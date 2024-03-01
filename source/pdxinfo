@@ -1,6 +1,6 @@
-name=Template
+name=GhostWheel
 author=Berat Ertural
-description=This is a game template.
+description=Isometric Horror
 bundleID=io.itch.berate.
 version=0.0.1
 buildNumber=1

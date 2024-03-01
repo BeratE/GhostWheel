@@ -1,0 +1,3 @@
+[submodule "source/pdlibs"]
+	path = source/pdlibs
+	url = git@github.com:BeratE/pdlibs.git
