@@ -1,0 +1,11 @@
+*.pdx
+build/*
+docs/design/*
+docs/ref/*
+docs/notes/*
+*~
+\#*\#
+*#
+*.elc
+auto-save-list
+.\#*

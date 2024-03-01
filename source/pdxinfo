@@ -1,0 +1,7 @@
+name=Template
+author=Berat Ertural
+description=This is a game template.
+bundleID=io.itch.berate.
+version=0.0.1
+buildNumber=1
+imagePath=assets/system
