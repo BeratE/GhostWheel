@@ -1,19 +1,5 @@
---[[
-                       WIDTH
-    ------------------------             Tile Grid Order
-   |           ###                          _ _ _ _ _ x     
-   |        ##     ##                     /_/_/_/    
- H |     ##           ##                 /_/_/_/ 
- E |   #                 #              /_/_/_/
- I |   # ##           ## #             / 
- H |   #    ##     ##    # | D        y
- G |   #       ###       # | E  
- Z |   # ##     #     ##   | P  
-   |        ##  #  ##      | T  
-   |           ###         | H  
---]]
 import "CoreLibs/object"
-import "CoreLibs/sprite"
+import "CoreLibs/graphics"
 
 local gfx <const> = playdate.graphics
 

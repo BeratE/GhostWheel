@@ -2,8 +2,14 @@ import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
+import "pdlibs/state/StateMachine"
 import "globals"
 
+
+--[[ Global variables ]]
+SCENE_MANAGER = pdlibs.state.StateMachine()
+
+--[[ Local variables ]]
 local pd <const> = playdate
 local dsp <const> = playdate.display
 local gfx <const> = playdate.graphics
@@ -17,16 +23,14 @@ gfx.setDrawOffset(0, 0)
 
 --[[ Update Routines ]]
 
-local function updateDeltaTime()
+function pd.update()
+    -- update delta time
     local nowTimeMs = pd.getCurrentTimeMilliseconds()
     deltaTimeMs = nowTimeMs - currTimeMs
     currTimeMs = nowTimeMs
-end
-
-function pd.update()
-    updateDeltaTime()
-    pd.timer.updateTimers() -- Update all timers
-    gfx.sprite.update()     -- Update all sprites
+    SCENE_MANAGER:update()    -- Update current scene
+    pd.timer.updateTimers()   -- Update all timers
+    gfx.sprite.update()       -- Update all sprites
     pd.drawFPS(0, 0)
 end
 

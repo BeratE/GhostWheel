@@ -1,5 +1,5 @@
 import "CoreLibs/object"
-import "CoreLibs/sprite"
+import "CoreLibs/graphics"
 import "pdlibs/state/StateMachine"
 
 local pd <const> = playdate

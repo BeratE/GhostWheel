@@ -1,0 +1,1 @@
+--[[ Preload all images, sounds and fonts from the asset directory ]]

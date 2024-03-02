@@ -1,3 +1,4 @@
+--[[ Global constants ]]
 FPS = 30
 
 DIR = {
