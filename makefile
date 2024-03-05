@@ -31,7 +31,7 @@ run: rebuild
 # Compile Source File
 
 compile: $(SRC_DIR)/main.lua
-	$(CC) --skip-unknown $(SRC_DIR) $(TARGET)
+	$(CC) $(SRC_DIR) $(TARGET)
 
 
 # Update Game Info in pdxinfo file

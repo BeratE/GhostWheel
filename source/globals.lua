@@ -1,6 +1,8 @@
 --[[ Global constants ]]
 FPS = 30
 
+PPM = 64 -- pixel per meter ratio (i.e. 1 meter = PPM pixels)
+
 DIR = {
     NE = 1, -- North-East
     E  = 2, -- West
@@ -9,9 +11,6 @@ DIR = {
     SW = 5, -- South-West
     W  = 6, -- West
     NW = 7, -- North West
-    N  = 8  -- North
+    N  = 8,  -- North
 }
 
-TILE = {
-    UNDEFINED = nil
-}

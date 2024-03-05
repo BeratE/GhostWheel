@@ -9,10 +9,8 @@ tinyecs.system(DrawBackgroundSystem)
 
 function DrawBackgroundSystem:init()
     DrawBackgroundSystem.super.init(self)
-	print("Init BackgroundSyste,")
 end
 
 function DrawBackgroundSystem:update(dt)
-    print("BG System")
 	gfx.fillRect(0, 0, disp:getWidth(), disp:getHeight())
 end

@@ -91,40 +91,49 @@ local filterJoin
 -- A helper function to filters from string
 local filterBuildString
 
+
+local function filterJoinRaw(invert, joining_op, ...)
+   local _args = {...}
+
+   return function(system, e)
+      local acc
+      local args = _args
+      if joining_op == 'or' then
+	 acc = false
+	 for i = 1, #args do
+	    local v = args[i]
+	    if type(v) == "string" then
+	       acc = acc or (e[v] ~= nil)
+	    elseif type(v) == "function" then
+	       acc = acc or v(system, e)
+	    else
+	       error 'Filter token must be a string or a filter function.'
+	    end
+	 end
+      else
+	 acc = true
+	 for i = 1, #args do
+	    local v = args[i]
+	    if type(v) == "string" then
+	       acc = acc and (e[v] ~= nil)
+	    elseif type(v) == "function" then
+	       acc = acc and v(system, e)
+	    else
+	       error 'Filter token must be a string or a filter function.'
+	    end
+	 end
+      end
+
+      -- computes a simple xor
+      if invert then
+	 return not acc
+      else
+	 return acc
+      end
+   end
+end
+
 do
-
-    local loadstring = loadstring or load
-    local function getchr(c)
-        return "\\" .. c:byte()
-    end
-    local function make_safe(text)
-        return ("%q"):format(text):gsub('\n', 'n'):gsub("[\128-\255]", getchr)
-    end
-
-    local function filterJoinRaw(prefix, seperator, ...)
-        local accum = {}
-        local build = {}
-        for i = 1, select('#', ...) do
-            local item = select(i, ...)
-            if type(item) == 'string' then
-                accum[#accum + 1] = ("(e[%s] ~= nil)"):format(make_safe(item))
-            elseif type(item) == 'function' then
-                build[#build + 1] = ('local subfilter_%d_ = select(%d, ...)')
-                    :format(i, i)
-                accum[#accum + 1] = ('(subfilter_%d_(system, e))'):format(i)
-            else
-                error 'Filter token must be a string or a filter function.'
-            end
-        end
-        local source = ('%s\nreturn function(system, e) return %s(%s) end')
-            :format(
-                table.concat(build, '\n'),
-                prefix,
-                table.concat(accum, seperator))
-        local loader, err = loadstring(source)
-        if err then error(err) end
-        return loader(...)
-    end
 
     function filterJoin(...)
         local state, value = pcall(filterJoinRaw, ...)
@@ -169,25 +178,25 @@ end
 --- Makes a Filter that selects Entities with all specified Components and
 -- Filters.
 function tinyecs.requireAll(...)
-    return filterJoin('', ' and ', ...)
+    return filterJoin(false, 'and', ...)
 end
 
 --- Makes a Filter that selects Entities with at least one of the specified
 -- Components and Filters.
 function tinyecs.requireAny(...)
-    return filterJoin('', ' or ', ...)
+    return filterJoin(false, 'or', ...)
 end
 
 --- Makes a Filter that rejects Entities with all specified Components and
 -- Filters, and selects all other Entities.
 function tinyecs.rejectAll(...)
-    return filterJoin('not', ' and ', ...)
+    return filterJoin(true, 'and', ...)
 end
 
 --- Makes a Filter that rejects Entities with at least one of the specified
 -- Components and Filters, and selects all other Entities.
 function tinyecs.rejectAny(...)
-    return filterJoin('not', ' or ', ...)
+    return filterJoin(true, 'or', ...)
 end
 
 --- Makes a Filter from a string. Syntax of `pattern` is as follows.
@@ -230,7 +239,7 @@ end
 -- removed from the world, after all Entities are removed from the System.
 --   * `function system:preWrap(dt)` - Called on each system before update is
 -- called on any system.
---   * `function system:postWrap(dt) - Called on each system in reverse order
+--   * `function system:postWrap(dt)` - Called on each system in reverse order
 -- after update is called on each system. The idea behind `preWrap` and
 -- `postWrap` is to allow for systems that modify the behavior of other systems.
 -- Say there is a DrawingSystem, which draws sprites to the screen, and a
@@ -278,11 +287,13 @@ end
 --
 -- There is another option to (hopefully) increase performance in systems that
 -- have items added to or removed from them often, and have lots of entities in
--- them.  Setting the `nocache' field of the system might improve performance.
+-- them.  Setting the `nocache` field of the system might improve performance.
 -- It is still experimental. There are some restriction to systems without
--- caching, however.  * There is no `entities` table.  * Callbacks such onAdd,
--- onRemove, and onModify will never be called * Noncached systems cannot be
--- sorted (There is no entities list to sort).
+-- caching, however.
+--
+--   * There is no `entities` table.
+--   * Callbacks such onAdd, onRemove, and onModify will never be called
+--   * Noncached systems cannot be sorted (There is no entities list to sort).
 --
 -- @section System
 
@@ -307,7 +318,7 @@ local function processingSystemUpdate(system, dt)
 
     if process then
         if system.nocache then
-            local entities = system.world.entityList
+            local entities = system.world.entities
             local filter = system.filter
             if filter then
                 for i = 1, #entities do
@@ -819,6 +830,7 @@ end
 -- the order in which they Systems processed, because lower indexed Systems are
 -- processed first. Returns the old system.index.
 function tinyecs.setSystemIndex(world, system, index)
+    tiny_manageSystems(world)
     local oldIndex = system.index
     local systems = world.systems
 
