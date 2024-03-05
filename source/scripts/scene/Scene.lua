@@ -4,6 +4,7 @@ import "pdlibs/state/State"
 import "scripts/system/render/AffineTransformSystem"
 import "scripts/system/render/DrawBackgroundSystem"
 import "scripts/system/physics/RigidBodySystem"
+import "scripts/entity/level/TiledMap"
 import "assets"
 
 local pd <const> = playdate
@@ -15,7 +16,7 @@ class("Scene").extends(pdlibs.state.State)
 
 function Scene:init()
     self.world = tinyecs.world() -- Each scene holds its own ecs-world
-    self.world:addSystem(DrawBackgroundSystem())
+    --self.world:addSystem(DrawBackgroundSystem())
     self.world:addSystem(AffineTransformSystem())
     self.world:addSystem(RigidBodySystem())
 
@@ -25,10 +26,13 @@ function Scene:init()
     self.sprite:setCenter(0.5, 0.5)
     self.sprite.pos = playdate.geometry.point.new(0, 0)
     self.sprite.mass = 80
+    self.sprite:setZIndex(10)
 
     self.world:add(self.sprite)
     self.world:refresh()
 
+    self.level = TiledMap("test.json")
+    self.level:add()
     
 
 
@@ -48,26 +52,25 @@ function Scene:onUpdate()
     self:refreshDeltaTimeMs()
     self.world:update(self:getDeltaTimeMs())
 
-    print("Impulse Force " .. v)
+    --print("Impulse Force " .. v)
     if (pd.buttonIsPressed(pd.kButtonA)) then
         v += 1
     end
     if (pd.buttonJustPressed(pd.kButtonUp)) then
-        RigidBodySystem.addForceXY(self.sprite, v, v)
+        RigidBodySystem.addForce(self.sprite, v, v)
         --self.sprite.pos.y += 1
     elseif (pd.buttonJustPressed(pd.kButtonDown)) then
-        RigidBodySystem.addForceXY(self.sprite, -v, -v)
+        RigidBodySystem.addForce(self.sprite, -v, -v)
         --self.sprite.pos.y -= 1
     elseif (pd.buttonJustPressed(pd.kButtonLeft)) then
-        RigidBodySystem.addForceXY(self.sprite, -v, v)
+        RigidBodySystem.addForce(self.sprite, -v, v)
         --self.sprite.pos.x -= 1
     elseif (pd.buttonJustPressed(pd.kButtonRight)) then
-        RigidBodySystem.addForceXY(self.sprite, v, -v)
+        RigidBodySystem.addForce(self.sprite, v, -v)
         --self.sprite.pos.x += 1
     end
-
-    --print("Pos " .. self.sprite.x .. " " .. self.sprite.y)
-
+    --print("Pos Sprite" .. self.sprite.x .. " " .. self.sprite.y)
+    --print("Pos " .. self.sprite.pos.x .. " " .. self.sprite.pos.y)
 end
 
 function Scene:refreshDeltaTimeMs()

@@ -14,3 +14,6 @@ DIR = {
     N  = 8,  -- North
 }
 
+
+SPRITE_Z_MIN = -32768
+SPRITE_Z_MAX = 32767

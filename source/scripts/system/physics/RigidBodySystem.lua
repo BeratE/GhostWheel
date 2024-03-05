@@ -13,8 +13,6 @@ Order of operations:
 ]]
 
 local point <const> = playdate.geometry.point
-local origin <const> = point.new(0, 0)
-local max_vel <const> = 3
 
 --[[ Basic implementation of 2D rigid body dynamics. ]]
 class("RigidBodySystem").extends()
@@ -32,9 +30,8 @@ end
 function RigidBodySystem:process(e, dt)
     --[[ Positional Logic ]]
     -- Apply linear damping force
-    
-    self.addForceXY(e, - e.lindamp * e.vel.x, - e.lindamp * e.vel.y)
-    -- Set velocity using the impulse forces acting on object
+    self.addForce(e, - e.lindamp * e.vel.x, - e.lindamp * e.vel.y)
+    -- Set acceleration using the impulse forces acting on object
     e.acc.x = e.force.x/e.mass
     e.acc.y = e.force.y/e.mass
     e.force = point.new(0, 0)
@@ -46,8 +43,9 @@ function RigidBodySystem:process(e, dt)
     if (math.abs(e.acc.y) < 0.01) then e.acc.y = 0 end
     if (math.abs(e.vel.x) < 0.01) then e.vel.x = 0 end
     if (math.abs(e.vel.y) < 0.01) then e.vel.y = 0 end
-    print("Acc " .. e.acc.x .. "  " .. e.acc.y)
-    print("Vel " .. e.vel.x .. " " .. e.vel.y)
+    
+    --print("Entity Acc: " .. e.acc.x .. ", " .. e.acc.y)
+    --print("Entity Vel: " .. e.vel.x .. ", " .. e.vel.y)
 end
 
 
@@ -55,15 +53,21 @@ end
 
 -- Add all the required components for the rigid body system
 function RigidBodySystem.addRigidBody(e, mass, lindamp)
-    e.mass = e.mass or mass or 1            -- Mass of object in kg
-    e.lindamp = e.lindamp or lindamp or 0.1 -- linear daming factor [0, 1], i.e. resistance to movement
-    e.force = e.force or point.new(0, 0)    -- Sum of impulse forces acting on object
-    e.vel = e.vel or point.new(0, 0)        -- Current velocity of the object
-    e.acc = e.acc or point.new(0, 0)        -- Current acceleration of the object
-    e.pos = e.pos or point.new(0, 0)        -- Current position of the object
+    --[[ Scalar ]]
+    -- Mass of object in kg (minimum of 1gram)
+    e.mass = e.mass or mass or 1
+    e.mass = math.max(e.mass, 0.001)
+    -- linear daming factor [0, 1], i.e. resistance to movement
+    e.lindamp = e.lindamp or lindamp or 0.1
+    e.lindamp = pdlibs.math.clamp(e.lindamp, 0.0, 1.0)
+    --[[ Vector ]]
+    e.force = e.force or point.new(0, 0) -- Forces currently acting on the object
+    e.vel = e.vel or point.new(0, 0) -- Current velocity of the object
+    e.acc = e.acc or point.new(0, 0) -- Current acceleration of the object
+    e.pos = e.pos or point.new(0, 0) -- Current position of the object
 end
 
-function RigidBodySystem.addForceXY(e, fx, fy)
+function RigidBodySystem.addForce(e, fx, fy)
     e.force:offset(fx, fy)
     return e.force
 end

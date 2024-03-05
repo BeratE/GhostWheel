@@ -21,16 +21,17 @@ local gfx <const> = playdate.graphics
 math.randomseed(pd.getSecondsSinceEpoch())
 dsp.setRefreshRate(FPS)
 gfx.setDrawOffset(dsp.getWidth()/2, dsp.getHeight()/2)
+--gfx.setDrawOffset(0, 0)
 
 --[[ Update Routines ]]
 
 function pd.update()
+    gfx.sprite.update()       -- Update all sprites
     pd.timer.updateTimers()   -- Update all timers
     SCENE_MANAGER:update()    -- Update current scene
-    gfx.sprite.update()       -- Update all sprites
+   
     pd.drawFPS(0, 0)
 end
-
 
 
 -- [[ Game lifecycle ]]
