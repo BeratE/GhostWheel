@@ -37,3 +37,8 @@ end
 function Scene:getDeltaTimeMs()
     return self.deltaTimeMs
 end
+
+-- [[ Simulator and Debug ]]
+
+function Scene:keyPressed(key)
+end

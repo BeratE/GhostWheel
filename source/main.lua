@@ -3,6 +3,7 @@ import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "pdlibs/state/StateMachine"
+import "libs/pdlog"
 import "globals"
 import "assets"
 
@@ -18,7 +19,7 @@ local dsp <const> = playdate.display
 local gfx <const> = playdate.graphics
 
 
--- Initialization
+--[[ Initialization ]]
 math.randomseed(pd.getSecondsSinceEpoch())
 dsp.setRefreshRate(FPS)
 gfx.setDrawOffset(DRAW_OFFSET_X, DRAW_OFFSET_Y)
@@ -33,7 +34,7 @@ function pd.update()
 end
 
 
--- [[ Game lifecycle ]]
+--[[ Game lifecycle ]]
 
 -- Save Gamestate on termination
 function pd.gameWillTerminate()
@@ -41,4 +42,11 @@ end
 
 -- Save Gamestate on sleep
 function pd.deviceWillSleep()
+end
+
+--[[ Simulator and Debug ]]
+
+function playdate.keyPressed(key)
+    log.info("Pressed key " .. key)
+    SCENE_MANAGER.current:keyPressed(key)
 end

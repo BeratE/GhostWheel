@@ -52,9 +52,9 @@ end
 
 function TestScene:nextLevel()
     self.levels[self.levelIdx]:remove()
-    self.levelIdx = (self.levelIdx % self.levels) + 1
+    self.levelIdx = (self.levelIdx % #self.levels) + 1
     self.levels[self.levelIdx]:add()
-    log.info("Switching to scene " .. self.levelIdx)
+    log.info("Switching to test-scene " .. self.levelIdx)
 end
 
 local v = 1
@@ -82,4 +82,11 @@ function TestScene:onUpdate()
     end
     --print("Pos Sprite" .. self.sprite.x .. " " .. self.sprite.y)
     --print("Pos " .. self.sprite.pos.x .. " " .. self.sprite.pos.y)
+end
+
+function TestScene:keyPressed(key)
+    -- Bug in playdate SDK 2.4.0
+    --if (key == 'n') then
+        self:nextLevel()
+    --end
 end
