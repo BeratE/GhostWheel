@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-field
 import "CoreLibs/object"
 import "pdlibs/util/math"
-import "libs/ecs/tiny"
+import "libs/tinyecs"
 
 --[[ Simple Rigid-Body 2D (top-down) physics engine.
 Units: kilogram kg, meter m, milliseconds ms.

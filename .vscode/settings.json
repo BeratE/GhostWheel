@@ -9,5 +9,9 @@
     "Lua.runtime.nonstandardSymbol": ["+=", "-=", "*=", "/="],
     "Lua.workspace.library": ["$PLAYDATE_SDK_PATH/CoreLibs"],
     "Lua.workspace.preloadFileSize": 1000,
-    "Lua.completion.autoRequire": false
+    "Lua.completion.autoRequire": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "cmake.configureOnOpen": true
 }

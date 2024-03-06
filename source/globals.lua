@@ -1,7 +1,7 @@
 --[[ Global constants ]]
-FPS = 30
-
+FPS = 30 -- Frames per second
 PPM = 64 -- pixel per meter ratio (i.e. 1 meter = PPM pixels)
+
 
 DIR = {
     NE = 1, -- North-East
@@ -14,6 +14,8 @@ DIR = {
     N  = 8,  -- North
 }
 
-
+--[[ Drawing ]]
+DRAW_OFFSET_X = 200
+DRAW_OFFSET_Y = 120
 SPRITE_Z_MIN = -32768
 SPRITE_Z_MAX = 32767

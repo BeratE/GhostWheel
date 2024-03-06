@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-field, need-check-nil
 import "CoreLibs/object"
 import "CoreLibs/graphics"
-import "assets"
+import "libs/pdlog"
 
 --[[ Supports JSON loading of TILED Maps v1.8]]
 
@@ -21,17 +21,21 @@ Implemented as a sprite that manages a group of tile sprites. ]]
 class("TiledMap").extends(gfx.sprite)
 
 function TiledMap:init(map)
-    TiledMap.super.moveTo(self, 200, 120)
-    TiledMap.super.setCenter(self, 0.5, 0.5)
-    TiledMap.super.setZIndex(self, SPRITE_Z_MIN)
     self:readMapJson(map)
     TiledMap.super.init(self)
 end
 
 function TiledMap:readMapJson(filename)
-    local tiled = json.decodeFile("assets/map/"..filename)
+    -- Reset sprite properties
+    TiledMap.super.moveTo(self, 200, 120)
+    TiledMap.super.setCenter(self, 0.5, 0.5)
+    TiledMap.super.setZIndex(self, SPRITE_Z_MIN)
+    -- Read json map
+    filename = "assets/map/"..filename
+    log.info("Loading Tiled file " .. filename)
+    local tiled = json.decodeFile(filename)
     -- Sanity check
-    assert(tiled, "Invalid TILED map file passed to level")
+    assert(tiled, "Unable to decode Tiled map file " .. filename)
     assert(tiled.width == tiled.height, "TiledMap only supports maps of equal width and height")
     assert(tiled.orientation == Orientation.Isometric, "TiledMap can only load isometric tiled data")
     assert(tiled.renderorder == RenderOrder.RightDown, "TiledMap can only use right-down render order")
@@ -42,13 +46,24 @@ function TiledMap:readMapJson(filename)
     self.tileheight = tiled.tileheight
     self.tiledepth  = self.tileheight/2
     --TiledMap.super.setSize(self, self.width*self.tilewidth, self.height*self.tiledepth)
-    -- Retrieve tileset info
+    -- Collect tilesets into one big image table
     self.tiles = {}
     for _,t in ipairs(tiled.tilesets) do
         local filename =  t.image or t.source or t.name
-        filename = filename:sub(string.find(filename, "/[^/]*$"), filename:find("-table-", 1, true) - 1)
+        -- Cut until filename if a path is given
+        local slashIdx = string.find(filename, "/[^/]*$")
+        if (slashIdx) then
+            filename = string.sub(filename, slashIdx)
+        end
+        -- Find image name without suffix
+        local tableIdx = string.find(filename, "-table-", 1, true)
+        if (tableIdx and tableIdx > 2) then
+            filename = string.sub(filename, 1, tableIdx-1)
+        else
+            error("Invalid image name used in tilesets (" .. filename .. ")", 2)
+        end
         local imgtable = assets.getImageTable(filename)
-        assert(imgtable, "Invalid image used in tilesets (" .. filename .. ")" )
+        assert(imgtable, "Unable to retrieve tileset image (" .. filename .. ")" )
         for i = 1, #imgtable do
             table.insert(self.tiles, imgtable:getImage(i))
         end
@@ -69,7 +84,6 @@ function TiledMap:readMapJson(filename)
                             tilesprite:setZIndex(SPRITE_Z_MIN + z)
                             tilesprite:setCenter(0.5, 0.5)
                             tilesprite:moveTo(px + layer.x, py + layer.y)
-                            --print(tilesprite.x, tilesprite.y)
                             table.insert(self.sprites, tilesprite)
                         end
                     end
@@ -83,7 +97,6 @@ end
 function TiledMap:getScreenCoordinatesAt(x, y, z)
     local px = self.x + ((x-y) * (self.tilewidth / 2))  - self.tilewidth/2
     local py = self.y + ((y+x) * (self.tileheight / 2)) - (self.tileheight * (self.height / 2)) - self.tileheight - (z * self.tiledepth)
-    print(px, py)
     return px, py
 end
 
@@ -112,6 +125,7 @@ function TiledMap:setSize(width, height)
     end
 end
 
+-- All other sprite functions are modified to iterate over sprite table
 TiledMap.__index = function(tiledmap, key)
     -- Check if requested function is part of TiledMap
     local proxy_value = rawget(TiledMap, key)
@@ -126,6 +140,7 @@ TiledMap.__index = function(tiledmap, key)
         -- Set to function on the TiledMap
 		rawset(tiledmap, key, function(tm, ...)
             local retVal = TiledMap.super[key](tm, ...)
+            -- Skip if function is a getter
             if (not retVal) then
                 for _, sprite in ipairs(tm.sprites) do
                     sprite[key](sprite, ...)

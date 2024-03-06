@@ -1,6 +1,6 @@
 ---@diagnostic disable: undefined-field, inject-field, need-check-nil
 import "CoreLibs/object"
-import "libs/ecs/tiny"
+import "libs/tinyecs"
 import "pdlibs/util/debug"
 
 local gfx <const> = playdate.graphics

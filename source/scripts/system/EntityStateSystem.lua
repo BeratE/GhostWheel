@@ -1,5 +1,5 @@
 import "CoreLibs/object"
-import "libs/ecs/tiny"
+import "libs/tinyecs"
 
 class("EntityStateSystem").extends()
 tinyecs.processingSystem(EntityStateSystem)

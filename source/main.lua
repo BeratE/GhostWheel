@@ -4,12 +4,13 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 import "pdlibs/state/StateMachine"
 import "globals"
+import "assets"
 
-import "scripts/scene/Scene"
+import "scripts/scene/TestScene"
 
 --[[ Global variables ]]
 SCENE_MANAGER = pdlibs.state.StateMachine()
-SCENE_MANAGER:switch(Scene())
+SCENE_MANAGER:switch(TestScene())
 
 --[[ Local variables ]]
 local pd <const> = playdate
@@ -20,16 +21,14 @@ local gfx <const> = playdate.graphics
 -- Initialization
 math.randomseed(pd.getSecondsSinceEpoch())
 dsp.setRefreshRate(FPS)
-gfx.setDrawOffset(dsp.getWidth()/2, dsp.getHeight()/2)
---gfx.setDrawOffset(0, 0)
+gfx.setDrawOffset(DRAW_OFFSET_X, DRAW_OFFSET_Y)
 
 --[[ Update Routines ]]
 
 function pd.update()
-    gfx.sprite.update()       -- Update all sprites
     pd.timer.updateTimers()   -- Update all timers
     SCENE_MANAGER:update()    -- Update current scene
-   
+    gfx.sprite.update()       -- Update all sprites
     pd.drawFPS(0, 0)
 end
 

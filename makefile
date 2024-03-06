@@ -6,7 +6,7 @@ SIM = $(SDK_BIN)/PlaydateSimulator
 SRC_DIR = source
 BIN_DIR = build
 
-CC = pdc
+CC = pdc -q
 
 GAME   = $(notdir $(CURDIR))
 TARGET = $(BIN_DIR)/$(GAME).pdx
