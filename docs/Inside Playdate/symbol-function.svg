@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="42.094" height="72" viewBox="0 0 42.094 72">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #fff;
+        fill-rule: evenodd;
+      }
+    </style>
+  </defs>
+  <path id="symbol-function.svg" class="cls-1" d="M55.432,114.592h12.2l7.9-40.1h15.7v-10.3h-13.8l0.8-4.1a8.4,8.4,0,0,1,8.5-7.1h7.6l2.1-10.4h-9c-10.9,0-19.3,6.7-21.3,16.9l-0.9,4.7h-10.9v10.3h8.9Z" transform="translate(-54.344 -42.594)"/>
+</svg>

@@ -1,0 +1,235 @@
+/* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
+
+pre.CodeRay {
+	background-color: var(--boxBackground);
+	max-height: 20em;
+	overflow: auto;
+}
+
+pre.CodeRay::-webkit-scrollbar {
+	height: .5em;
+	width: .5em;
+	padding: .1em;
+	border: 0 solid var(--subtlestBackground);
+}
+pre.CodeRay::-webkit-scrollbar-corner
+{
+	border: 0 solid var(--subtlestBackground);
+	border-width: .1em 0 0 .1em;
+}
+pre.CodeRay::-webkit-scrollbar:horizontal
+{
+	border-width: .1em 0 0 0;
+}
+pre.CodeRay::-webkit-scrollbar:vertical
+{
+	border-width: 0 0 0 .1em;
+}
+pre.CodeRay::-webkit-scrollbar-thumb
+{
+	border-radius: .1em;	
+	background: var(--boxBackgroundStronger);
+}
+
+.item .CodeRay .content
+{
+	padding-left: unset;
+}
+
+.CodeRay .line-numbers {
+	border-right: 1px solid var(--subtle);
+	opacity: .35;
+	padding: 0 .5em 0 0;
+}
+
+.CodeRay span.line-numbers {
+	display: inline-block;
+	margin-right: .75em;
+}
+
+.CodeRay .line-numbers strong {
+	color: var(--foreground);
+}
+
+table.CodeRay {
+	border-collapse: separate;
+	border: 0;
+	margin-bottom: 0;
+	background: none;
+}
+
+table.CodeRay td {
+	vertical-align: top;
+	line-height: inherit
+}
+
+table.CodeRay td.line-numbers {
+	text-align: right;
+}
+
+table.CodeRay td.code {
+	padding: 0 0 0 .75em;
+}
+
+/* Light Theme */
+
+.CodeRay .debug { color: var(--foreground); background-color: var(--pageBackground); }
+.CodeRay .annotation { color: rgb(135, 135, 135); }
+.CodeRay .attribute-name { color: rgb(116, 27, 163); font-weight: bold; }
+.CodeRay .attribute-value { color: rgb(57, 0, 160); }
+.CodeRay .binary { color: rgb(187, 37, 0); }
+.CodeRay .comment { color: rgb(135, 135, 135); font-style: italic }
+.CodeRay .char { color: rgb(221, 36, 0); }
+.CodeRay .char .content { color: rgb(221, 36, 0); }
+.CodeRay .char .delimiter { color: rgb(53, 82, 0); }
+.CodeRay .class { color: rgb(116, 27, 163); font-weight: bold }
+.CodeRay .complex { color: rgb(116, 27, 163); }
+.CodeRay .constant,.CodeRay .predefined-constant { color: rgb(116, 27, 163); font-weight: bold; }
+.CodeRay .color { color: rgb(63, 110, 125); }
+.CodeRay .class-variable { color: rgb(135, 53, 165); }
+.CodeRay .decorator { color: rgb(116, 27, 163); }
+.CodeRay .definition { color: rgb(116, 27, 163); font-weight: bold; }
+.CodeRay .delimiter { color: var(--foreground) }
+.CodeRay .doc { color: rgb(116, 27, 163); }
+.CodeRay .doctype { color: rgb(116, 27, 163); }
+.CodeRay .doc-string { color: rgb(221, 36, 0); }
+.CodeRay .escape { color: rgb(53, 82, 0); }
+.CodeRay .entity { color: rgb(0, 122, 183); }
+.CodeRay .error { color: var(--negative); }
+.CodeRay .exception { color: var(--negative); }
+.CodeRay .filename { color: rgb(93, 143, 0); }
+.CodeRay .function { color: rgb(63, 110, 125);  }
+.CodeRay .global-variable { var(--negative); }
+.CodeRay .hex { color: rgb(215, 45, 101); }
+.CodeRay .integer,.CodeRay .float { color: rgb(221, 36, 0); }
+.CodeRay .include { color: rgb(135, 135, 135); }
+.CodeRay .inline { color: var(--foreground) }
+.CodeRay .inline .inline { background-color: var(--pageBackground) }
+.CodeRay .inline .inline .inline { background-color: var(--pageBackground) }
+.CodeRay .inline .inline-delimiter { color: rgb(53, 82, 0); }
+.CodeRay .inline-delimiter { color: rgb(53, 82, 0); }
+.CodeRay .important { color: rgb(224, 55, 143); font-weight: bold }
+.CodeRay .interpreted { color: rgb(224, 55, 143); }
+.CodeRay .instance-variable { color: rgb(135, 53, 165); }
+.CodeRay .label { color: rgb(222, 122, 49); }
+.CodeRay .local-variable { color: rgb(135, 53, 165); }
+.CodeRay .octal { color: rgb(93, 143, 0); }
+.CodeRay .predefined { color: rgb(0, 70, 170); }
+.CodeRay .preprocessor { color: rgb(80, 80, 80); }
+.CodeRay .pseudo-class { color: rgb(116, 27, 163); }
+.CodeRay .directive { font-weight: bold }
+.CodeRay .type { color: rgb(116, 27, 163); }
+.CodeRay .predefined-type { color: rgb(0, 70, 170); }
+.CodeRay .reserved, .CodeRay .keyword  { color: rgb(0, 70, 170); font-weight: bold }
+.CodeRay .key { color: rgb(57, 0, 160); }
+.CodeRay .key .delimiter { color: rgb(53, 82, 0); }
+.CodeRay .key .char { color: rgb(221, 36, 0); }
+.CodeRay .value { color: rgb(0, 122, 183); }
+.CodeRay .regexp .delimiter { color: rgb(53, 82, 0); }
+.CodeRay .regexp .content { color: rgb(221, 36, 0); }
+.CodeRay .regexp .modifier { color: rgb(221, 36, 0); }
+.CodeRay .regexp .char { color: rgb(221, 36, 0); }
+.CodeRay .regexp .function { color: rgb(63, 110, 125); }
+.CodeRay .string { color: rgb(221, 36, 0); }
+.CodeRay .string .content { color: rgb(221, 36, 0); }
+.CodeRay .string .char { color: rgb(221, 36, 0); }
+.CodeRay .string .delimiter { color: rgb(221, 36, 0); }
+.CodeRay .shell { color: rgb(221, 36, 0); }
+.CodeRay .shell .delimiter { color: rgb(221, 36, 0); }
+.CodeRay .symbol { color: rgb(0, 122, 183); }
+.CodeRay .symbol .content { color: rgb(0, 122, 183); }
+.CodeRay .symbol .delimiter { color: rgb(53, 82, 0); }
+.CodeRay .tag { color: rgb(0, 70, 170); }
+.CodeRay .tag-special { color: rgb(0, 70, 170); }
+.CodeRay .variable { color: rgb(135, 53, 165); }
+.CodeRay .insert { color: rgba(93, 143, 0, .1); }
+.CodeRay .delete { background-color: rgba(255, 0, 0, .1) }
+.CodeRay .change { color: rgba(0, 112, 248, .1); }
+.CodeRay .head { color: rgb(0, 70, 170); }
+.CodeRay .insert .insert { color: rgb(93, 143, 0); }
+.CodeRay .delete .delete { color: rgb(255, 0, 0); }
+.CodeRay .change .change { color: rgb(0, 112, 248); }
+.CodeRay .head .head { color: rgb(0, 70, 170); }
+
+/* Dark Theme */
+
+@media (prefers-color-scheme: dark) {
+	.CodeRay .debug { color: var(--foreground); background-color: var(--pageBackground); }
+	.CodeRay .annotation { color: var(--subtle); }
+	.CodeRay .attribute-name { color: hsl(258, 57%, 70%); font-weight: bold; }
+	.CodeRay .attribute-value { color: hsl(258, 57%, 70%); }
+	.CodeRay .binary { color: hsl(210, 100%, 70%); }
+	.CodeRay .comment { color: var(--subtle); font-style: italic }
+	.CodeRay .char { color: hsl(0, 100%, 70%); }
+	.CodeRay .char .content { color: hsl(0, 100%, 70%); }
+	.CodeRay .char .delimiter { color: hsl(94, 44%, 64%); }
+	.CodeRay .class { color: hsl(258, 57%, 70%); font-weight: bold }
+	.CodeRay .complex { color: hsl(258, 57%, 70%); }
+	.CodeRay .constant,.CodeRay .predefined-constant { color: hsl(258, 57%, 70%); font-weight: bold; }
+	.CodeRay .color { color: hsl(166, 41%, 62%); }
+	.CodeRay .class-variable { color: hsl(268, 100%, 83%); }
+	.CodeRay .decorator { color: hsl(258, 57%, 70%); }
+	.CodeRay .definition { color: hsl(258, 57%, 70%); font-weight: bold; }
+	.CodeRay .delimiter { color: var(--foreground) }
+	.CodeRay .doc { color: hsl(258, 57%, 70%); }
+	.CodeRay .doctype { color: hsl(258, 57%, 70%); }
+	.CodeRay .doc-string { color: hsl(0, 100%, 70%); }
+	.CodeRay .escape { color: hsl(94, 44%, 64%); }
+	.CodeRay .entity { color: hsl(210, 100%, 70%); }
+	.CodeRay .error { var(--negative); }
+	.CodeRay .exception { color: var(--negative); }
+	.CodeRay .filename { color: hsl(40, 100%, 64%); }
+	.CodeRay .function { color: hsl(166, 41%, 62%); }
+	.CodeRay .global-variable { var(--negative); }
+	.CodeRay .hex { color: hsl(249, 84%, 74%); }
+	.CodeRay .integer,.CodeRay .float { color: hsl(0, 100%, 70%); }
+	.CodeRay .include { color: var(--subtle); }
+	.CodeRay .inline { color: var(--foreground) }
+	.CodeRay .inline .inline { background-color: var(--pageBackground) }
+	.CodeRay .inline .inline .inline { background-color: var(--pageBackground) }
+	.CodeRay .inline .inline-delimiter { color: hsl(94, 44%, 64%); }
+	.CodeRay .inline-delimiter { color: hsl(94, 44%, 64%); }
+	.CodeRay .important { color: rgb(224, 55, 143); font-weight: bold }
+	.CodeRay .interpreted { color: rgb(224, 55, 143); }
+	.CodeRay .instance-variable { color: hsl(268, 100%, 83%); }
+	.CodeRay .label { color: rgb(222, 122, 49); }
+	.CodeRay .local-variable { color: hsl(268, 100%, 83%); }
+	.CodeRay .octal { color: hsl(40, 100%, 64%); }
+	.CodeRay .predefined { color: hsl(30, 50%, 60%); }
+	.CodeRay .preprocessor { color: var(--subtle); }
+	.CodeRay .pseudo-class { color: hsl(258, 57%, 70%); }
+	.CodeRay .directive { font-weight: bold }
+	.CodeRay .type { color: hsl(258, 57%, 70%); }
+	.CodeRay .predefined-type { color: hsl(30, 50%, 60%); }
+	.CodeRay .reserved, .CodeRay .keyword  { color: hsl(30, 50%, 60%); font-weight: bold }
+	.CodeRay .key { color: hsl(258, 57%, 70%); }
+	.CodeRay .key .delimiter { color: hsl(94, 44%, 64%); }
+	.CodeRay .key .char { color: hsl(0, 100%, 70%); }
+	.CodeRay .value { color: hsl(210, 100%, 70%); }
+	.CodeRay .regexp .delimiter { color: hsl(94, 44%, 64%); }
+	.CodeRay .regexp .content { color: hsl(0, 100%, 70%); }
+	.CodeRay .regexp .modifier { color: hsl(0, 100%, 70%); }
+	.CodeRay .regexp .char { color: hsl(0, 100%, 70%); }
+	.CodeRay .regexp .function { color: hsl(166, 41%, 62%);
+	 }
+	.CodeRay .string { color: hsl(0, 100%, 70%); }
+	.CodeRay .string .content { color: hsl(0, 100%, 70%); }
+	.CodeRay .string .char { color: hsl(0, 100%, 70%); }
+	.CodeRay .string .delimiter { color: hsl(0, 100%, 70%); }
+	.CodeRay .shell { color: hsl(0, 100%, 70%); }
+	.CodeRay .shell .delimiter { color: hsl(0, 100%, 70%); }
+	.CodeRay .symbol { color: hsl(210, 100%, 70%); }
+	.CodeRay .symbol .content { color: hsl(210, 100%, 70%); }
+	.CodeRay .symbol .delimiter { color: hsl(94, 44%, 64%); }
+	.CodeRay .tag { color: hsl(30, 50%, 60%); }
+	.CodeRay .tag-special { color: hsl(30, 50%, 60%); }
+	.CodeRay .variable { color: hsl(268, 100%, 83%); }
+	.CodeRay .insert { color: rgba(93, 143, 0, .1); }
+	.CodeRay .delete { background-color: rgba(255, 0, 0, .1) }
+	.CodeRay .change { color: rgba(0, 112, 248, .1); }
+	.CodeRay .head { color: hsl(30, 50%, 60%); }
+	.CodeRay .insert .insert { color: hsl(40, 100%, 64%); }
+	.CodeRay .delete .delete { color: hsl(0, 100%, 70%); }
+	.CodeRay .change .change { color: hsl(210, 100%, 70%); }
+	.CodeRay .head .head { color: hsl(30, 50%, 60%); }
+}

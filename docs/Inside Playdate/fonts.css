@@ -1,0 +1,16 @@
+@font-face {
+  font-family: 'mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Menlo"), local("Monaco"), local("Cascadia Mono"), local("Segoe UI Mono"), local("Roboto Mono"), local("Oxygen Mono"), local("Ubuntu Monospace"), local("Source Code Pro"), local("Fira Mono"), local("Droid Sans Mono"), local("Courier New");
+}
+
+body
+{
+	font-family: system-ui, -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Ubuntu, roboto, noto, arial, sans-serif;
+}
+
+pre, code
+{
+	font-family: 'mono', monospace;
+}

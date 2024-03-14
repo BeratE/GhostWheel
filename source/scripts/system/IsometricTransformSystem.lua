@@ -8,13 +8,13 @@ local disp <const> = playdate.display
 local geom <const> = playdate.geometry
 
 -- [[ Derives screen coordinates by applying linear transform to position coordinates ]]
-class("AffineTransformSystem").extends()
-tinyecs.processingSystem(AffineTransformSystem)
-AffineTransformSystem.filter = tinyecs.requireAll("pos")
+class("IsometricTransformSystem").extends()
+tinyecs.processingSystem(IsometricTransformSystem)
+IsometricTransformSystem.filter = tinyecs.requireAll("pos")
 
 
-function AffineTransformSystem:init()
-    AffineTransformSystem.super.init(self)
+function IsometricTransformSystem:init()
+    IsometricTransformSystem.super.init(self)
     local a = math.pi/4 -- 45 degrees 
     local c1 = math.cos(-a)
     local s1 = math.sin(-a)
@@ -24,7 +24,7 @@ function AffineTransformSystem:init()
     self.isometricInv:invert()
 end
 
-function AffineTransformSystem:preProcess(dt)
+function IsometricTransformSystem:preProcess(dt)
     local d = disp.getRect()
     local ox, oy = gfx.getDrawOffset()
     self.topDownViewPort = {
@@ -36,10 +36,8 @@ function AffineTransformSystem:preProcess(dt)
     --print("Top-Down Viewport: " .. pdlibs.dump(self.topDownViewPort))
 end
 
-function AffineTransformSystem:process(e, dt)
+function IsometricTransformSystem:process(e, dt)
     local x, y = self.isometric:transformXY(e.pos.x, e.pos.y)
-    
     e:moveTo(x, y)
     --print("Entity Sprite Pos: " .. e.pos.x .. " " .. e.pos.y .. ", " .. x .. " " .. y)
 end
-

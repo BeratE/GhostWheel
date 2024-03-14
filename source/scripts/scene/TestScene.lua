@@ -1,5 +1,5 @@
 import "scripts/scene/Scene"
-import "scripts/system/AffineTransformSystem"
+import "scripts/system/IsometricTransformSystem"
 import "scripts/system/CameraSystem"
 import "scripts/system/RigidBodySystem"
 import "scripts/entity/TiledMap"
@@ -14,7 +14,7 @@ class("TestScene").extends(Scene)
 
 function TestScene:init()
     TestScene.super.init(self)
-    self.world:addSystem(AffineTransformSystem())
+    self.world:addSystem(IsometricTransformSystem())
     self.world:addSystem(RigidBodySystem())
     self.world:addSystem(CameraSystem())
 
@@ -68,16 +68,16 @@ function TestScene:onUpdate()
         v += 1
     end
     if (pd.buttonJustPressed(pd.kButtonUp)) then
-        RigidBodySystem.addForce(self.player, v, v)
+        RigidBodySystem.addForce(self.player, 0, v)
         --self.sprite.pos.y += 1
     elseif (pd.buttonJustPressed(pd.kButtonDown)) then
-        RigidBodySystem.addForce(self.player, -v, -v)
+        RigidBodySystem.addForce(self.player, 0, -v)
         --self.sprite.pos.y -= 1
     elseif (pd.buttonJustPressed(pd.kButtonLeft)) then
-        RigidBodySystem.addForce(self.player, -v, v)
+        RigidBodySystem.addForce(self.player, -v, 0)
         --self.sprite.pos.x -= 1
     elseif (pd.buttonJustPressed(pd.kButtonRight)) then
-        RigidBodySystem.addForce(self.player, v, -v)
+        RigidBodySystem.addForce(self.player, v, 0)
         --self.sprite.pos.x += 1
     end
     --print("Pos Sprite" .. self.sprite.x .. " " .. self.sprite.y)

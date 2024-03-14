@@ -1,0 +1,247 @@
+@charset "utf-8";
+
+/* Light Theme */
+
+:root
+{
+	--strongBackground: var(--psd-light-gray);
+	--pageBackground: var(--white);
+	--boxBackground: var(--lightest-gray);			/* blockquote */
+	--boxBackgroundStronger: var(--psd-light-gray);	/* sidebar */
+
+	--foreground: var(--black);
+	--interactive: var(--purple);					/* link */
+	--barely-subtle: var(--screen-black);				/* TOC */
+	--mildly-subtle: var(--dark-gray);			/* TOC */
+	--subtle: var(--mid-gray);						/* footer */
+	--subtler: var(--psd-mid-gray);					/* lines */
+
+	--negative: var(--red);							/* error */
+	--neutral: var(--blue);							/* note */
+	--positive: var(--green);						/* tip */
+	--important: var(--purple);						/* warning */
+	
+	--subtlestBackground: rgba(0,0,0,.05);
+}
+
+/* Dark Theme */
+
+@media (prefers-color-scheme: dark) {
+	:root
+	{
+		--strongBackground: var(--black);
+		--pageBackground: var(--darkest-gray);
+		--boxBackground: var(--screen-black);
+		--boxBackgroundStronger: var(--dark-gray);
+
+		--foreground: var(--white);
+		--interactive: var(--brand-yellow);
+		--barely-subtle: var(--screen-white);
+		--mildly-subtle: var(--psd-mid-gray);
+		--subtle: var(--psd-dark-gray);
+		--subtler: var(--mid-gray);
+
+		--negative: var(--readable-red);
+		--neutral: var(--muted-blue);
+		--positive: var(--green);
+		--important: var(--brand-yellow);
+		
+		--subtlestBackground: rgba(0,0,0,.2);
+	}
+
+}
+
+/* Colors in use */
+
+html,
+body
+{
+	background-color: var(--pageBackground);
+	color: var(--foreground);
+}
+
+#content
+{
+
+}
+
+/* Links */
+
+a
+{
+	color: var(--interactive);
+}
+
+/* Headers */
+
+h2, h3, h4
+{
+	color: var(--foreground);
+}
+
+#header .details
+{
+	color: var(--subtle);
+}
+
+
+/* TOC */
+
+#toc
+{
+	/* background-color: var(--boxBackgroundStronger); */
+	background-color: var(--boxBackground);
+	border-right-color: var(--subtler);
+}
+
+#toctitle
+{
+	color: var(--foreground);
+}
+
+#toc a
+{
+	color: var(--foreground);
+}
+#toc a:hover
+{
+/* 	color: var(--interactive); */
+}
+
+/* Images */
+
+
+
+/* Code */
+
+pre
+{
+	border: 1px solid var(--boxBackgroundStronger);
+	background-color: var(--boxBackground);
+}
+
+pre, code
+{
+}
+
+p>code,
+li>code
+{
+	background: var(--boxBackground);
+	color: var(--barely-subtle);
+	border: 1px solid var(--boxBackgroundStronger);
+}
+
+td.content>code
+{
+	background: var(--pageBackground);
+	color: var(--barely-subtle);
+	border: 1px solid var(--boxBackgroundStronger);
+}
+
+code
+{
+}
+
+div>p>a+code>strong,
+div>p>code>strong
+{
+	color: var(--foreground);
+}
+
+/* Tables */
+
+tbody
+{
+	background-color: var(--boxBackground);
+	border-color: var(--subtler);
+}
+
+.tableblock td
+{
+	border-color: var(--subtler);
+}
+
+/* Footer */
+
+#footer
+{
+	color: var(--subtle);
+}
+
+/* Admonition blocks */
+
+.admonitionblock>table
+{
+	background: inherit;
+	background-color: var(--boxBackground);
+	border-color: var(--boxBackgroundStronger);
+}
+
+.admonitionblock.important>table td.icon
+{
+	background-color: var(--important);
+}
+.admonitionblock.caution>table td.icon
+{
+	background-color: var(--negative);
+}
+.admonitionblock.tip>table td.icon
+{
+	background-color: var(--positive);
+}
+.admonitionblock.note>table td.icon
+{
+	background-color: var(--neutral);
+}
+.admonitionblock>table td.icon
+{
+	background-color: var(--boxBackground);
+}
+
+.admonitionblock>table td.content
+{
+	color: var(--mildly-subtle);
+}
+
+/* Captions etc. */
+
+.title,
+.item .listingblock .title
+{
+	color: var(--subtle);
+}
+
+.item .title
+{
+	color: var(--foreground);
+	border-bottom-color: var(--subtle);
+}
+.item .title::after
+{
+	color: var(--boxBackground);
+	background-color: var(--subtle);
+}
+
+.item.method .title,
+.item.callback .title
+{ border-bottom-color: var(--muted-blue); }
+.item.method .title::after,
+.item.callback .title::after
+{ background-color: var(--muted-blue); }
+
+.item.function .title,
+.item.constant .title
+{ border-bottom-color: var(--muted-green); }
+.item.function .title::after,
+.item.constant .title::after
+{ background-color: var(--muted-green); }
+
+.item.variable .title,
+.item.property .title
+{ border-bottom-color: var(--muted-purple); }
+.item.variable .title::after,
+.item.property .title::after
+{ background-color: var(--muted-purple); }
+
+

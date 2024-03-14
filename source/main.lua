@@ -15,14 +15,15 @@ SCENE_MANAGER:switch(TestScene())
 
 --[[ Local variables ]]
 local pd <const> = playdate
-local dsp <const> = playdate.display
 local gfx <const> = playdate.graphics
+local disp <const> = playdate.display
 
 
 --[[ Initialization ]]
 math.randomseed(pd.getSecondsSinceEpoch())
-dsp.setRefreshRate(FPS)
-gfx.setDrawOffset(DRAW_OFFSET_X, DRAW_OFFSET_Y)
+disp.setRefreshRate(FPS)
+gfx.setDrawOffset(disp.getWidth()/2, disp.getHeight()/2)
+gfx.setBackgroundColor(gfx.kColorBlack)
 
 --[[ Update Routines ]]
 
@@ -44,9 +45,24 @@ end
 function pd.deviceWillSleep()
 end
 
+
 --[[ Simulator and Debug ]]
 
 function playdate.keyPressed(key)
-    log.info("Pressed key " .. key)
+    if (#key > 1) then
+        log.warn("Key pressed (null-terminated) " .. key)
+        key = key[1]
+    else
+        log.info("Key pressed " .. key)
+    end
     SCENE_MANAGER.current:keyPressed(key)
+end
+
+local menu = playdate.getSystemMenu()
+local debugItem, error = menu:addCheckmarkMenuItem("debug", DEBUG, function(value)
+    DEBUG = value
+    log.info("Debug mode set to " .. string.upper(tostring(value)))
+end)
+if (not debugItem) then
+    log.error(error)
 end
