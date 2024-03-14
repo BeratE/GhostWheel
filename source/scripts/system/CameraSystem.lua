@@ -15,7 +15,6 @@ CameraSystem.filter = tinyecs.requireAll("player")
 
 function CameraSystem:init()
     CameraSystem.super.init(self)
-    
 end
 
 function CameraSystem:preProcess(dt)
@@ -23,7 +22,7 @@ function CameraSystem:preProcess(dt)
 end
 
 function CameraSystem:process(e, dt)
-    gfx.setDrawOffset(DRAW_OFFSET_X -e.x, DRAW_OFFSET_Y -e.y)
+    gfx.setDrawOffset(disp.getWidth()/2 -e.x, disp.getHeight()/2 -e.y)
 end
 
 function CameraSystem:postProcess(dt)

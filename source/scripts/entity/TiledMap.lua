@@ -1,20 +1,12 @@
 ---@diagnostic disable: undefined-field, need-check-nil
 import "CoreLibs/object"
 import "CoreLibs/graphics"
+import "pdlibs/util/string"
 import "libs/pdlog"
 
---[[ Supports JSON loading of TILED Maps v1.8]]
+--[[ Supports JSON loading of TILED Tiled.Maps v1.8]]
 
 local gfx <const> = playdate.graphics
-local Orientation <const> = {
-    Orthogonal = "orthogonal",
-    Isometric  = "isometric",
-    Staggered  = "isometric",
-    Hexagonal  = "isometric"
-}
-local RenderOrder <const> = {
-    RightDown = "right-down"
-}
 
 --[[ Load, manage and render TILED Level Editor maps.
 Implemented as a sprite that manages a group of tile sprites. ]]
@@ -25,79 +17,105 @@ function TiledMap:init(map)
     TiledMap.super.init(self)
 end
 
-function TiledMap:readMapJson(filename)
+function TiledMap:readMapJson(tiled_filename)
     -- Reset sprite properties
     TiledMap.super.moveTo(self, 200, 120)
     TiledMap.super.setCenter(self, 0.5, 0.5)
     TiledMap.super.setZIndex(self, SPRITE_Z_MIN)
     -- Read json map
-    filename = "assets/map/"..filename
-    log.info("Loading Tiled file " .. filename)
-    local tiled = json.decodeFile(filename)
+    tiled_filename = "assets/map/"..tiled_filename
+    log.info("Loading Tiled file " .. tiled_filename)
+    local tiled = json.decodeFile(tiled_filename)
     -- Sanity check
-    assert(tiled, "Unable to decode Tiled map file " .. filename)
+    assert(tiled, "Unable to decode Tiled map file " .. tiled_filename)
+    assert(tiled.compressionlevel == Tiled.Map.Compression.Default, "TiledMap only supports default compression")
+    assert(tiled.infinite == false, "TileTiled.Map does not support infinite maps")
     assert(tiled.width == tiled.height, "TiledMap only supports maps of equal width and height")
-    assert(tiled.orientation == Orientation.Isometric, "TiledMap can only load isometric tiled data")
-    assert(tiled.renderorder == RenderOrder.RightDown, "TiledMap can only use right-down render order")
+    assert(tiled.orientation == Tiled.Map.Orientation.Isometric, "TiledMap can only load isometric tiled data")
+    assert(tiled.renderorder == Tiled.Map.RenderOrder.RightDown, "TiledMap can only use right-down render order")
     -- Read tile data
-    self.width = tiled.width
-    self.height = tiled.height
-    self.tilewidth  = tiled.tilewidth
-    self.tileheight = tiled.tileheight
-    self.tiledepth  = self.tileheight/2
-    --TiledMap.super.setSize(self, self.width*self.tilewidth, self.height*self.tiledepth)
+    self.nTilesX = tiled.width
+    self.nTilesY = tiled.height
+    self.tileWidth  = tiled.tilewidth
+    self.tileHeight = tiled.tileheight
+    self.tileDepth  = self.tileHeight/2
+    TiledMap.super.setSize(self, self.nTilesX*self.tileWidth, self.nTilesY*self.tileHeight)
+    self.corners = {
+        top    = {x = self.width/2, y = 0},
+        bottom = {x = self.width/2, y = self.height},
+        left   = {x = 0,            y = self.height/2},
+        right  = {x = self.width,   y = self.height/2},
+    }
     -- Collect tilesets into one big image table
     self.tiles = {}
     for _,t in ipairs(tiled.tilesets) do
-        local filename =  t.image or t.source or t.name
+        local source_filename =  t.image or t.source or t.name
         -- Cut until filename if a path is given
-        local slashIdx = string.find(filename, "/[^/]*$")
-        if (slashIdx) then
-            filename = string.sub(filename, slashIdx)
-        end
+        source_filename = pdlibs.string.cutPathToFilename(source_filename)
         -- Find image name without suffix
-        local tableIdx = string.find(filename, "-table-", 1, true)
+        local tableIdx = string.find(source_filename, "-table-", 1, true)
         if (tableIdx and tableIdx > 2) then
-            filename = string.sub(filename, 1, tableIdx-1)
+            source_filename = string.sub(source_filename, 1, tableIdx-1)
         else
-            error("Invalid image name used in tilesets (" .. filename .. ")", 2)
+            error("Invalid image name used in tilesets (" .. source_filename .. ")", 2)
         end
-        local imgtable = assets.getImageTable(filename)
-        assert(imgtable, "Unable to retrieve tileset image (" .. filename .. ")" )
+        local imgtable = assets.getImageTable(source_filename)
+        assert(imgtable, "Unable to retrieve tileset image (" .. source_filename .. ")" )
         for i = 1, #imgtable do
             table.insert(self.tiles, imgtable:getImage(i))
         end
     end
     -- Retrieve layer information
-    self.layers = tiled.layers
-    -- Construct sprites
     self.sprites = {}
-    for z, layer in ipairs(self.layers) do
-        if (layer.visible) then
+    local addLayerSprite = function (img, layer, z, px, py)
+        local sprite = gfx.sprite.new(img)
+        sprite:setZIndex(SPRITE_Z_MIN + z)
+        sprite:setCenter(0.5, 0.5)
+        local offsetX = (layer.x or 0)*self.tileWidth + (layer.offsetx or 0)
+        local offsetY = (layer.y or 0)*self.tileWidth + (layer.offsety or 0)
+        sprite:moveTo((px or 0) + offsetX, (py or 0) + offsetY)
+        if (layer.property) then
+            for _, property in ipairs(layer.property) do
+                sprite[property.name] = property.value
+            end
+        end
+        sprite[layer.type] = true
+        table.insert(self.sprites, sprite)
+    end
+    for z, layer in ipairs(tiled.layers) do
+        if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
                 for x = 1, layer.width  do
-                    if (layer.type == "tilelayer") then
-                        local tileidx = layer.data[((y-1)*layer.width) + x]
-                        local tilesprite = gfx.sprite.new(self.tiles[tileidx])
-                        if (tilesprite) then
-                            local px, py = self:getScreenCoordinatesAt(x, y, 0)
-                            tilesprite:setZIndex(SPRITE_Z_MIN + z)
-                            tilesprite:setCenter(0.5, 0.5)
-                            tilesprite:moveTo(px + layer.x, py + layer.y)
-                            table.insert(self.sprites, tilesprite)
-                        end
+                    local tileidx = layer.data[((y-1)*layer.width) + x]
+                    local tileimg = self.tiles[tileidx]
+                    if (tileimg) then
+                        local px = self.x + ((x-y) * (self.tileWidth / 2))  - self.tileWidth/2
+                        local py = self.y + ((y+x) * (self.tileHeight / 2)) - (self.tileHeight * (self.nTilesY / 2)) - self.tileHeight
+                        addLayerSprite(tileimg, layer, z, px, py)
+                    elseif (tileidx > 0) then
+                        local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tileidx, z, x, y)
+                        log.warn(msg)
                     end
                 end
             end
+        elseif(layer.type == Tiled.Layer.Type.Object) then
+            --
+        elseif(layer.type == Tiled.Layer.Type.Image) then
+            print("hello")
+            local img_name = pdlibs.string.cutPathToFilename(layer.image)
+            local img = gfx.sprite.new(assets.getImage(img_name))
+            if (img) then
+                local px, py = self.x - self.width/2, self.y + self.height/2
+                addLayerSprite(img, layer, z, px, py)
+            else
+                local msg = ("Image %s not found in tilelayer %i"):format(img_name, z)
+                log.warn(msg)
+            end
+        else
+            log.warn("Unrecognized layer type ".. layer.type)
         end
     end
     assert(#self.sprites > 0, "TiledMap was unable to retrieve any map data")
-end
-
-function TiledMap:getScreenCoordinatesAt(x, y, z)
-    local px = self.x + ((x-y) * (self.tilewidth / 2))  - self.tilewidth/2
-    local py = self.y + ((y+x) * (self.tileheight / 2)) - (self.tileheight * (self.height / 2)) - self.tileheight - (z * self.tiledepth)
-    return px, py
 end
 
 --[[ Sprite Management ]]

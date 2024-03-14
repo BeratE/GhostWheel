@@ -34,11 +34,14 @@ function TestScene:onEnter()
         self.levels = {}
         while(true) do
             local levelname = ("test-%i.json"):format(#self.levels + 1)
+            local value = TiledMap(levelname)
+            --[[
             local status, value = pcall(function() return TiledMap(levelname) end)
             if (not status) then
                 log.warn(value)
                 break
             end
+            --]]
             table.insert(self.levels, value)
             break
         end
@@ -85,7 +88,6 @@ function TestScene:onUpdate()
 end
 
 function TestScene:keyPressed(key)
-    -- Bug in playdate SDK 2.4.0
     --if (key == 'n') then
         self:nextLevel()
     --end

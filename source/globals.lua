@@ -1,4 +1,5 @@
 --[[ Global constants ]]
+DEBUG = false
 FPS = 30 -- Frames per second
 PPM = 64 -- pixel per meter ratio (i.e. 1 meter = PPM pixels)
 
@@ -15,7 +16,35 @@ DIR = {
 }
 
 --[[ Drawing ]]
-DRAW_OFFSET_X = 200
-DRAW_OFFSET_Y = 120
 SPRITE_Z_MIN = -32768
 SPRITE_Z_MAX = 32767
+
+
+--[[ Definitions for Tiled ]]
+Tiled = {
+    Map = {
+        Compression = {
+            Default = -1
+        },
+        Orientation = {
+            Orthogonal = "orthogonal",
+            Isometric  = "isometric",
+            Staggered  = "staggered",
+            Hexagonal  = "hexagonal"
+        },
+        RenderOrder = {
+            RightDown = "right-down", -- Default
+            RightUp   = "right-up",
+            LeftDown  = "left-down",
+            LeftUp    = "left-up" -- Only supported for orthogonal maps
+        },
+    },
+    Layer = {
+        Type = {
+            Tile   = "tilelayer",
+            Object = "objectgroup",
+            Image  = "imagelayer",
+            Group  = "group",
+        }
+    }
+}
