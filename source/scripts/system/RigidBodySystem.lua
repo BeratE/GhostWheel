@@ -13,6 +13,7 @@ Order of operations:
 ]]
 
 local point <const> = playdate.geometry.point
+local precision <const> = 0.0001
 
 --[[ Basic implementation of 2D rigid body dynamics. ]]
 class("RigidBodySystem").extends()
@@ -35,16 +36,18 @@ function RigidBodySystem:process(e, dt)
     e.acc.x = e.force.x/e.mass
     e.acc.y = e.force.y/e.mass
     e.force = point.new(0, 0)
-    -- Velocity verlet integration    
+    -- Velocity verlet integration 
+    e.posPrevious = e.pos:copy()
     e.pos:offset(e.vel.x*dt + e.acc.x/2*dt*dt, e.vel.y*dt + e.acc.y/2*dt*dt)
     e.vel:offset(e.acc.x*dt, e.acc.y*dt)
     -- Clamp velocity
-    if (math.abs(e.acc.x) < 0.01) then e.acc.x = 0 end
-    if (math.abs(e.acc.y) < 0.01) then e.acc.y = 0 end
-    if (math.abs(e.vel.x) < 0.01) then e.vel.x = 0 end
-    if (math.abs(e.vel.y) < 0.01) then e.vel.y = 0 end
+    if (math.abs(e.acc.x) < precision) then e.acc.x = 0 end
+    if (math.abs(e.acc.y) < precision) then e.acc.y = 0 end
+    if (math.abs(e.vel.x) < precision) then e.vel.x = 0 end
+    if (math.abs(e.vel.y) < precision) then e.vel.y = 0 end
     --print("Entity Acc: " .. e.acc.x .. ", " .. e.acc.y)
     --print("Entity Vel: " .. e.vel.x .. ", " .. e.vel.y)
+    --print("Entity Pos " .. e.pos.x .. " " .. e.pos.y)
 end
 
 
@@ -70,4 +73,5 @@ function RigidBodySystem.initRigidBody(e, mass, lindamp)
     e.acc = e.acc or point.new(0, 0) -- Current acceleration of the object
     e.vel = e.vel or point.new(0, 0) -- Current velocity of the object
     e.pos = e.pos or point.new(0, 0) -- Current position of the object
+    e.posPrevious = e.posPrevious or point.new(0, 0)
 end

@@ -1,33 +1,32 @@
 import "scripts/scene/Scene"
-import "scripts/system/IsometricTransformSystem"
+import "scripts/system/TransformSystem"
 import "scripts/system/CameraSystem"
 import "scripts/system/RigidBodySystem"
+import "scripts/system/TiledMapSystem"
 import "scripts/entity/TiledMap"
 import "scripts/entity/Player"
 import "libs/pdlog"
 
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
+local geom <const> = playdate.geometry
 
 --[[ TestScene ]]
 class("TestScene").extends(Scene)
 
 function TestScene:init()
     TestScene.super.init(self)
-    self.world:addSystem(IsometricTransformSystem())
+    self.world:addSystem(TransformSystem())
     self.world:addSystem(RigidBodySystem())
+    self.world:addSystem(TiledMapSystem())
     self.world:addSystem(CameraSystem())
-
     self.player = Player()
-    self.player:add()
-
-    self.world:add(self.player)
-    self.world:refresh()
 end
 
 function TestScene:onEnter()
     TestScene.super.onEnter(self)
     log.info("Entering TestScene ..")
+    --[[ All entities to world ]]
 
     -- Add Levels
     if (not self.levels) then
@@ -50,17 +49,29 @@ function TestScene:onEnter()
         end
         self.levelIdx = 1
         self.levels[self.levelIdx]:add()
+        self.world:addEntity(self.levels[self.levelIdx])
     end
+    
+    -- Add player
+    self.player:add()
+    self.world:addEntity(self.player)
+
+    self.world:refresh()
+
+    --local x, y = TransformSystem.TD2ISO():transformXY(self.levels[self.levelIdx].spawn_player.x, self.levels[self.levelIdx].spawn_player.y)
+    --self.player.pos = geom.point.new(self.levels[self.levelIdx].spawn_player.x, self.levels[self.levelIdx].spawn_player.y)
 end
 
 function TestScene:nextLevel()
     self.levels[self.levelIdx]:remove()
+    self.world.removeEntity(self.levels[self.levelIdx])
     self.levelIdx = (self.levelIdx % #self.levels) + 1
     self.levels[self.levelIdx]:add()
+    self.world.addEntity(self.levels[self.levelIdx])
     log.info("Switching to test-scene " .. self.levelIdx)
 end
 
-local v = 1
+local v = 0.01
 function TestScene:onUpdate()
     TestScene.super.onUpdate(self)
     self:refreshDeltaTimeMs()
@@ -84,7 +95,7 @@ function TestScene:onUpdate()
         --self.sprite.pos.x += 1
     end
     --print("Pos Sprite" .. self.sprite.x .. " " .. self.sprite.y)
-    --print("Pos " .. self.sprite.pos.x .. " " .. self.sprite.pos.y)
+    
 end
 
 function TestScene:keyPressed(key)

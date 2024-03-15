@@ -1,8 +1,10 @@
 --[[ Global constants ]]
 DEBUG = false
 FPS = 30 -- Frames per second
-PPM = 64 -- pixel per meter ratio (i.e. 1 meter = PPM pixels)
+PPM = 1 -- pixel per meter ratio (i.e. 1 meter = PPM pixels)
 
+TILE_WIDTH  = 128
+TILE_HEIGHT = 64
 
 DIR = {
     NE = 1, -- North-East

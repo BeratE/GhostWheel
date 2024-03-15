@@ -1,4 +1,4 @@
----@diagnostic disable: undefined-field, need-check-nil
+---@diagnostic disable: undefined-field, need-check-nil, inject-field
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "pdlibs/util/string"
@@ -7,6 +7,7 @@ import "libs/pdlog"
 --[[ Supports JSON loading of TILED Tiled.Maps v1.8]]
 
 local gfx <const> = playdate.graphics
+local geom <const> = playdate.geometry
 
 --[[ Load, manage and render TILED Level Editor maps.
 Implemented as a sprite that manages a group of tile sprites. ]]
@@ -18,8 +19,9 @@ function TiledMap:init(map)
 end
 
 function TiledMap:readMapJson(tiled_filename)
+    self.tiledmap = true
     -- Reset sprite properties
-    TiledMap.super.moveTo(self, 200, 120)
+    --TiledMap.super.moveTo(self, 200, 120)
     TiledMap.super.setCenter(self, 0.5, 0.5)
     TiledMap.super.setZIndex(self, SPRITE_Z_MIN)
     -- Read json map
@@ -67,13 +69,11 @@ function TiledMap:readMapJson(tiled_filename)
     end
     -- Retrieve layer information
     self.sprites = {}
-    local addLayerSprite = function (img, layer, z, px, py)
+    local addLayerSprite = function (img, layer, z, sx, sy)
         local sprite = gfx.sprite.new(img)
         sprite:setZIndex(SPRITE_Z_MIN + z)
-        sprite:setCenter(0.5, 0.5)
-        local offsetX = (layer.x or 0)*self.tileWidth + (layer.offsetx or 0)
-        local offsetY = (layer.y or 0)*self.tileWidth + (layer.offsety or 0)
-        sprite:moveTo((px or 0) + offsetX, (py or 0) + offsetY)
+        sprite:setCenter(0.5, 0.0)
+        sprite:moveTo(sx, sy)
         if (layer.property) then
             for _, property in ipairs(layer.property) do
                 sprite[property.name] = property.value
@@ -82,6 +82,7 @@ function TiledMap:readMapJson(tiled_filename)
         sprite[layer.type] = true
         table.insert(self.sprites, sprite)
     end
+    -- Iterate layers
     for z, layer in ipairs(tiled.layers) do
         if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
@@ -89,9 +90,8 @@ function TiledMap:readMapJson(tiled_filename)
                     local tileidx = layer.data[((y-1)*layer.width) + x]
                     local tileimg = self.tiles[tileidx]
                     if (tileimg) then
-                        local px = self.x + ((x-y) * (self.tileWidth / 2))  - self.tileWidth/2
-                        local py = self.y + ((y+x) * (self.tileHeight / 2)) - (self.tileHeight * (self.nTilesY / 2)) - self.tileHeight
-                        addLayerSprite(tileimg, layer, z, px, py)
+                        local sx, sy = TransformSystem.TileToScreen():transformXY(x-1, y-1)
+                        addLayerSprite(tileimg, layer, z, sx, sy)
                     elseif (tileidx > 0) then
                         local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tileidx, z, x, y)
                         log.warn(msg)
@@ -99,9 +99,12 @@ function TiledMap:readMapJson(tiled_filename)
                 end
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then
-            --
+            for i, obj in ipairs(layer.objects) do
+                if obj.name == "spawn_player" then
+                    self.spawn_player = {x = obj.x, y = obj.y}
+                end
+            end
         elseif(layer.type == Tiled.Layer.Type.Image) then
-            print("hello")
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
             local img = gfx.sprite.new(assets.getImage(img_name))
             if (img) then
@@ -117,6 +120,8 @@ function TiledMap:readMapJson(tiled_filename)
     end
     assert(#self.sprites > 0, "TiledMap was unable to retrieve any map data")
 end
+
+
 
 --[[ Sprite Management ]]
 
@@ -138,9 +143,6 @@ end
 
 function TiledMap:setSize(width, height)
     TiledMap.super.setSize(self, width, height)
-    for _, sprite in ipairs(self.sprites) do
-        sprite:setSize(width, height)
-    end
 end
 
 -- All other sprite functions are modified to iterate over sprite table

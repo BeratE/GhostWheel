@@ -23,14 +23,14 @@ local disp <const> = playdate.display
 math.randomseed(pd.getSecondsSinceEpoch())
 disp.setRefreshRate(FPS)
 gfx.setDrawOffset(disp.getWidth()/2, disp.getHeight()/2)
-gfx.setBackgroundColor(gfx.kColorBlack)
+--gfx.setBackgroundColor(gfx.kColorBlack)
 
 --[[ Update Routines ]]
 
 function pd.update()
     pd.timer.updateTimers()   -- Update all timers
-    SCENE_MANAGER:update()    -- Update current scene
     gfx.sprite.update()       -- Update all sprites
+    SCENE_MANAGER:update()    -- Update current scene
     pd.drawFPS(0, 0)
 end
 

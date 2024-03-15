@@ -9,7 +9,7 @@ class("Player").extends(gfx.sprite)
 
 function Player:init()
     Player.super.init(self)
-    local img = gfx.image.new(48, 64)
+    local img = gfx.image.new(12, 12)
     gfx.pushContext(img)
         gfx.fillEllipseInRect(0, 0, img:getSize())
     gfx.popContext()
