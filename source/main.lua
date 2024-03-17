@@ -23,7 +23,7 @@ local disp <const> = playdate.display
 math.randomseed(pd.getSecondsSinceEpoch())
 disp.setRefreshRate(FPS)
 gfx.setDrawOffset(disp.getWidth()/2, disp.getHeight()/2)
---gfx.setBackgroundColor(gfx.kColorBlack)
+gfx.setBackgroundColor(gfx.kColorBlack)
 
 --[[ Update Routines ]]
 

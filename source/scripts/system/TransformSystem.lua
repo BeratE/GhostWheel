@@ -7,7 +7,7 @@ local gfx <const> = playdate.graphics
 local disp <const> = playdate.display
 local geom <const> = playdate.geometry
 -- Top-Down to Screen Coordinate projection
-local trIsometric = geom.affineTransform.new(TILE_WIDTH/2, -TILE_WIDTH/2, TILE_HEIGHT/2, TILE_HEIGHT/2)
+local trIsometric = geom.affineTransform.new((TILE_WIDTH/2)/PPM, -(TILE_WIDTH/2)/PPM, (TILE_HEIGHT/2)/PPM, (TILE_HEIGHT/2)/PPM)
 local trIsometricInv = trIsometric:copy()
 trIsometricInv:invert()
 
@@ -35,7 +35,7 @@ end
 function TransformSystem:process(e, dt)
     local x, y = TransformSystem.TileToScreen():transformXY(e.pos.x, e.pos.y)
     e:moveTo(x, y)
-    print("Entity Pos: " .. e.pos.x .. " " .. e.pos.y .. ", Sprite: " .. x .. " " .. y)
+    --print("Entity Pos: " .. e.pos.x .. " " .. e.pos.y .. ", Sprite: " .. x .. " " .. y)
 end
 
 function TransformSystem.TileToScreen()

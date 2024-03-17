@@ -1,10 +1,12 @@
 --[[ Global constants ]]
 DEBUG = false
 FPS = 30 -- Frames per second
-PPM = 1 -- pixel per meter ratio (i.e. 1 meter = PPM pixels)
 
-TILE_WIDTH  = 128
-TILE_HEIGHT = 64
+TILE_WIDTH  = 128           -- Global Tile-width for isometric coordinate conversion
+TILE_HEIGHT = 64            -- Global Tile-height or isometric coordinate conversion
+PPM = TILE_HEIGHT           -- Pixel-Per-Meter. Stretching factor for Tile coordinate system.
+
+BUMP_CELL_MULTIPLIER = 2    -- BumpWorld cell size multiplier
 
 DIR = {
     NE = 1, -- North-East

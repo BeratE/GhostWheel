@@ -2,8 +2,8 @@ import "scripts/scene/Scene"
 import "scripts/system/TransformSystem"
 import "scripts/system/CameraSystem"
 import "scripts/system/RigidBodySystem"
-import "scripts/system/TiledMapSystem"
-import "scripts/entity/TiledMap"
+import "scripts/system/BumpWorldSystem"
+import "scripts/entity/Level"
 import "scripts/entity/Player"
 import "libs/pdlog"
 
@@ -16,62 +16,57 @@ class("TestScene").extends(Scene)
 
 function TestScene:init()
     TestScene.super.init(self)
-    self.world:addSystem(TransformSystem())
-    self.world:addSystem(RigidBodySystem())
-    self.world:addSystem(TiledMapSystem())
-    self.world:addSystem(CameraSystem())
+    -- Load levels
+    self.levels = {}
+    while(true) do
+        local levelname = ("test-%i.json"):format(#self.levels + 1)
+        local value = Level(levelname)
+        --[[
+        local status, value = pcall(function() return TiledMap(levelname) end)
+        if (not status) then
+            log.warn(value)
+            break
+        end
+        --]]
+        table.insert(self.levels, value)
+        break
+    end
+    if (#self.levels == 0) then
+        error("No test levels found for TestScene", 2)
+    end
+    self.levelIdx = 1
+    -- Initialize Systems
+    self.systems = {
+        rigidbody = RigidBodySystem(),
+        bumpworld = BumpWorldSystem(self.levels[self.levelIdx].bumpworld),
+        transform = TransformSystem(),
+        camera = CameraSystem()
+    }
+    -- Add Systems
+    for _, sys in pairs(self.systems) do
+        self.world:addSystem(sys)
+    end
+    -- Add entities
     self.player = Player()
+    self.world:addEntity(self.player)
+    self.world:addEntity(self.levels[self.levelIdx])
 end
 
 function TestScene:onEnter()
     TestScene.super.onEnter(self)
     log.info("Entering TestScene ..")
-    --[[ All entities to world ]]
-
-    -- Add Levels
-    if (not self.levels) then
-        self.levels = {}
-        while(true) do
-            local levelname = ("test-%i.json"):format(#self.levels + 1)
-            local value = TiledMap(levelname)
-            --[[
-            local status, value = pcall(function() return TiledMap(levelname) end)
-            if (not status) then
-                log.warn(value)
-                break
-            end
-            --]]
-            table.insert(self.levels, value)
-            break
-        end
-        if (#self.levels == 0) then
-            error("No test levels found for TestScene", 2)
-        end
-        self.levelIdx = 1
-        self.levels[self.levelIdx]:add()
-        self.world:addEntity(self.levels[self.levelIdx])
-    end
-    
-    -- Add player
+    -- Add Sprites
     self.player:add()
-    self.world:addEntity(self.player)
-
-    self.world:refresh()
-
-    --local x, y = TransformSystem.TD2ISO():transformXY(self.levels[self.levelIdx].spawn_player.x, self.levels[self.levelIdx].spawn_player.y)
-    --self.player.pos = geom.point.new(self.levels[self.levelIdx].spawn_player.x, self.levels[self.levelIdx].spawn_player.y)
-end
-
-function TestScene:nextLevel()
-    self.levels[self.levelIdx]:remove()
-    self.world.removeEntity(self.levels[self.levelIdx])
-    self.levelIdx = (self.levelIdx % #self.levels) + 1
     self.levels[self.levelIdx]:add()
-    self.world.addEntity(self.levels[self.levelIdx])
-    log.info("Switching to test-scene " .. self.levelIdx)
 end
 
-local v = 0.01
+function TestScene:onExit()
+    -- Remove Sprites
+    self.player:remove()
+    self.levels[self.levelIdx]:remove()
+end
+
+local v = 0.1
 function TestScene:onUpdate()
     TestScene.super.onUpdate(self)
     self:refreshDeltaTimeMs()
@@ -79,13 +74,13 @@ function TestScene:onUpdate()
 
     --print("Impulse Force " .. v)
     if (pd.buttonIsPressed(pd.kButtonA)) then
-        v += 1
+        v += 0.1
     end
     if (pd.buttonJustPressed(pd.kButtonUp)) then
-        RigidBodySystem.addForce(self.player, 0, v)
+        RigidBodySystem.addForce(self.player, 0, -v)
         --self.sprite.pos.y += 1
     elseif (pd.buttonJustPressed(pd.kButtonDown)) then
-        RigidBodySystem.addForce(self.player, 0, -v)
+        RigidBodySystem.addForce(self.player, 0, v)
         --self.sprite.pos.y -= 1
     elseif (pd.buttonJustPressed(pd.kButtonLeft)) then
         RigidBodySystem.addForce(self.player, -v, 0)
@@ -98,8 +93,20 @@ function TestScene:onUpdate()
     
 end
 
+function TestScene:switchNextLevel()
+    if (self.levels[self.levelIdx]) then
+        self.levels[self.levelIdx]:remove()
+        self.world:removeEntity(self.levels[self.levelIdx])
+    end
+    self.levelIdx = (self.levelIdx % #self.levels) + 1
+    self.levels[self.levelIdx]:add()
+    self.world:addEntity(self.levels[self.levelIdx])
+    self.systems.bumpworld.bumpworld = self.levels[self.levelIdx].bumpworld
+    log.info("Switching to test-scene " .. self.levelIdx)
+end
+
 function TestScene:keyPressed(key)
-    --if (key == 'n') then
-        self:nextLevel()
-    --end
+    if (key == 'n') then
+        self:switchNextLevel()
+    end
 end

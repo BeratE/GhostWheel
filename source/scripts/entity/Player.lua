@@ -9,15 +9,18 @@ class("Player").extends(gfx.sprite)
 
 function Player:init()
     Player.super.init(self)
-    local img = gfx.image.new(12, 12)
+    local img = gfx.image.new(16, 16)
     gfx.pushContext(img)
-        gfx.fillEllipseInRect(0, 0, img:getSize())
+    gfx.setColor(gfx.kColorBlack)
+    gfx.fillEllipseInRect(0, 0, img:getSize())
+    gfx.setColor(gfx.kColorWhite)
+    gfx.fillEllipseInRect(2, 2, img.width-4, img.height-4)
     gfx.popContext()
     self:setImage(img)
     self:setCenter(0.5, 0.5)
     self:setZIndex(0)
-
+    self.hitbox = {w = img.width, h = img.height}
     self.player = true
     self.mass = 80
-    self.pos = geom.point.new(0, 0)
+    self.pos = geom.point.new(PPM/2, PPM/2)
 end

@@ -2,6 +2,7 @@
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "pdlibs/util/string"
+import "libs/bump"
 import "libs/pdlog"
 
 --[[ Supports JSON loading of TILED Tiled.Maps v1.8]]
@@ -11,25 +12,23 @@ local geom <const> = playdate.geometry
 
 --[[ Load, manage and render TILED Level Editor maps.
 Implemented as a sprite that manages a group of tile sprites. ]]
-class("TiledMap").extends(gfx.sprite)
+class("Level").extends(gfx.sprite)
 
-function TiledMap:init(map)
-    self:readMapJson(map)
-    TiledMap.super.init(self)
+function Level:init(filepathname)
+    self:readTiledJson(filepathname)
+    Level.super.init(self)
 end
 
-function TiledMap:readMapJson(tiled_filename)
-    self.tiledmap = true
+function Level:readTiledJson(filepathname)
     -- Reset sprite properties
-    --TiledMap.super.moveTo(self, 200, 120)
-    TiledMap.super.setCenter(self, 0.5, 0.5)
-    TiledMap.super.setZIndex(self, SPRITE_Z_MIN)
+    Level.super.setCenter(self, 0.5, 0.5)
+    Level.super.setZIndex(self, SPRITE_Z_MIN)
     -- Read json map
-    tiled_filename = "assets/map/"..tiled_filename
-    log.info("Loading Tiled file " .. tiled_filename)
-    local tiled = json.decodeFile(tiled_filename)
+    filepathname = "assets/map/"..filepathname
+    log.info("Loading Tiled file " .. filepathname)
+    local tiled = json.decodeFile(filepathname)
     -- Sanity check
-    assert(tiled, "Unable to decode Tiled map file " .. tiled_filename)
+    assert(tiled, "Unable to decode Tiled map file " .. filepathname)
     assert(tiled.compressionlevel == Tiled.Map.Compression.Default, "TiledMap only supports default compression")
     assert(tiled.infinite == false, "TileTiled.Map does not support infinite maps")
     assert(tiled.width == tiled.height, "TiledMap only supports maps of equal width and height")
@@ -41,7 +40,7 @@ function TiledMap:readMapJson(tiled_filename)
     self.tileWidth  = tiled.tilewidth
     self.tileHeight = tiled.tileheight
     self.tileDepth  = self.tileHeight/2
-    TiledMap.super.setSize(self, self.nTilesX*self.tileWidth, self.nTilesY*self.tileHeight)
+    Level.super.setSize(self, self.nTilesX*self.tileWidth, self.nTilesY*self.tileHeight)
     self.corners = {
         top    = {x = self.width/2, y = 0},
         bottom = {x = self.width/2, y = self.height},
@@ -82,6 +81,8 @@ function TiledMap:readMapJson(tiled_filename)
         sprite[layer.type] = true
         table.insert(self.sprites, sprite)
     end
+    -- Initialize tilemap bumpword
+    self.bumpworld = bump.newWorld(self.tileHeight*BUMP_CELL_MULTIPLIER)
     -- Iterate layers
     for z, layer in ipairs(tiled.layers) do
         if (layer.type == Tiled.Layer.Type.Tile) then
@@ -89,10 +90,14 @@ function TiledMap:readMapJson(tiled_filename)
                 for x = 1, layer.width  do
                     local tileidx = layer.data[((y-1)*layer.width) + x]
                     local tileimg = self.tiles[tileidx]
+                    local tx, ty = (x-1)*PPM, (y-1)*PPM
                     if (tileimg) then
-                        local sx, sy = TransformSystem.TileToScreen():transformXY(x-1, y-1)
+                        local sx, sy = TransformSystem.TileToScreen():transformXY(tx, ty)
                         addLayerSprite(tileimg, layer, z, sx, sy)
-                    elseif (tileidx > 0) then
+                    elseif (tileidx == 0) then -- Empty tile registered as collision
+                        local tile = {name = ("Tile_%i_%i"):format(x, y)}
+                        self.bumpworld:add(tile, tx, ty, PPM, PPM)
+                    else
                         local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tileidx, z, x, y)
                         log.warn(msg)
                     end
@@ -125,30 +130,30 @@ end
 
 --[[ Sprite Management ]]
 
-function TiledMap:moveTo(x, y)
+function Level:moveTo(x, y)
     local dx, dy = x - self.x, y - self.y
-    TiledMap.super.moveTo(self, x, y)
+    Level.super.moveTo(self, x, y)
     for _, sprite in ipairs(self.sprites) do
         sprite:moveBy(dx, dy)
     end
 end
 
-function TiledMap:setZIndex(z)
-    local pz = TiledMap:getZIndex()
-    TiledMap.super.setZIndex(self, z)
+function Level:setZIndex(z)
+    local pz = Level:getZIndex()
+    Level.super.setZIndex(self, z)
     for _, sprite in ipairs(self.sprites) do
         sprite:setZIndex(z + sprite:getZIndex() - pz)
     end
 end
 
-function TiledMap:setSize(width, height)
-    TiledMap.super.setSize(self, width, height)
+function Level:setSize(width, height)
+    Level.super.setSize(self, width, height)
 end
 
 -- All other sprite functions are modified to iterate over sprite table
-TiledMap.__index = function(tiledmap, key)
+Level.__index = function(tiledmap, key)
     -- Check if requested function is part of TiledMap
-    local proxy_value = rawget(TiledMap, key)
+    local proxy_value = rawget(Level, key)
 	if proxy_value then
         --print(("TiledMap __index: rawget(TiledMap, %s)"):format(key))
 		return proxy_value
@@ -159,7 +164,7 @@ TiledMap.__index = function(tiledmap, key)
         --print(("TiledMap __index: rawget(gfx.sprite, %s)"):format(key))
         -- Set to function on the TiledMap
 		rawset(tiledmap, key, function(tm, ...)
-            local retVal = TiledMap.super[key](tm, ...)
+            local retVal = Level.super[key](tm, ...)
             -- Skip if function is a getter
             if (not retVal) then
                 for _, sprite in ipairs(tm.sprites) do
