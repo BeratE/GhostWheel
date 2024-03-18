@@ -7,14 +7,10 @@ import "pdlibs/util/debug"
 local gfx <const> = playdate.graphics
 local disp <const> = playdate.display
 
-local function round(x)
-    return math.floor(x * 32 + 16) / 32
-end
-
 -- [[ Lazily follows the player character around by setting the drawing offset ]]
 class("CameraSystem").extends()
 tinyecs.processingSystem(CameraSystem)
-CameraSystem.filter = tinyecs.requireAll("cameraTrack", "sprite")
+CameraSystem.filter = tinyecs.requireAll("player", "sprite")
 
 
 function CameraSystem:init()
@@ -22,23 +18,21 @@ function CameraSystem:init()
 end
 
 function CameraSystem:onAdd(e)
-    local xo, yo = e.cameraTrack.xoffset, e.cameraTrack.yoffset
-    local x, y = e.sprite.x + xo, e.sprite.y + yo
-    self.camera = vector(x, y)
+    self.camera = vector(disp.getWidth()/2-e.sprite.x, disp.getHeight()/2-e.sprite.y)
 end
 
 function CameraSystem:preProcess(dt)
+    self.center = vector(disp.getWidth()/2, disp.getHeight()/2)
 end
 
 function CameraSystem:process(e, dt)
-    local xo, yo = e.cameraTrack.xoffset, e.cameraTrack.yoffset
-    local x, y = e.sprite.x + xo, e.sprite.y + yo
-    local xp, yp = self.camera:unpack()
     local lerp = 0.1
-    self.camera:set(-round(xp + (x - xp) * lerp), -round(yp + (y - yp) * lerp))
-
-    --gfx.setDrawOffset(self.camera.x, self.camera.y)
-    gfx.setDrawOffset(disp.getWidth()/2 -e.sprite.x, disp.getHeight()/2 -e.sprite.y)
+    local tx, ty = self.center.x - e.sprite.x, self.center.y - e.sprite.y
+    local cx, cy = self.camera:unpack()
+    local sx, sy = cx + lerp*(tx - cx), cy + lerp*(ty - cy)
+    self.camera:set(sx, sy)
+    gfx.setDrawOffset(self.camera.x, self.camera.y)
+    --gfx.setDrawOffset(disp.getWidth()/2 -e.sprite.x, disp.getHeight()/2 -e.sprite.y)
 end
 
 function CameraSystem:postProcess(dt)

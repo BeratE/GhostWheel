@@ -10,7 +10,6 @@ import "libs/pdlog"
 
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
-local geom <const> = playdate.geometry
 
 --[[ TestScene ]]
 class("TestScene").extends(Scene)

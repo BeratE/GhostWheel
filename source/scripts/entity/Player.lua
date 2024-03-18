@@ -10,7 +10,6 @@ class("Player").extends()
 function Player:init()
     -- Player specific components
     self.player = true
-    self.cameraTrack = {xoffset = 16, yoffset = -32}
     -- Sprite component
     self.sprite = gfx.sprite.new(self:getDummyImage())
     self.sprite:setCenter(0.5, 0.5)
