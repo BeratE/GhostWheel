@@ -57,13 +57,17 @@ function TestScene:onEnter()
     log.info("Entering TestScene ..")
     -- Add Entities
     self.world:addEntity(self.player)
-    self.world:addEntity(self.levels[self.levelIdx])
+    for _, tile in ipairs(self.levels[self.levelIdx].tiles) do
+        self.world:addEntity(tile)
+    end
 end
 
 function TestScene:onExit()
     -- Remove Entities
     self.world:removeEntity(self.player)
-    self.world:removeEntity(self.levels[self.levelIdx])
+    for _, tile in ipairs(self.levels[self.levelIdx].tiles) do
+        self.world:removeEntity(tile)
+    end
 end
 
 local v = 0.1

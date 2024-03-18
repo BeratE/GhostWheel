@@ -29,7 +29,6 @@ gfx.setBackgroundColor(gfx.kColorBlack)
 
 function pd.update()
     pd.timer.updateTimers()   -- Update all timers
-    gfx.sprite.update()       -- Update all sprites
     SCENE_MANAGER:update()    -- Update current scene
     pd.drawFPS(0, 0)
 end

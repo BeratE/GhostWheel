@@ -25,10 +25,12 @@ function SpriteSystem:onRemove(e)
 end
 
 function SpriteSystem:preProcess(dt)
+    gfx.clear()
 end
 
 function SpriteSystem:process(e, dt)
 end
 
 function SpriteSystem:postProcess(dt)
+    gfx.sprite.update() -- Update all sprites
 end

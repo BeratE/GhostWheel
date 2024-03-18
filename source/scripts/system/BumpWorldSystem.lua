@@ -42,7 +42,8 @@ end
 
 function BumpWorldSystem:proxyProcess(e, dt)
     --[[ Position Update and Collision detection ]]
-    local px, py, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, e.onCollision or collisionFilter)
+    local filter = e.collisionFilter or collisionFilter
+    local px, py, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, filter)
     for i = 1, len do
         local col = cols[i]
         local collided = true

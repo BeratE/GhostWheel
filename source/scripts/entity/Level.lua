@@ -11,17 +11,15 @@ local gfx <const> = playdate.graphics
 
 --[[ Load, manage and render TILED Level Editor maps.
 Implemented as a sprite that manages a group of tile sprites. ]]
-class("Level").extends(gfx.sprite)
+class("Level").extends()
 
 function Level:init(filepathname)
     self:readTiledJson(filepathname)
-    Level.super.init(self)
 end
 
 function Level:readTiledJson(filepathname)
+    self.leveldata = true
     -- Reset sprite properties
-    Level.super.setCenter(self, 0.5, 0.5)
-    Level.super.setZIndex(self, SPRITE_Z_MIN)
     -- Read json map
     filepathname = "assets/map/"..filepathname
     log.info("Loading Tiled file " .. filepathname)
@@ -39,7 +37,8 @@ function Level:readTiledJson(filepathname)
     self.tileWidth  = tiled.tilewidth
     self.tileHeight = tiled.tileheight
     self.tileDepth  = self.tileHeight/2
-    Level.super.setSize(self, self.nTilesX*self.tileWidth, self.nTilesY*self.tileHeight)
+    self.width = self.nTilesX*self.tileWidth
+    self.height = self.nTilesY*self.tileHeight
     -- Collect tilesets into one big image table
     self.images = {}
     for _,t in ipairs(tiled.tilesets) do
@@ -62,18 +61,19 @@ function Level:readTiledJson(filepathname)
     -- Retrieve layer information
     self.tiles = {}
     self.objects = {}
-    local addLayerSprite = function (img, layer, z, sx, sy)
-        local sprite = gfx.sprite.new(img)
-        sprite:setZIndex(SPRITE_Z_MIN + z)
-        sprite:setCenter(0.5, 0.0)
-        sprite:moveTo(sx, sy)
+    local addTile = function (img, layer, z, sx, sy)
+        local tile = {}
+        tile.sprite = gfx.sprite.new(img)
+        tile.sprite:setZIndex(SPRITE_Z_MIN + z)
+        tile.sprite:setCenter(0.5, 0.0)
+        tile.sprite:moveTo(sx, sy)
         if (layer.property) then
             for _, property in ipairs(layer.property) do
-                sprite[property.name] = property.value
+                tile[property.name] = property.value
             end
         end
-        sprite[layer.type] = true
-        table.insert(self.tiles, sprite)
+        tile[layer.type] = true
+        table.insert(self.tiles, tile)
     end
     -- Initialize tilemap bumpword
     self.bumpworld = bump.newWorld(self.tileHeight*BUMP_CELL_MULTIPLIER)
@@ -87,7 +87,7 @@ function Level:readTiledJson(filepathname)
                     local tx, ty = (x-1)*PPM, (y-1)*PPM
                     if (tileimg) then
                         local sx, sy = TransformSystem.TileToScreen():transformXY(tx, ty)
-                        addLayerSprite(tileimg, layer, z, sx, sy)
+                        addTile(tileimg, layer, z, sx, sy)
                     elseif (tileidx == 0) then -- Empty tile registered as collision
                         local tile = {name = ("Tile_%i_%i"):format(x, y)}
                         --self.bumpworld:add(tile, tx, ty, PPM, PPM)
@@ -103,71 +103,21 @@ function Level:readTiledJson(filepathname)
                     self.spawn_player = {x = obj.x, y = obj.y}
                 end
             end
+        --[[
         elseif(layer.type == Tiled.Layer.Type.Image) then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
             local img = gfx.sprite.new(assets.getImage(img_name))
             if (img) then
                 local px, py = self.x - self.width/2, self.y + self.height/2
-                addLayerSprite(img, layer, z, px, py)
+                addTileSprite(img, layer, z, px, py)
             else
                 local msg = ("Image %s not found in tilelayer %i"):format(img_name, z)
                 log.warn(msg)
             end
+            --]]
         else
             log.warn("Unrecognized layer type ".. layer.type)
         end
     end
     assert(#self.tiles > 0, "TiledMap was unable to retrieve any map data")
-end
-
-
-
---[[ Sprite Management ]]
-
-function Level:moveTo(x, y)
-    local dx, dy = x - self.x, y - self.y
-    Level.super.moveTo(self, x, y)
-    for _, sprite in ipairs(self.tiles) do
-        sprite:moveBy(dx, dy)
-    end
-end
-
-function Level:setZIndex(z)
-    local pz = Level:getZIndex()
-    Level.super.setZIndex(self, z)
-    for _, sprite in ipairs(self.tiles) do
-        sprite:setZIndex(z + sprite:getZIndex() - pz)
-    end
-end
-
-function Level:setSize(width, height)
-    Level.super.setSize(self, width, height)
-end
-
--- All other sprite functions are modified to iterate over sprite table
-Level.__index = function(tiledmap, key)
-    -- Check if requested function is part of TiledMap
-    local proxy_value = rawget(Level, key)
-	if proxy_value then
-        --print(("TiledMap __index: rawget(TiledMap, %s)"):format(key))
-		return proxy_value
-	end
-    -- Check if requested function is part of gfx.sprite
-	proxy_value = rawget(gfx.sprite, key)
-    if type(proxy_value) == "function" then
-        --print(("TiledMap __index: rawget(gfx.sprite, %s)"):format(key))
-        -- Set to function on the TiledMap
-		rawset(tiledmap, key, function(tm, ...)
-            local retVal = Level.super[key](tm, ...)
-            -- Skip if function is a getter
-            if (not retVal) then
-                for _, sprite in ipairs(tm.sprites) do
-                    sprite[key](sprite, ...)
-                end
-            end
-			return retVal
-		end)
-		return tiledmap[key]
-	end
-	return proxy_value -- Otherwise return usual
 end

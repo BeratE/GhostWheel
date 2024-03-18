@@ -1,22 +1,23 @@
 ---@diagnostic disable: undefined-field, need-check-nil
 import "CoreLibs/object"
 import "CoreLibs/graphics"
+import "libs/vector"
 
 local gfx <const> = playdate.graphics
-local geom <const> = playdate.geometry
 
 class("Player").extends()
 
 function Player:init()
     -- Player specific components
     self.player = true
+    self.cameraTrack = {xoffset = 16, yoffset = -32}
     -- Sprite component
     self.sprite = gfx.sprite.new(self:getDummyImage())
     self.sprite:setCenter(0.5, 0.5)
     self.sprite:setZIndex(0)
     -- Physics and collision components
     self.mass = 80
-    self.pos = geom.point.new(PPM/2, PPM/2)
+    self.pos = vector(PPM/2, PPM/2)
     self.hitbox = {w = self.sprite.width, h = self.sprite.height}
 end
 
