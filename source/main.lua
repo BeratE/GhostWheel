@@ -48,12 +48,7 @@ end
 --[[ Simulator and Debug ]]
 
 function playdate.keyPressed(key)
-    if (#key > 1) then
-        log.warn("Key pressed (null-terminated) " .. key)
-        key = key[1]
-    else
-        log.info("Key pressed " .. key)
-    end
+    --log.info("Key pressed " .. key)
     SCENE_MANAGER.current:keyPressed(key)
 end
 

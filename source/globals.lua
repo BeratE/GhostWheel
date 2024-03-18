@@ -1,5 +1,5 @@
 --[[ Global constants ]]
-DEBUG = false
+DEBUG = true
 FPS = 30 -- Frames per second
 
 --[[ CONFIGURATIONS ]]

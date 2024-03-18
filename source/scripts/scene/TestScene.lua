@@ -8,9 +8,6 @@ import "scripts/entity/Level"
 import "scripts/entity/Player"
 import "libs/pdlog"
 
-local pd <const> = playdate
-local gfx <const> = playdate.graphics
-
 --[[ TestScene ]]
 class("TestScene").extends(Scene)
 
@@ -68,27 +65,10 @@ function TestScene:onExit()
     self.world:refresh()
 end
 
-local v = 0.1
 function TestScene:onUpdate()
     TestScene.super.onUpdate(self)
     self:refreshDeltaTimeMs()
     self.world:update(self:getDeltaTimeMs())
-
-    --print("Impulse Force " .. v)
-    if (pd.buttonIsPressed(pd.kButtonA)) then
-        v += 0.1
-    end
-    if (pd.buttonJustPressed(pd.kButtonUp)) then
-        self.player:addForce(0, -v)
-    elseif (pd.buttonJustPressed(pd.kButtonDown)) then
-        self.player:addForce(0, v)
-    elseif (pd.buttonJustPressed(pd.kButtonLeft)) then
-        self.player:addForce(-v, 0)
-    elseif (pd.buttonJustPressed(pd.kButtonRight)) then
-        self.player:addForce(v, 0)
-    end
-    --print("Pos Sprite" .. self.sprite.x .. " " .. self.sprite.y)
-    
 end
 
 function TestScene:switchNextLevel()
@@ -104,8 +84,39 @@ function TestScene:switchNextLevel()
     self.world:refresh()
 end
 
+local v = 0.1
 function TestScene:keyPressed(key)
+    -- Print help
+    if (key == "h") then
+        log.info("TestScene Simulator Keyboard help: ")
+        log.info("i - Move player up")
+        log.info("k - Move player down")
+        log.info("j - Move player left")
+        log.info("l - Move player right")
+        log.info("+ - Increase player velocity")
+        log.info("c - toggle collision")
+        log.info("n - switch to next level")
+    end
+
     if (key == 'n') then
         self:switchNextLevel()
+    elseif (key == "i") then
+        self.player:addForce(0, -v)
+    elseif (key == "k") then
+        self.player:addForce(0, v)
+    elseif (key == "j") then
+        self.player:addForce(-v, 0)
+    elseif (key == "l") then
+        self.player:addForce(v, 0)
+    elseif (key == "+") then
+        v += 0.1
+    elseif (key == "c") then
+        if (self.systems.bumpworld.world == nil) then
+            log.info("DEBUG: Activate Collision")
+            self.world:addSystem(self.systems.bumpworld)
+        else
+            log.info("DEBUG: Deactivate Collision")
+            self.world:removeSystem(self.systems.bumpworld)
+        end
     end
 end
