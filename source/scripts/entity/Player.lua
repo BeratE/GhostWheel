@@ -1,13 +1,15 @@
 ---@diagnostic disable: undefined-field, need-check-nil
 import "CoreLibs/object"
 import "CoreLibs/graphics"
+import "scripts/entity/Entity"
 import "libs/vector"
 
 local gfx <const> = playdate.graphics
 
-class("Player").extends()
+class("Player").extends(Entity)
 
 function Player:init(pos)
+    Player.super.init(self)
     self.player = true
     self.cameraTrack = {offsetx = 0, offsety = 0}
     self:setSprite()

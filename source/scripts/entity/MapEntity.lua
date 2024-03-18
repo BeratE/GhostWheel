@@ -2,13 +2,15 @@
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "libs/vector"
+import "scripts/entity/Entity"
 
 local gfx <const> = playdate.graphics
 
-class("MapTile").extends()
+--[[ Generic Map Entity Tile or Object ]]
+class("MapEntity").extends(Entity)
 
-function MapTile:init(layer, z, x, y)
-    self.tile = true
+function MapEntity:init(layer, z, x, y)
+    MapEntity.super.init(self)
     self.name = ("%s_%i_%i"):format(layer.name, x, y)
     self.idx = layer.data[((y-1)*layer.width) + x]
     self.pos = vector((x-1)*PPM, (y-1)*PPM)
@@ -21,7 +23,7 @@ function MapTile:init(layer, z, x, y)
     end
 end
 
-function MapTile:setSprite(img)
+function MapEntity:setSprite(img)
     self.sprite = gfx.sprite.new(img)
     self.sprite:setZIndex(SPRITE_Z_MIN + self.layeridx)
     self.sprite:setCenter(0.5, 0.0)

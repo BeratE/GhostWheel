@@ -29,7 +29,7 @@
         {
          "draworder":"topdown",
          "id":6,
-         "name":"spawn",
+         "name":"spawns",
          "objects":[
                 {
                  "height":0,
@@ -48,9 +48,37 @@
          "visible":true,
          "x":0,
          "y":0
+        }, 
+        {
+         "draworder":"topdown",
+         "id":8,
+         "name":"events",
+         "objects":[
+                {
+                 "height":58.5,
+                 "id":32,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"object",
+                         "value":0
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":126.5,
+                 "x":640,
+                 "y":513.5
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
         }],
- "nextlayerid":8,
- "nextobjectid":31,
+ "nextlayerid":9,
+ "nextobjectid":33,
  "orientation":"isometric",
  "renderorder":"right-down",
  "tiledversion":"1.8.0",

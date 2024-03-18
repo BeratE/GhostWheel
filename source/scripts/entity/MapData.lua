@@ -1,7 +1,7 @@
 ---@diagnostic disable: undefined-field, need-check-nil, inject-field
 import "CoreLibs/object"
 import "CoreLibs/graphics"
-import "scripts/entity/MapTile"
+import "scripts/entity/MapEntity"
 import "pdlibs/util/string"
 import "libs/bump"
 import "libs/pdlog"
@@ -74,7 +74,7 @@ function MapData:readTiledJson(filepathname)
         if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
                 for x = 1, layer.width  do
-                    local tile = MapTile(layer, z, x, y)
+                    local tile = MapEntity(layer, z, x, y)
                     local tileimg = self.tileimages[tile.idx]
                     if (tileimg) then
                         tile:setSprite(tileimg)

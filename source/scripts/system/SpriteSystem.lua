@@ -24,6 +24,10 @@ function SpriteSystem:onRemove(e)
     e.sprite:remove()
 end
 
+function SpriteSystem:preWrap()
+    gfx.clear()
+end
+
 function SpriteSystem:update(dt)
     gfx.sprite.update() -- Update all sprites
 end

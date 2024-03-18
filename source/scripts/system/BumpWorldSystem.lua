@@ -21,7 +21,7 @@ end
 
 class("BumpWorldSystem").extends()
 tinyecs.processingSystem(BumpWorldSystem)
-BumpWorldSystem.filter = tinyecs.requireAll("pos", "hitbox", tinyecs.rejectAny("tile"))
+BumpWorldSystem.filter = tinyecs.requireAll("pos", "hitbox", tinyecs.rejectAny(Tiled.Layer.Type.Tile))
 
 function BumpWorldSystem:init(bumpworld)
     BumpWorldSystem.super.init(self)

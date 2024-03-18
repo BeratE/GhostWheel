@@ -14,7 +14,7 @@ trIsometricInv:invert()
 -- [[ Derives screen coordinates by applying linear transform to position coordinates ]]
 class("TransformSystem").extends()
 tinyecs.processingSystem(TransformSystem)
-TransformSystem.filter = tinyecs.requireAll("pos", "sprite", tinyecs.rejectAny("tile"))
+TransformSystem.filter = tinyecs.requireAll("pos", "sprite", tinyecs.rejectAny(Tiled.Layer.Type.Image))
 
 function TransformSystem:init()
     TransformSystem.super.init(self)
