@@ -1,23 +1,24 @@
 ---@diagnostic disable: undefined-field, need-check-nil, inject-field
 import "CoreLibs/object"
 import "CoreLibs/graphics"
-import "scripts/entity/Tile"
+import "scripts/entity/MapTile"
 import "pdlibs/util/string"
 import "libs/bump"
 import "libs/pdlog"
 
 local gfx <const> = playdate.graphics
 
---[[ Load leveldata from TILED export.
-Container for level info, bumpworld and collection of tile, object and image entities. ]]
-class("Level").extends()
+--[[ Container for map info, bumpworld and 
+collection of tile, object and image entities. 
+Loads TILED map data from JSON files]]
+class("MapData").extends()
 
-function Level:init(filepathname)
+function MapData:init(filepathname)
     self:readTiledJson(filepathname)
 end
 
-function Level:readTiledJson(filepathname)
-    self.leveldata = true
+function MapData:readTiledJson(filepathname)
+    self.mapdata = true
 
     -- Read json map
     filepathname = "assets/map/"..filepathname
@@ -73,7 +74,7 @@ function Level:readTiledJson(filepathname)
         if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
                 for x = 1, layer.width  do
-                    local tile = Tile(layer, z, x, y)
+                    local tile = MapTile(layer, z, x, y)
                     local tileimg = self.tileimages[tile.idx]
                     if (tileimg) then
                         tile:setSprite(tileimg)
@@ -89,7 +90,7 @@ function Level:readTiledJson(filepathname)
                 end
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then
-            if (layer.name == LayerName.Spawn) then
+            if (layer.name == LayerName.Spawns) then
                 for i, obj in ipairs(layer.objects) do
                     if obj.name == "player" then
                         self.spawns.player = vector(obj.x, obj.y)
@@ -113,10 +114,10 @@ function Level:readTiledJson(filepathname)
     assert(#self.tiles > 0, "TiledMap was unable to retrieve any map data")
 end
 
-function Level:add(world)
+function MapData:add(world)
     world:add(table.unpack(self.tiles))
 end
 
-function Level:remove(world)
+function MapData:remove(world)
     world:remove(table.unpack(self.tiles))
 end

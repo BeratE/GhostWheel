@@ -10,6 +10,8 @@ Order of physics system:
 3 Collisions resolution
 ]]
 
+local gfx <const> = playdate.graphics
+
 local function collisionFilter(item, other)
     if (other.tile) then
         return "touch"
@@ -38,6 +40,17 @@ function BumpWorldSystem:preProcess(dt)
 end
 
 function BumpWorldSystem:process(e, dt)
+    --[[ Debug draw ]]
+    --[[
+    local p = playdate.geometry.polygon.new(
+        e.pos.x, e.pos.y,
+        e.pos.x, e.pos.y+e.hitbox.h,
+        e.pos.x+e.hitbox.w, e.pos.y + e.hitbox.h,
+        e.pos.x+e.hitbox.w, e.pos.y,
+        e.pos.x, e.pos.y
+    )
+    local sp = TransformSystem.TileToScreen():transformedPolygon(p)
+    --]]
     --[[ Position Update and Collision detection ]]
     local filter = e.collisionFilter or collisionFilter
     local px, py, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, filter)

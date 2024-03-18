@@ -4,7 +4,7 @@ import "scripts/system/CameraSystem"
 import "scripts/system/RigidBodySystem"
 import "scripts/system/BumpWorldSystem"
 import "scripts/system/SpriteSystem"
-import "scripts/entity/Level"
+import "scripts/entity/MapData"
 import "scripts/entity/Player"
 import "libs/pdlog"
 
@@ -19,7 +19,7 @@ function TestScene:init()
         local levelname = ("test-%i.json"):format(#self.levels + 1)
         --local value = Level(levelname)
         --
-        local status, value = pcall(function() return Level(levelname) end)
+        local status, value = pcall(function() return MapData(levelname) end)
         if (not status) then
             log.warn(value)
             break

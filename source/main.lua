@@ -46,7 +46,14 @@ end
 
 
 --[[ Simulator and Debug ]]
-
+--[[
+DEBUG_OVERLAY = gfx.image.new(disp.getWidth(), disp.getHeight(), gfx.kColorBlack)
+pd.setDebugDrawColor(1, 1, 0, 0)
+function playdate.debugDraw()
+	DEBUG_OVERLAY:drawIgnoringOffset(0, 0) -- draw our layer of collected debug draws
+	DEBUG_OVERLAY:clear(gfx.kColorBlack) -- blank for next update
+end
+--]]
 function playdate.keyPressed(key)
     --log.info("Key pressed " .. key)
     SCENE_MANAGER.current:keyPressed(key)

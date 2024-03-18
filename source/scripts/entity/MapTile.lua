@@ -5,9 +5,9 @@ import "libs/vector"
 
 local gfx <const> = playdate.graphics
 
-class("Tile").extends()
+class("MapTile").extends()
 
-function Tile:init(layer, z, x, y)
+function MapTile:init(layer, z, x, y)
     self.tile = true
     self.name = ("%s_%i_%i"):format(layer.name, x, y)
     self.idx = layer.data[((y-1)*layer.width) + x]
@@ -21,7 +21,7 @@ function Tile:init(layer, z, x, y)
     end
 end
 
-function Tile:setSprite(img)
+function MapTile:setSprite(img)
     self.sprite = gfx.sprite.new(img)
     self.sprite:setZIndex(SPRITE_Z_MIN + self.layeridx)
     self.sprite:setCenter(0.5, 0.0)
