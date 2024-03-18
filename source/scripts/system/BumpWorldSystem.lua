@@ -10,8 +10,6 @@ Order of physics system:
 3 Collisions resolution
 ]]
 
-local point <const> = playdate.geometry.point
-
 local function collisionFilter(item, other)
     return "touch"
 end

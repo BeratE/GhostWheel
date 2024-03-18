@@ -14,7 +14,7 @@ trIsometricInv:invert()
 -- [[ Derives screen coordinates by applying linear transform to position coordinates ]]
 class("TransformSystem").extends()
 tinyecs.processingSystem(TransformSystem)
-TransformSystem.filter = tinyecs.requireAll("pos")
+TransformSystem.filter = tinyecs.requireAll("pos", "sprite")
 
 function TransformSystem:init()
     TransformSystem.super.init(self)
@@ -34,7 +34,7 @@ end
 
 function TransformSystem:process(e, dt)
     local x, y = TransformSystem.TileToScreen():transformXY(e.pos.x, e.pos.y)
-    e:moveTo(x, y)
+    e.sprite:moveTo(x, y)
     --print("Entity Pos: " .. e.pos.x .. " " .. e.pos.y .. ", Sprite: " .. x .. " " .. y)
 end
 

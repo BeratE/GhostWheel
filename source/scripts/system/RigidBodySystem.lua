@@ -2,6 +2,7 @@
 import "CoreLibs/object"
 import "pdlibs/util/math"
 import "libs/tinyecs"
+import "libs/vector"
 
 --[[ Simple Rigid-Body 2D (top-down) physics engine working in tile coordinates.
 Units: kilogram kg, meter m, milliseconds ms. (Usage of milliseconds to avoid floating-point errors)
@@ -11,7 +12,6 @@ Order of physics system:
 3 Collisions resolution
 ]]
 
-local point <const> = playdate.geometry.point
 local PRECISION <const> = 0.0001
 
 class("RigidBodySystem").extends()
@@ -26,17 +26,19 @@ function RigidBodySystem:onAdd(e)
     RigidBodySystem.initRigidBody(e)
 end
 
+--[[ Positional Logic ]]
 function RigidBodySystem:process(e, dt)
-    --[[ Positional Logic ]]
     -- Apply linear damping force
-    self.addForce(e, - e.lindamp * e.vel.x, - e.lindamp * e.vel.y)
+    e:addForce(-e.lindamp * e.vel.x, -e.lindamp * e.vel.y)
     -- Set acceleration using the impulse forces acting on object
     e.acc.x = e.force.x/e.mass
     e.acc.y = e.force.y/e.mass
-    e.force = point.new(0, 0)
-    -- Velocity verlet integration 
-    e.pos:offset(e.vel.x*dt + e.acc.x/2*dt*dt, e.vel.y*dt + e.acc.y/2*dt*dt)
-    e.vel:offset(e.acc.x*dt, e.acc.y*dt)
+    e.force = vector(0, 0)
+    -- Velocity verlet integration
+    e.pos.x += e.vel.x*dt + e.acc.x/2*dt*dt
+    e.pos.y += e.vel.y*dt + e.acc.y/2*dt*dt
+    e.vel.x += e.acc.x*dt
+    e.vel.y += e.acc.y*dt
     -- Clamp velocity
     if (math.abs(e.acc.x) < PRECISION) then e.acc.x = 0 end
     if (math.abs(e.acc.y) < PRECISION) then e.acc.y = 0 end
@@ -50,24 +52,25 @@ end
 
 --[[ Static helper functions ]]
 
--- Add impulse force to entity
-function RigidBodySystem.addForce(e, fx, fy)
-    e.force:offset(fx, fy)
-    return e.force
-end
-
 -- Add all the required components for the rigid body system
-function RigidBodySystem.initRigidBody(e, mass, lindamp)
+function RigidBodySystem.initRigidBody(e, mass, lindamp, pos)
+    e.pos = e.pos or pos or vector(0, 0) -- Current position of the object
+    e = e or {}
     --[[ Scalar components ]]
     -- Mass of object in kg (minimum of 1gram)
     e.mass = e.mass or mass or 1
     e.mass = math.max(e.mass, 0.001)
-    -- linear daming factor [0, 1], i.e. resistance to movement
+    -- linear damping factor [0, 1], i.e. resistance to movement
     e.lindamp = e.lindamp or lindamp or 0.1
     e.lindamp = pdlibs.math.clamp(e.lindamp, 0.0, 1.0)
     --[[ Vector components ]]
-    e.force = e.force or point.new(0, 0) -- Forces currently acting on the object 
-    e.acc = e.acc or point.new(0, 0) -- Current acceleration of the object
-    e.vel = e.vel or point.new(0, 0) -- Current velocity of the object
-    e.pos = e.pos or point.new(0, 0) -- Current position of the object
+    e.force = e.force or vector(0, 0) -- Accumulated forces acting on the object in the next timestep 
+    e.acc = e.acc or vector(0, 0) -- Current acceleration of the object
+    e.vel = e.vel or vector(0, 0) -- Current velocity of the object
+
+    -- Add impulse force to entity
+    e.addForce = e.addForce or function (self, fx, fy)
+        self.force.x += fx
+        self.force.y += fy
+    end
 end

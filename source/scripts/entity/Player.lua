@@ -5,10 +5,22 @@ import "CoreLibs/graphics"
 local gfx <const> = playdate.graphics
 local geom <const> = playdate.geometry
 
-class("Player").extends(gfx.sprite)
+class("Player").extends()
 
 function Player:init()
-    Player.super.init(self)
+    -- Player specific components
+    self.player = true
+    -- Sprite component
+    self.sprite = gfx.sprite.new(self:getDummyImage())
+    self.sprite:setCenter(0.5, 0.5)
+    self.sprite:setZIndex(0)
+    -- Physics and collision components
+    self.mass = 80
+    self.pos = geom.point.new(PPM/2, PPM/2)
+    self.hitbox = {w = self.sprite.width, h = self.sprite.height}
+end
+
+function Player:getDummyImage()
     local img = gfx.image.new(16, 16)
     gfx.pushContext(img)
     gfx.setColor(gfx.kColorBlack)
@@ -16,11 +28,5 @@ function Player:init()
     gfx.setColor(gfx.kColorWhite)
     gfx.fillEllipseInRect(2, 2, img.width-4, img.height-4)
     gfx.popContext()
-    self:setImage(img)
-    self:setCenter(0.5, 0.5)
-    self:setZIndex(0)
-    self.hitbox = {w = img.width, h = img.height}
-    self.player = true
-    self.mass = 80
-    self.pos = geom.point.new(PPM/2, PPM/2)
+    return img
 end

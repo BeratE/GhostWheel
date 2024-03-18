@@ -3,6 +3,7 @@ import "scripts/system/TransformSystem"
 import "scripts/system/CameraSystem"
 import "scripts/system/RigidBodySystem"
 import "scripts/system/BumpWorldSystem"
+import "scripts/system/SpriteSystem"
 import "scripts/entity/Level"
 import "scripts/entity/Player"
 import "libs/pdlog"
@@ -16,7 +17,8 @@ class("TestScene").extends(Scene)
 
 function TestScene:init()
     TestScene.super.init(self)
-    -- Load levels
+    -- Initialize Entities
+    self.player = Player()
     self.levels = {}
     while(true) do
         local levelname = ("test-%i.json"):format(#self.levels + 1)
@@ -35,35 +37,33 @@ function TestScene:init()
         error("No test levels found for TestScene", 2)
     end
     self.levelIdx = 1
+    local bumpworld = self.levels[self.levelIdx].bumpworld
     -- Initialize Systems
     self.systems = {
         rigidbody = RigidBodySystem(),
-        bumpworld = BumpWorldSystem(self.levels[self.levelIdx].bumpworld),
+        bumpworld = BumpWorldSystem(bumpworld),
         transform = TransformSystem(),
+        sprite = SpriteSystem(),
         camera = CameraSystem()
     }
     -- Add Systems
     for _, sys in pairs(self.systems) do
         self.world:addSystem(sys)
     end
-    -- Add entities
-    self.player = Player()
-    self.world:addEntity(self.player)
-    self.world:addEntity(self.levels[self.levelIdx])
 end
 
 function TestScene:onEnter()
     TestScene.super.onEnter(self)
     log.info("Entering TestScene ..")
-    -- Add Sprites
-    self.player:add()
-    self.levels[self.levelIdx]:add()
+    -- Add Entities
+    self.world:addEntity(self.player)
+    self.world:addEntity(self.levels[self.levelIdx])
 end
 
 function TestScene:onExit()
-    -- Remove Sprites
-    self.player:remove()
-    self.levels[self.levelIdx]:remove()
+    -- Remove Entities
+    self.world:removeEntity(self.player)
+    self.world:removeEntity(self.levels[self.levelIdx])
 end
 
 local v = 0.1
@@ -77,17 +77,13 @@ function TestScene:onUpdate()
         v += 0.1
     end
     if (pd.buttonJustPressed(pd.kButtonUp)) then
-        RigidBodySystem.addForce(self.player, 0, -v)
-        --self.sprite.pos.y += 1
+        self.player:addForce(0, -v)
     elseif (pd.buttonJustPressed(pd.kButtonDown)) then
-        RigidBodySystem.addForce(self.player, 0, v)
-        --self.sprite.pos.y -= 1
+        self.player:addForce(0, v)
     elseif (pd.buttonJustPressed(pd.kButtonLeft)) then
-        RigidBodySystem.addForce(self.player, -v, 0)
-        --self.sprite.pos.x -= 1
+        self.player:addForce(-v, 0)
     elseif (pd.buttonJustPressed(pd.kButtonRight)) then
-        RigidBodySystem.addForce(self.player, v, 0)
-        --self.sprite.pos.x += 1
+        self.player:addForce(v, 0)
     end
     --print("Pos Sprite" .. self.sprite.x .. " " .. self.sprite.y)
     

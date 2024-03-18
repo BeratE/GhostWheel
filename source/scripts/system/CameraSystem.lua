@@ -5,12 +5,11 @@ import "pdlibs/util/debug"
 
 local gfx <const> = playdate.graphics
 local disp <const> = playdate.display
-local geom <const> = playdate.geometry
 
 -- [[ Lazily follows the player character around by setting the drawing offset ]]
 class("CameraSystem").extends()
 tinyecs.processingSystem(CameraSystem)
-CameraSystem.filter = tinyecs.requireAll("player")
+CameraSystem.filter = tinyecs.requireAll("player", "sprite")
 
 
 function CameraSystem:init()
@@ -22,9 +21,17 @@ function CameraSystem:preProcess(dt)
 end
 
 function CameraSystem:process(e, dt)
-    gfx.setDrawOffset(disp.getWidth()/2 -e.x, disp.getHeight()/2 -e.y)
+    gfx.setDrawOffset(disp.getWidth()/2 -e.sprite.x, disp.getHeight()/2 -e.sprite.y)
 end
 
 function CameraSystem:postProcess(dt)
     
+end
+
+function CameraSystem.getViewPort()
+    local drawOffset = gfx.getDrawOffset()
+    return {
+        x = drawOffset.x, y = drawOffset.y,
+        w = disp.getWidth(), h = disp.getHeight()
+    }
 end
