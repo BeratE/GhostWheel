@@ -45,7 +45,7 @@ function BumpWorldSystem:process(e, dt)
         local col = cols[i]
         local collided = true
         if (col.other.tile) then
-            log.info(("Collision with %s at %0.2f, %0.2f."):format(col.other.tilename, col.touch.x, col.touch.y))
+            log.info(("Collision with %s at %0.2f, %0.2f."):format(col.other.name, col.touch.x, col.touch.y))
         end
 
         if col.type == "touch" then

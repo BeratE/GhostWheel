@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-field, need-check-nil, inject-field
 import "CoreLibs/object"
 import "CoreLibs/graphics"
+import "scripts/entity/Tile"
 import "pdlibs/util/string"
 import "libs/bump"
 import "libs/pdlog"
@@ -19,7 +20,7 @@ end
 
 function Level:readTiledJson(filepathname)
     self.leveldata = true
-    -- Reset sprite properties
+
     -- Read json map
     filepathname = "assets/map/"..filepathname
     log.info("Loading Tiled file " .. filepathname)
@@ -40,7 +41,7 @@ function Level:readTiledJson(filepathname)
     self.width = self.nTilesX*self.tileWidth
     self.height = self.nTilesY*self.tileHeight
     -- Collect tilesets into one big image table
-    self.images = {}
+    self.tileimages = {}
     for _,t in ipairs(tiled.tilesets) do
         local source_filename =  t.image or t.source or t.name
         -- Cut until filename if a path is given
@@ -55,48 +56,30 @@ function Level:readTiledJson(filepathname)
         local imgtable = assets.getImageTable(source_filename)
         assert(imgtable, "Unable to retrieve tileset image (" .. source_filename .. ")" )
         for i = 1, #imgtable do
-            table.insert(self.images, imgtable:getImage(i))
+            table.insert(self.tileimages, imgtable:getImage(i))
         end
     end
+    -- Initialize tilemap bumpword and add map borders
+    self.bumpworld = bump.newWorld()
     -- Retrieve layer information
     self.tiles = {}
+    self.images = {}
     self.objects = {}
-    -- Initialize tilemap bumpword
-    self.bumpworld = bump.newWorld()
     -- Iterate layers
     for z, layer in ipairs(tiled.layers) do
         if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
                 for x = 1, layer.width  do
-                    -- Create Tile Entity
-                    local tile = {
-                        tile = true,
-                        tilelayer = z,
-                        tilename = ("%s_%i_%i"):format(layer.name, x, y),
-                        tileidx = layer.data[((y-1)*layer.width) + x],
-                        pos = vector((x-1)*PPM, (y-1)*PPM),
-                    }
-                    tile[layer.type] = true
-                    -- Set custom properties
-                    if (layer.property) then
-                        for _, property in ipairs(layer.property) do
-                            tile[property.name] = property.value
-                        end
-                    end
-                    -- Tile with sprite
-                    local tileimg = self.images[tile.tileidx]
+                    local tile = Tile(layer, z, x, y)
+                    local tileimg = self.tileimages[tile.idx]
                     if (tileimg) then
-                        tile.sprite = gfx.sprite.new(tileimg)
-                        tile.sprite:setZIndex(SPRITE_Z_MIN + z)
-                        tile.sprite:setCenter(0.5, 0.0)
-                        tile.sprite:moveTo(TransformSystem.TileToScreen():transformXY(tile.pos.x, tile.pos.y))
-                    -- Empty collision tile
-                    elseif(tile.tileidx == 0) then
+                        tile:setImage(tileimg)
+                    elseif(tile.idx == 0) then
                         if (layer.name == LayerName.Floor) then
                             self.bumpworld:add(tile, tile.pos.x, tile.pos.y, PPM, PPM)
                         end
                     else
-                        local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tile.tileidx, z, x, y)
+                        local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tile.idx, z, x, y)
                         log.warn(msg)
                     end
                     table.insert(self.tiles, tile)
@@ -104,11 +87,8 @@ function Level:readTiledJson(filepathname)
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then
             for i, obj in ipairs(layer.objects) do
-                if obj.name == "spawn_player" then
-                    self.spawn_player = {x = obj.x, y = obj.y}
-                end
+                
             end
-        --[[
         elseif(layer.type == Tiled.Layer.Type.Image) then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
             local img = gfx.sprite.new(assets.getImage(img_name))
@@ -119,7 +99,6 @@ function Level:readTiledJson(filepathname)
                 local msg = ("Image %s not found in tilelayer %i"):format(img_name, z)
                 log.warn(msg)
             end
-            --]]
         else
             log.warn("Unrecognized layer type ".. layer.type)
         end

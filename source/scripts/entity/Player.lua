@@ -11,7 +11,7 @@ function Player:init()
     -- Player specific components
     self.player = true
     -- Sprite component
-    self.sprite = gfx.sprite.new(self:getDummyImage())
+    self.sprite = gfx.sprite.new(Player.getDummyImage())
     self.sprite:setCenter(0.5, 0.5)
     self.sprite:setZIndex(0)
     -- Physics and collision components
@@ -20,7 +20,7 @@ function Player:init()
     self.hitbox = {w = self.sprite.width, h = self.sprite.height}
 end
 
-function Player:getDummyImage()
+function Player.getDummyImage()
     local img = gfx.image.new(16, 16)
     gfx.pushContext(img)
     gfx.setColor(gfx.kColorBlack)

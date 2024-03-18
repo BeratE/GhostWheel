@@ -7,10 +7,6 @@
  <tileset firstgid="10" source="people-dead-table-128-128.tsx"/>
  <tileset firstgid="34" source="../../../../Pictures/PixelArt/IsometricHospitalTiles/people-dead-table-128-128.tsx"/>
  <layer id="1" name="floor" width="32" height="32">
-  <properties>
-   <property name="collision" type="bool" value="false"/>
-   <property name="collisionEmpty" type="bool" value="true"/>
-  </properties>
   <data encoding="csv">
 4,4,4,4,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,
 4,4,4,4,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -47,9 +43,6 @@
 </data>
  </layer>
  <layer id="2" name="objects" width="32" height="32">
-  <properties>
-   <property name="collision" type="bool" value="true"/>
-  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -85,5 +78,5 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="6" name="Spawn"/>
+ <objectgroup id="6" name="spawn"/>
 </map>
