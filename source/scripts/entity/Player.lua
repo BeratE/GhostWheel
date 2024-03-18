@@ -8,20 +8,15 @@ local gfx <const> = playdate.graphics
 class("Player").extends()
 
 function Player:init(pos)
-    -- Player specific components
     self.player = true
     self.cameraTrack = {offsetx = 0, offsety = 0}
-    -- Sprite component
-    self.sprite = gfx.sprite.new(Player.getDummyImage())
-    self.sprite:setCenter(0.5, 0.5)
-    self.sprite:setZIndex(0)
-    -- Physics and collision components
+    self:setSprite()
     self.mass = 80
     self.pos = pos or vector(PPM/2, PPM/2)
     self.hitbox = {w = self.sprite.width, h = self.sprite.height}
 end
 
-function Player.getDummyImage()
+function Player:setSprite()
     local img = gfx.image.new(16, 16)
     gfx.pushContext(img)
     gfx.setColor(gfx.kColorBlack)
@@ -29,5 +24,7 @@ function Player.getDummyImage()
     gfx.setColor(gfx.kColorWhite)
     gfx.fillEllipseInRect(2, 2, img.width-4, img.height-4)
     gfx.popContext()
-    return img
+    self.sprite = gfx.sprite.new(img)
+    self.sprite:setCenter(0.5, 0.5)
+    self.sprite:setZIndex(0)
 end

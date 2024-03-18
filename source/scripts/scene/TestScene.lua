@@ -32,9 +32,10 @@ function TestScene:init()
         error("No test levels found for TestScene", 2)
     end
     self.levelIdx = 1
-    local bumpworld = self.levels[self.levelIdx].bumpworld
     self.player = Player(self.levels[self.levelIdx].spawns.player)
+    local bumpworld = self.levels[self.levelIdx].bumpworld
     -- Initialize Systems
+
     self.systems = {
         rigidbody = RigidBodySystem(),
         bumpworld = BumpWorldSystem(bumpworld),
@@ -80,7 +81,7 @@ function TestScene:switchNextLevel()
     end
     self.world:refresh()
     self.levels[self.levelIdx]:add(self.world)
-    self.systems.bumpworld.bumpworld = self.levels[self.levelIdx].bumpworld
+    self.systems.bumpworld:setBumpWorld(self.levels[self.levelIdx].bumpworld)
     self.world:refresh()
 end
 

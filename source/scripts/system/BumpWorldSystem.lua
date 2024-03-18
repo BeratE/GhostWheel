@@ -62,3 +62,7 @@ function BumpWorldSystem:process(e, dt)
     end
     e.pos.x, e.pos.y = px, py
 end
+
+function BumpWorldSystem:setBumpWorld(bumpworld)
+    self.bumpworld = bumpworld
+end

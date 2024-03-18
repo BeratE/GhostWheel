@@ -6,12 +6,10 @@ import "pdlibs/util/string"
 import "libs/bump"
 import "libs/pdlog"
 
---[[ Supports JSON loading of TILED Tiled.Maps v1.8]]
-
 local gfx <const> = playdate.graphics
 
---[[ Load, manage and render TILED Level Editor maps.
-Implemented as a sprite that manages a group of tile sprites. ]]
+--[[ Load leveldata from TILED export.
+Container for level info, bumpworld and collection of tile, object and image entities. ]]
 class("Level").extends()
 
 function Level:init(filepathname)
@@ -78,7 +76,7 @@ function Level:readTiledJson(filepathname)
                     local tile = Tile(layer, z, x, y)
                     local tileimg = self.tileimages[tile.idx]
                     if (tileimg) then
-                        tile:setImage(tileimg)
+                        tile:setSprite(tileimg)
                     elseif(tile.idx == 0) then
                         if (layer.name == LayerName.Floor) then
                             self.bumpworld:add(tile, tile.pos.x, tile.pos.y, PPM, PPM)
@@ -92,14 +90,12 @@ function Level:readTiledJson(filepathname)
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then
             if (layer.name == LayerName.Spawn) then
-                
                 for i, obj in ipairs(layer.objects) do
                     if obj.name == "player" then
                         self.spawns.player = vector(obj.x, obj.y)
                     end
                 end
             end
-            
         elseif(layer.type == Tiled.Layer.Type.Image) then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
             local img = gfx.sprite.new(assets.getImage(img_name))
