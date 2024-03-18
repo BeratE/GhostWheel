@@ -33,7 +33,6 @@ function CameraSystem:process(e, dt)
     local sx, sy = cx + lerp*(tx - cx), cy + lerp*(ty - cy)
     self.camera:set(sx, sy)
     gfx.setDrawOffset(self.camera.x, self.camera.y)
-    --gfx.setDrawOffset(disp.getWidth()/2 -e.sprite.x, disp.getHeight()/2 -e.sprite.y)
 end
 
 function CameraSystem:postProcess(dt)

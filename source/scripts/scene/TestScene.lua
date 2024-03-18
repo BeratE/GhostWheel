@@ -57,6 +57,7 @@ function TestScene:onEnter()
     -- Add Entities
     self.world:addEntity(self.player)
     self.levels[self.levelIdx]:add(self.world)
+    self.world:refresh()
 end
 
 function TestScene:onExit()
@@ -64,6 +65,7 @@ function TestScene:onExit()
     -- Remove Entities
     self.world:addEntity(self.player)
     self.levels[self.levelIdx]:remove(self.world)
+    self.world:refresh()
 end
 
 local v = 0.1
@@ -96,6 +98,7 @@ function TestScene:switchNextLevel()
     if (self.levels[prevIdx]) then
         self.levels[prevIdx]:remove(self.world)
     end
+    self.world:refresh()
     self.levels[self.levelIdx]:add(self.world)
     self.systems.bumpworld.bumpworld = self.levels[self.levelIdx].bumpworld
     self.world:refresh()
