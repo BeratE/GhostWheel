@@ -61,6 +61,10 @@ function Level:readTiledJson(filepathname)
     end
     -- Initialize tilemap bumpword and add map borders
     self.bumpworld = bump.newWorld()
+    self.bumpworld:add("_borderTop",   0, -16, self.nTilesX*PPM, 16)
+    self.bumpworld:add("_borderBot",   0, self.nTilesY*PPM, self.nTilesX*PPM, 16)
+    self.bumpworld:add("_borderLeft",  -16, 0, 16, self.nTilesY*PPM)
+    self.bumpworld:add("_borderRight", self.nTilesX*PPM, 0, 16, self.nTilesY*PPM)
     -- Retrieve layer information
     self.tiles = {}
     self.images = {}
