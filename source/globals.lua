@@ -33,7 +33,8 @@ DIR = {
 
 --[[ Special Tiled layers]]
 LayerName = {
-    Floor = "floor" -- Empty tiles on floor layer are treated as walls
+    Floor = "floor", -- Empty tiles on floor layer are treated as walls
+    Spawn = "spawn"
 }
 
 --[[ Definitions for Tiled ]]

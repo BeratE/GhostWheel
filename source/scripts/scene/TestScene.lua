@@ -17,18 +17,17 @@ class("TestScene").extends(Scene)
 function TestScene:init()
     TestScene.super.init(self)
     -- Initialize Entities
-    self.player = Player()
     self.levels = {}
     while(true) do
         local levelname = ("test-%i.json"):format(#self.levels + 1)
-        local value = Level(levelname)
-        --[[
-        local status, value = pcall(function() return TiledMap(levelname) end)
+        --local value = Level(levelname)
+        --
+        local status, value = pcall(function() return Level(levelname) end)
         if (not status) then
             log.warn(value)
             break
         end
-        --]]
+        --
         table.insert(self.levels, value)
         break
     end
@@ -37,6 +36,7 @@ function TestScene:init()
     end
     self.levelIdx = 1
     local bumpworld = self.levels[self.levelIdx].bumpworld
+    self.player = Player(self.levels[self.levelIdx].spawns.player)
     -- Initialize Systems
     self.systems = {
         rigidbody = RigidBodySystem(),
@@ -56,17 +56,14 @@ function TestScene:onEnter()
     log.info("Entering TestScene ..")
     -- Add Entities
     self.world:addEntity(self.player)
-    for _, tile in ipairs(self.levels[self.levelIdx].tiles) do
-        self.world:addEntity(tile)
-    end
+    self.levels[self.levelIdx]:add(self.world)
 end
 
 function TestScene:onExit()
+    log.info("Exiting TestScene ..")
     -- Remove Entities
-    self.world:removeEntity(self.player)
-    for _, tile in ipairs(self.levels[self.levelIdx].tiles) do
-        self.world:removeEntity(tile)
-    end
+    self.world:addEntity(self.player)
+    self.levels[self.levelIdx]:remove(self.world)
 end
 
 local v = 0.1
@@ -93,15 +90,15 @@ function TestScene:onUpdate()
 end
 
 function TestScene:switchNextLevel()
-    if (self.levels[self.levelIdx]) then
-        self.levels[self.levelIdx]:remove()
-        self.world:removeEntity(self.levels[self.levelIdx])
-    end
+    local prevIdx = self.levelIdx
     self.levelIdx = (self.levelIdx % #self.levels) + 1
-    self.levels[self.levelIdx]:add()
-    self.world:addEntity(self.levels[self.levelIdx])
-    self.systems.bumpworld.bumpworld = self.levels[self.levelIdx].bumpworld
     log.info("Switching to test-scene " .. self.levelIdx)
+    if (self.levels[prevIdx]) then
+        self.levels[prevIdx]:remove(self.world)
+    end
+    self.levels[self.levelIdx]:add(self.world)
+    self.systems.bumpworld.bumpworld = self.levels[self.levelIdx].bumpworld
+    self.world:refresh()
 end
 
 function TestScene:keyPressed(key)

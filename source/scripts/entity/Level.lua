@@ -61,14 +61,15 @@ function Level:readTiledJson(filepathname)
     end
     -- Initialize tilemap bumpword and add map borders
     self.bumpworld = bump.newWorld()
-    self.bumpworld:add("_borderTop",   0, -16, self.nTilesX*PPM, 16)
-    self.bumpworld:add("_borderBot",   0, self.nTilesY*PPM, self.nTilesX*PPM, 16)
-    self.bumpworld:add("_borderLeft",  -16, 0, 16, self.nTilesY*PPM)
-    self.bumpworld:add("_borderRight", self.nTilesX*PPM, 0, 16, self.nTilesY*PPM)
+    self.bumpworld:add({name = "_borderTop"},   0, -16, self.nTilesX*PPM, 16)
+    self.bumpworld:add({name = "_borderBot"},   0, self.nTilesY*PPM, self.nTilesX*PPM, 16)
+    self.bumpworld:add({name = "_borderLeft"},  -16, 0, 16, self.nTilesY*PPM)
+    self.bumpworld:add({name = "_borderRight"}, self.nTilesX*PPM, 0, 16, self.nTilesY*PPM)
     -- Retrieve layer information
     self.tiles = {}
     self.images = {}
     self.objects = {}
+    self.spawns = {}
     -- Iterate layers
     for z, layer in ipairs(tiled.layers) do
         if (layer.type == Tiled.Layer.Type.Tile) then
@@ -90,9 +91,15 @@ function Level:readTiledJson(filepathname)
                 end
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then
-            for i, obj in ipairs(layer.objects) do
+            if (layer.name == LayerName.Spawn) then
                 
+                for i, obj in ipairs(layer.objects) do
+                    if obj.name == "player" then
+                        self.spawns.player = vector(obj.x, obj.y)
+                    end
+                end
             end
+            
         elseif(layer.type == Tiled.Layer.Type.Image) then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
             local img = gfx.sprite.new(assets.getImage(img_name))
@@ -108,4 +115,12 @@ function Level:readTiledJson(filepathname)
         end
     end
     assert(#self.tiles > 0, "TiledMap was unable to retrieve any map data")
+end
+
+function Level:add(world)
+    world:add(table.unpack(self.tiles))
+end
+
+function Level:remove(world)
+    world:remove(table.unpack(self.tiles))
 end

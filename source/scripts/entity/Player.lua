@@ -7,16 +7,17 @@ local gfx <const> = playdate.graphics
 
 class("Player").extends()
 
-function Player:init()
+function Player:init(pos)
     -- Player specific components
     self.player = true
+    self.cameraTrack = {offsetx = 0, offsety = 0}
     -- Sprite component
     self.sprite = gfx.sprite.new(Player.getDummyImage())
     self.sprite:setCenter(0.5, 0.5)
     self.sprite:setZIndex(0)
     -- Physics and collision components
     self.mass = 80
-    self.pos = vector(PPM/2, PPM/2)
+    self.pos = pos or vector(PPM/2, PPM/2)
     self.hitbox = {w = self.sprite.width, h = self.sprite.height}
 end
 
