@@ -61,40 +61,45 @@ function Level:readTiledJson(filepathname)
     -- Retrieve layer information
     self.tiles = {}
     self.objects = {}
-    local addTile = function (img, layer, z, sx, sy)
-        local tile = {}
-        tile.sprite = gfx.sprite.new(img)
-        tile.sprite:setZIndex(SPRITE_Z_MIN + z)
-        tile.sprite:setCenter(0.5, 0.0)
-        tile.sprite:moveTo(sx, sy)
-        if (layer.property) then
-            for _, property in ipairs(layer.property) do
-                tile[property.name] = property.value
-            end
-        end
-        tile[layer.type] = true
-        table.insert(self.tiles, tile)
-    end
     -- Initialize tilemap bumpword
-    self.bumpworld = bump.newWorld(self.tileHeight*BUMP_CELL_MULTIPLIER)
+    self.bumpworld = bump.newWorld()
     -- Iterate layers
     for z, layer in ipairs(tiled.layers) do
         if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
                 for x = 1, layer.width  do
-                    local tileidx = layer.data[((y-1)*layer.width) + x]
-                    local tileimg = self.images[tileidx]
-                    local tx, ty = (x-1)*PPM, (y-1)*PPM
+                    -- Create Tile Entity
+                    local tile = {
+                        tile = true,
+                        tilelayer = z,
+                        tilename = ("%s_%i_%i"):format(layer.name, x, y),
+                        tileidx = layer.data[((y-1)*layer.width) + x],
+                        pos = vector((x-1)*PPM, (y-1)*PPM),
+                    }
+                    tile[layer.type] = true
+                    -- Set custom properties
+                    if (layer.property) then
+                        for _, property in ipairs(layer.property) do
+                            tile[property.name] = property.value
+                        end
+                    end
+                    -- Tile with sprite
+                    local tileimg = self.images[tile.tileidx]
                     if (tileimg) then
-                        local sx, sy = TransformSystem.TileToScreen():transformXY(tx, ty)
-                        addTile(tileimg, layer, z, sx, sy)
-                    elseif (tileidx == 0) then -- Empty tile registered as collision
-                        local tile = {name = ("Tile_%i_%i"):format(x, y)}
-                        --self.bumpworld:add(tile, tx, ty, PPM, PPM)
+                        tile.sprite = gfx.sprite.new(tileimg)
+                        tile.sprite:setZIndex(SPRITE_Z_MIN + z)
+                        tile.sprite:setCenter(0.5, 0.0)
+                        tile.sprite:moveTo(TransformSystem.TileToScreen():transformXY(tile.pos.x, tile.pos.y))
+                    -- Empty collision tile
+                    elseif(tile.tileidx == 0) then
+                        if (layer.name == LayerName.Floor) then
+                            self.bumpworld:add(tile, tile.pos.x, tile.pos.y, PPM, PPM)
+                        end
                     else
-                        local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tileidx, z, x, y)
+                        local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tile.tileidx, z, x, y)
                         log.warn(msg)
                     end
+                    table.insert(self.tiles, tile)
                 end
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then

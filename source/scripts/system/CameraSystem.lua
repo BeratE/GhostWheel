@@ -26,7 +26,7 @@ function CameraSystem:preProcess(dt)
 end
 
 function CameraSystem:process(e, dt)
-    local lerp = 0.1
+    local lerp = CAMERA_LERP_FACTOR
     local tx, ty = self.center.x - e.sprite.x, self.center.y - e.sprite.y
     local cx, cy = self.camera:unpack()
     local sx, sy = cx + lerp*(tx - cx), cy + lerp*(ty - cy)

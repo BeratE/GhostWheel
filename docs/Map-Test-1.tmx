@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.0" orientation="isometric" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="64" infinite="0" nextlayerid="7" nextobjectid="30">
+<map version="1.8" tiledversion="1.8.0" orientation="isometric" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="64" infinite="0" nextlayerid="8" nextobjectid="30">
  <editorsettings>
   <export target="../source/assets/map/test-1.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" source="tile-floor-table-128-64.tsx"/>
  <tileset firstgid="10" source="people-dead-table-128-128.tsx"/>
  <tileset firstgid="34" source="../../../../Pictures/PixelArt/IsometricHospitalTiles/people-dead-table-128-128.tsx"/>
- <layer id="1" name="Floor" width="32" height="32">
+ <layer id="1" name="floor" width="32" height="32">
   <properties>
    <property name="collision" type="bool" value="false"/>
+   <property name="collisionEmpty" type="bool" value="true"/>
   </properties>
   <data encoding="csv">
 4,4,4,4,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,9,
@@ -45,7 +46,7 @@
 9,0,0,4,4,0,0,0,0,8,8,8,8,8,8,8,0,0,4,4,0,0,0,0,0,0,0,0,0,0,0,9
 </data>
  </layer>
- <layer id="2" name="Objects" width="32" height="32">
+ <layer id="2" name="objects" width="32" height="32">
   <properties>
    <property name="collision" type="bool" value="true"/>
   </properties>

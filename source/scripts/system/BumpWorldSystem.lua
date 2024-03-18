@@ -11,12 +11,15 @@ Order of physics system:
 ]]
 
 local function collisionFilter(item, other)
+    if (other.tile) then
+        return "touch"
+    end
     return "touch"
 end
 
 class("BumpWorldSystem").extends()
 tinyecs.processingSystem(BumpWorldSystem)
-BumpWorldSystem.filter = tinyecs.requireAll("pos", "hitbox")
+BumpWorldSystem.filter = tinyecs.requireAll("pos", "hitbox", tinyecs.rejectAny("tile"))
 
 function BumpWorldSystem:init(bumpworld)
     BumpWorldSystem.super.init(self)
@@ -32,26 +35,21 @@ function BumpWorldSystem:onRemove(e)
 end
 
 function BumpWorldSystem:preProcess(dt)
-    -- Check if a bumpworld is given
-    self.process = self.proxyProcess
-    if (not self.bumpworld) then
-        self.process = self.emptyProcess
-    end
 end
 
-
-function BumpWorldSystem:proxyProcess(e, dt)
+function BumpWorldSystem:process(e, dt)
     --[[ Position Update and Collision detection ]]
     local filter = e.collisionFilter or collisionFilter
     local px, py, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, filter)
     for i = 1, len do
         local col = cols[i]
         local collided = true
+        if (col.other.tile) then
+            log.info(("Collision with %s at %0.2f, %0.2f."):format(col.other.tilename, col.touch.x, col.touch.y))
+        end
 
-        log.info(("Collision with %s at %0.2f, %0.2f."):format(col.other.name, col.touch.x, col.touch.y))
-        
         if col.type == "touch" then
-            --e.vel.x, e.vel.y = 0, 0
+            e.vel.x, e.vel.y = 0, 0
         elseif col.type == "slide" then
             
         elseif col.type == "bounce" then
@@ -64,8 +62,4 @@ function BumpWorldSystem:proxyProcess(e, dt)
         end
     end
     e.pos.x, e.pos.y = px, py
-end
-
-function BumpWorldSystem:emptyProcess(e, dt)
-    -- Do Nothing
 end
