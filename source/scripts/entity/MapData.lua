@@ -120,12 +120,10 @@ function MapData:_readTiledJson(filepathname)
                 h = math.max(e.height or 1, 1)
             }
         end
-        --[[
         if (e.bumptype and not e.bumpfilter) then
             e.bumpfilter = function (self, other)
                 return e.bumptype
             end
         end
-        --]]
     end
 end
