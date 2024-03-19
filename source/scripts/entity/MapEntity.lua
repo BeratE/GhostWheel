@@ -14,7 +14,7 @@ function MapEntity:init(layer, lidx)
     self.lidx = lidx or layer.id     -- Layer index
     self[layer.type] = true          -- Object/Tile
     self:setProperties(layer.properties)
-    self.pos = vector((layer.x or 0), (layer.y or 0))
+    self.pos = vector((layer.offsetx or 0), (layer.offsety or 0))
     self.name = ("%s_%i"):format(layer.name, self.lidx)
 end
 

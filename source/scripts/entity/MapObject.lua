@@ -17,11 +17,13 @@ function MapObject:init(layer, lidx, object, oidx)
     self.pos.y += object.y
     self.rotation = object.rotation
     self.type = object.type
+    self.text = object.text
     if object.point then
         self.point = geom.point.new(self.pos.x, self.pos.y)
-    elseif object.polygon then
-        self.polygon = geom.polygon.new(#object.polygon)
-        for n, p in ipairs(object.polygon) do
+    elseif object.polygon or object.polyline then
+        local polygon = object.polygon or object.polyline
+        self.polygon = geom.polygon.new(#polygon)
+        for n, p in ipairs(polygon) do
             self.polygon:setPointAt(n, p.x, p.y)
         end
     else
