@@ -31,13 +31,6 @@ DIR = {
     N  = 8,  -- North
 }
 
---[[ Special Tiled layers]]
-LayerName = {
-    Floor = "floor", -- Empty tiles on floor layer are treated as walls
-    Spawns = "spawns",
-    Events = "events"
-}
-
 --[[ Definitions for Tiled ]]
 Tiled = {
     Map = {

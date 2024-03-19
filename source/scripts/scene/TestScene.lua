@@ -17,14 +17,14 @@ function TestScene:init()
     self.levels = {}
     while(true) do
         local levelname = ("test-%i.json"):format(#self.levels + 1)
-        --local value = Level(levelname)
-        --
+        local value = MapData(levelname)
+        --[[
         local status, value = pcall(function() return MapData(levelname) end)
         if (not status) then
             log.warn(value)
             break
         end
-        --
+        --]]
         table.insert(self.levels, value)
         break
     end
@@ -32,7 +32,8 @@ function TestScene:init()
         error("No test levels found for TestScene", 2)
     end
     self.levelIdx = 1
-    self.player = Player(self.levels[self.levelIdx].spawns.player)
+    --self.player = Player(self.levels[self.levelIdx].spawns.player)
+    self.player = Player()
     local bumpworld = self.levels[self.levelIdx].bumpworld
     -- Initialize Systems
 

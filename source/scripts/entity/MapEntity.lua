@@ -9,23 +9,33 @@ local gfx <const> = playdate.graphics
 --[[ Generic Map Entity Tile or Object ]]
 class("MapEntity").extends(Entity)
 
-function MapEntity:init(layer, z, x, y)
+function MapEntity:init(layer, lidx)
     MapEntity.super.init(self)
-    self.name = ("%s_%i_%i"):format(layer.name, x, y)
-    self.idx = layer.data[((y-1)*layer.width) + x]
-    self.pos = vector((x-1)*PPM, (y-1)*PPM)
-    self.layeridx = z
-    self[layer.type] = true
-    if (layer.property) then
-        for _, property in ipairs(layer.property) do
-            self[property.name] = property.value
-        end
-    end
+    self.lidx = lidx or layer.id     -- Layer index
+    self[layer.type] = true          -- Object/Tile
+    self:setProperties(layer.properties)
+    self.pos = vector((layer.x or 0), (layer.y or 0))
+    self.name = ("%s_%i"):format(layer.name, self.lidx)
 end
 
 function MapEntity:setSprite(img)
     self.sprite = gfx.sprite.new(img)
-    self.sprite:setZIndex(SPRITE_Z_MIN + self.layeridx)
+    self.sprite:setZIndex(SPRITE_Z_MIN + self.lidx)
     self.sprite:setCenter(0.5, 0.0)
     self.sprite:moveTo(TransformSystem.TileToScreen():transformXY(self.pos.x, self.pos.y))
+end
+
+function MapEntity:setProperties(properties)
+    if (properties) then
+        for _, property in ipairs(properties) do
+            -- Translate string dot notation
+            local pointer, prev, lname = self, self, property.name
+            for name in string.gmatch(property.name, '([^.]*)') do
+                prev = pointer
+                pointer[name] = {}
+                pointer = pointer[name]
+            end
+            prev[lname] = property.value
+        end
+    end
 end

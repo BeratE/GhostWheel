@@ -12,7 +12,7 @@ Order of physics system:
 
 local gfx <const> = playdate.graphics
 
-local function collisionFilter(item, other)
+local function filter(item, other)
     if (other.tile) then
         return "touch"
     end
@@ -21,7 +21,8 @@ end
 
 class("BumpWorldSystem").extends()
 tinyecs.processingSystem(BumpWorldSystem)
-BumpWorldSystem.filter = tinyecs.requireAll("pos", "hitbox", tinyecs.rejectAny(Tiled.Layer.Type.Tile))
+BumpWorldSystem.filter = tinyecs.requireAll("pos", "hitbox",
+    tinyecs.rejectAny(Tiled.Layer.Type.Tile))
 
 function BumpWorldSystem:init(bumpworld)
     BumpWorldSystem.super.init(self)
@@ -52,8 +53,8 @@ function BumpWorldSystem:process(e, dt)
     local sp = TransformSystem.TileToScreen():transformedPolygon(p)
     --]]
     --[[ Position Update and Collision detection ]]
-    local filter = e.collisionFilter or collisionFilter
-    local px, py, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, filter)
+    local collisionfilter = e.bumpfilter or filter
+    local px, py, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, collisionfilter)
     for i = 1, len do
         local col = cols[i]
         local collided = true

@@ -1,7 +1,8 @@
 ---@diagnostic disable: undefined-field, need-check-nil, inject-field
 import "CoreLibs/object"
 import "CoreLibs/graphics"
-import "scripts/entity/MapEntity"
+import "scripts/entity/MapTile"
+import "scripts/entity/MapObject"
 import "pdlibs/util/string"
 import "libs/bump"
 import "libs/pdlog"
@@ -68,43 +69,35 @@ function MapData:readTiledJson(filepathname)
     self.tiles = {}
     self.images = {}
     self.objects = {}
-    self.spawns = {}
     -- Iterate layers
-    for z, layer in ipairs(tiled.layers) do
+    for lidx, layer in ipairs(tiled.layers) do
         if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
                 for x = 1, layer.width  do
-                    local tile = MapEntity(layer, z, x, y)
-                    local tileimg = self.tileimages[tile.idx]
+                    local entityTile = MapTile(layer, lidx, x, y)
+                    local tileimg = self.tileimages[entityTile.tileidx]
                     if (tileimg) then
-                        tile:setSprite(tileimg)
-                    elseif(tile.idx == 0) then
-                        if (layer.name == LayerName.Floor) then
-                            self.bumpworld:add(tile, tile.pos.x, tile.pos.y, PPM, PPM)
-                        end
-                    else
-                        local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tile.idx, z, x, y)
+                        entityTile:setSprite(tileimg)
+                    elseif(entityTile.tileidx ~= 0) then
+                        local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(entityTile.tileidx, lidx, x, y)
                         log.warn(msg)
                     end
-                    table.insert(self.tiles, tile)
+                    table.insert(self.tiles, entityTile)
                 end
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then
-            if (layer.name == LayerName.Spawns) then
-                for i, obj in ipairs(layer.objects) do
-                    if obj.name == "player" then
-                        self.spawns.player = vector(obj.x, obj.y)
-                    end
-                end
+            for oidx, object in ipairs(layer.objects) do
+                local entityObject = MapObject(layer, lidx, object, oidx)
+                table.insert(self.objects, entityObject)
             end
         elseif(layer.type == Tiled.Layer.Type.Image) then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
             local img = gfx.sprite.new(assets.getImage(img_name))
             if (img) then
-                local px, py = self.x - self.width/2, self.y + self.height/2
-                addTileSprite(img, layer, z, px, py)
+                local entityImage = MapImage(layer, lidx, img)
+                table.insert(self.images, entityImage)
             else
-                local msg = ("Image %s not found in tilelayer %i"):format(img_name, z)
+                local msg = ("Image %s not found in tilelayer %i"):format(img_name, lidx)
                 log.warn(msg)
             end
         else
@@ -116,8 +109,12 @@ end
 
 function MapData:add(world)
     world:add(table.unpack(self.tiles))
+    world:add(table.unpack(self.objects))
+    world:add(table.unpack(self.images))
 end
 
 function MapData:remove(world)
     world:remove(table.unpack(self.tiles))
+    world:remove(table.unpack(self.objects))
+    world:remove(table.unpack(self.images))
 end

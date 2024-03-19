@@ -3,7 +3,8 @@
     "Lua.diagnostics.disable": [
         "undefined-global",
         "lowercase-global",
-        "redundant-parameter"
+        "redundant-parameter",
+        "need-check-nil"
     ],
     "Lua.diagnostics.globals": ["playdate", "import"],
     "Lua.runtime.nonstandardSymbol": ["+=", "-=", "*=", "/="],
