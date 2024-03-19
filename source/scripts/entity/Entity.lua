@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "libs/vector"

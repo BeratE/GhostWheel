@@ -32,22 +32,16 @@ function TestScene:init()
         error("No test levels found for TestScene", 2)
     end
     self.levelIdx = 1
-    --self.player = Player(self.levels[self.levelIdx].spawns.player)
     self.player = Player()
-    local bumpworld = self.levels[self.levelIdx].bumpworld
     -- Initialize Systems
-
     self.systems = {
+        bumpworld = BumpWorldSystem(self.levels[self.levelIdx].bumpworld),
         rigidbody = RigidBodySystem(),
-        bumpworld = BumpWorldSystem(bumpworld),
         transform = TransformSystem(),
         sprite = SpriteSystem(),
         camera = CameraSystem()
     }
-    -- Add Systems
-    for _, sys in pairs(self.systems) do
-        self.world:addSystem(sys)
-    end
+    self:addSystems(self.systems)
 end
 
 function TestScene:onEnter()
@@ -62,7 +56,7 @@ end
 function TestScene:onExit()
     log.info("Exiting TestScene ..")
     -- Remove Entities
-    self.world:addEntity(self.player)
+    self.world:removeEntity(self.player)
     self.levels[self.levelIdx]:remove(self.world)
     self.world:refresh()
 end

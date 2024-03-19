@@ -4,7 +4,8 @@
         "undefined-global",
         "lowercase-global",
         "redundant-parameter",
-        "need-check-nil"
+        "need-check-nil",
+        "undefined-field"
     ],
     "Lua.diagnostics.globals": ["playdate", "import"],
     "Lua.runtime.nonstandardSymbol": ["+=", "-=", "*=", "/="],

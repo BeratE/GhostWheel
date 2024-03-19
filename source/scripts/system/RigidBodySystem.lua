@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field
 import "CoreLibs/object"
 import "pdlibs/util/math"
 import "libs/tinyecs"
@@ -16,8 +15,7 @@ local PRECISION <const> = 0.0001
 
 class("RigidBodySystem").extends()
 tinyecs.processingSystem(RigidBodySystem)
-RigidBodySystem.filter = tinyecs.requireAll("pos",
-    tinyecs.rejectAny(Tiled.Layer.Type.Tile))
+RigidBodySystem.filter = tinyecs.requireAll("pos", tinyecs.rejectAny(Tiled.Layer.Type.Image, Tiled.Layer.Type.Tile))
 
 function RigidBodySystem:init()
     RigidBodySystem.super.init(self)
@@ -36,8 +34,13 @@ function RigidBodySystem:process(e, dt)
     e.acc.y = e.force.y/e.mass
     e.force = vector(0, 0)
     -- Velocity verlet integration
-    e.pos.x += e.vel.x*dt + e.acc.x/2*dt*dt
-    e.pos.y += e.vel.y*dt + e.acc.y/2*dt*dt
+    e.moved = false
+    local x = e.pos.x + e.vel.x*dt + e.acc.x/2*dt*dt
+    local y = e.pos.y + e.vel.y*dt + e.acc.y/2*dt*dt
+    if (e.pos.x ~= x or e.pos.y ~= y) then
+        e.pos.x, e.pos.y = x, y
+        e.moved = true
+    end
     e.vel.x += e.acc.x*dt
     e.vel.y += e.acc.y*dt
     -- Clamp velocity

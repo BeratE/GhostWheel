@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field
 import "CoreLibs/object"
 import "scripts/entity/MapEntity"
 

@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field, inject-field, need-check-nil
 import "CoreLibs/object"
 import "libs/tinyecs"
 import "pdlibs/util/debug"
@@ -7,18 +6,24 @@ local gfx <const> = playdate.graphics
 local disp <const> = playdate.display
 local geom <const> = playdate.geometry
 -- Top-Down to Screen Coordinate projection
-local trIsometric = geom.affineTransform.new((TILE_WIDTH/2)/PPM, -(TILE_WIDTH/2)/PPM, (TILE_HEIGHT/2)/PPM, (TILE_HEIGHT/2)/PPM)
+local trIsometric = geom.affineTransform.new(
+    (TILE_WIDTH/2)/PPM, -(TILE_WIDTH/2)/PPM,
+    (TILE_HEIGHT/2)/PPM, (TILE_HEIGHT/2)/PPM)
 local trIsometricInv = trIsometric:copy()
 trIsometricInv:invert()
 
 -- [[ Derives screen coordinates by applying linear transform to position coordinates ]]
 class("TransformSystem").extends()
 tinyecs.processingSystem(TransformSystem)
-TransformSystem.filter = tinyecs.requireAll("pos", "sprite",
-    tinyecs.rejectAny(Tiled.Layer.Type.Image, Tiled.Layer.Type.Tile))
+TransformSystem.filter = tinyecs.requireAll("pos", "sprite", tinyecs.rejectAny(Tiled.Layer.Type.Image, Tiled.Layer.Type.Tile))
 
 function TransformSystem:init()
     TransformSystem.super.init(self)
+end
+
+function TransformSystem:onAdd(e)
+    local x, y = TransformSystem.TileToScreen():transformXY(e.pos.x, e.pos.y)
+    e.sprite:moveTo(x, y)
 end
 
 function TransformSystem:preProcess(dt)
@@ -34,6 +39,9 @@ function TransformSystem:preProcess(dt)
 end
 
 function TransformSystem:process(e, dt)
+    if not e.moved then
+        return
+    end
     local x, y = TransformSystem.TileToScreen():transformXY(e.pos.x, e.pos.y)
     e.sprite:moveTo(x, y)
     --print("Entity Pos: " .. e.pos.x .. " " .. e.pos.y .. ", Sprite: " .. x .. " " .. y)

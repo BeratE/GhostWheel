@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field, need-check-nil
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "scripts/entity/Entity"

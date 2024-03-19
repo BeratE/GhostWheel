@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field
 import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "libs/vector"
@@ -11,11 +10,12 @@ class("MapEntity").extends(Entity)
 
 function MapEntity:init(layer, lidx)
     MapEntity.super.init(self)
+    self.mapentity = true            -- Generic Map Entity
+    self[layer.type] = true          -- Object/Tile Entity
     self.lidx = lidx or layer.id     -- Layer index
-    self[layer.type] = true          -- Object/Tile
-    self:setProperties(layer.properties)
     self.pos = vector((layer.offsetx or 0), (layer.offsety or 0))
-    self.name = ("%s_%i"):format(layer.name, self.lidx)
+    self.name = layer.name
+    self:setProperties(layer.properties)
 end
 
 function MapEntity:setSprite(img)

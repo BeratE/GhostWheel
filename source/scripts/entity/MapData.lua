@@ -19,15 +19,11 @@ function MapData:init(filepathname)
 end
 
 function MapData:add(world)
-    world:add(table.unpack(self.tiles))
-    world:add(table.unpack(self.objects))
-    world:add(table.unpack(self.images))
+    world:add(table.unpack(self.entitis))
 end
 
 function MapData:remove(world)
-    world:remove(table.unpack(self.tiles))
-    world:remove(table.unpack(self.objects))
-    world:remove(table.unpack(self.images))
+    world:remove(table.unpack(self.entitis))
 end
 
 function MapData:_readTiledJson(filepathname)
@@ -37,6 +33,7 @@ function MapData:_readTiledJson(filepathname)
     filepathname = "assets/map/"..filepathname
     log.info("Loading Tiled file " .. filepathname)
     local tiled = json.decodeFile(filepathname)
+
     -- Sanity check
     assert(tiled, "Unable to decode Tiled map file " .. filepathname)
     assert(tiled.compressionlevel == Tiled.Map.Compression.Default, "TiledMap only supports default compression")
@@ -44,6 +41,7 @@ function MapData:_readTiledJson(filepathname)
     assert(tiled.width == tiled.height, "TiledMap only supports maps of equal width and height")
     assert(tiled.orientation == Tiled.Map.Orientation.Isometric, "TiledMap can only load isometric tiled data")
     assert(tiled.renderorder == Tiled.Map.RenderOrder.RightDown, "TiledMap can only use right-down render order")
+
     -- Read tile data
     self.nTilesX = tiled.width
     self.nTilesY = tiled.height
@@ -52,6 +50,7 @@ function MapData:_readTiledJson(filepathname)
     self.tileDepth  = self.tileHeight/2
     self.width = self.nTilesX*self.tileWidth
     self.height = self.nTilesY*self.tileHeight
+
     -- Collect tilesets into one big image table
     self.tileimages = {}
     for _,t in ipairs(tiled.tilesets) do
@@ -71,17 +70,16 @@ function MapData:_readTiledJson(filepathname)
             table.insert(self.tileimages, imgtable:getImage(i))
         end
     end
+
     -- Initialize tilemap bumpword and add map borders
     self.bumpworld = bump.newWorld()
-    self.bumpworld:add({name = "_borderTop"},   0, -16, self.nTilesX*PPM, 16)
+    self.bumpworld:add({name = "_borderTop"},   0, -PPM, self.nTilesX*PPM, PPM)
     self.bumpworld:add({name = "_borderBot"},   0, self.nTilesY*PPM, self.nTilesX*PPM, 16)
-    self.bumpworld:add({name = "_borderLeft"},  -16, 0, 16, self.nTilesY*PPM)
-    self.bumpworld:add({name = "_borderRight"}, self.nTilesX*PPM, 0, 16, self.nTilesY*PPM)
-    -- Retrieve layer information
-    self.tiles = {}
-    self.images = {}
-    self.objects = {}
-    -- Iterate layers
+    self.bumpworld:add({name = "_borderLeft"},  -PPM, 0, PPM, self.nTilesY*PPM)
+    self.bumpworld:add({name = "_borderRight"}, self.nTilesX*PPM, 0, PPM, self.nTilesY*PPM)
+
+    -- Retrieve entities from layers
+    self.entitis = {}
     for lidx, layer in ipairs(tiled.layers) do
         if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
@@ -89,7 +87,7 @@ function MapData:_readTiledJson(filepathname)
                     local tileidx = layer.data[((y-1)*layer.width) + x]
                     local tileimg = self.tileimages[tileidx]
                     if (tileimg) then
-                        table.insert(self.tiles, MapTile(layer, lidx, x, y, tileimg))
+                        table.insert(self.entitis, MapTile(layer, lidx, x, y, tileimg))
                     elseif(tileidx ~= 0) then
                         local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tileidx, lidx, x, y)
                         log.warn(msg)
@@ -98,13 +96,13 @@ function MapData:_readTiledJson(filepathname)
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then
             for oidx, object in ipairs(layer.objects) do
-                table.insert(self.objects, MapObject(layer, lidx, object, oidx))
+                table.insert(self.entitis, MapObject(layer, lidx, object))
             end
         elseif(layer.type == Tiled.Layer.Type.Image) then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
             local img = gfx.sprite.new(assets.getImage(img_name))
             if (img) then
-                table.insert(self.images, MapImage(layer, lidx, img))
+                table.insert(self.entitis, MapImage(layer, lidx, img))
             else
                 local msg = ("Image %s not found in tilelayer %i"):format(img_name, lidx)
                 log.warn(msg)
@@ -113,5 +111,21 @@ function MapData:_readTiledJson(filepathname)
             log.warn("Unrecognized layer type ".. layer.type)
         end
     end
-    assert(#self.tiles > 0, "TiledMap was unable to retrieve any map data")
+
+    -- Post-Process entities
+    for _, e in ipairs(self.entitis) do
+        if (e.collision and not e.hitbox) then
+            e.hitbox = {
+                w = math.max(e.width or 1, 1),
+                h = math.max(e.height or 1, 1)
+            }
+        end
+        --[[
+        if (e.bumptype and not e.bumpfilter) then
+            e.bumpfilter = function (self, other)
+                return e.bumptype
+            end
+        end
+        --]]
+    end
 end

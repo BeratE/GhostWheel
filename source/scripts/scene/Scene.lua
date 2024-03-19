@@ -38,6 +38,12 @@ function Scene:getDeltaTimeMs()
     return self.deltaTimeMs
 end
 
+function Scene:addSystems(systems)
+    for _, sys in pairs(systems) do
+        self.world:addSystem(sys)
+    end
+end
+
 -- [[ Simulator and Debug ]]
 
 function Scene:keyPressed(key)

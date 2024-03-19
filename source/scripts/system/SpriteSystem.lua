@@ -3,7 +3,6 @@ import "libs/tinyecs"
 import "pdlibs/util/debug"
 
 local gfx <const> = playdate.graphics
-local disp <const> = playdate.display
 
 -- [[ Manage sprite component of entities ]]
 class("SpriteSystem").extends()

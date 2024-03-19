@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field
 import "CoreLibs/object"
 import "scripts/entity/MapEntity"
 
@@ -7,10 +6,10 @@ local geom <const> = playdate.geometry
 --[[ Map Object Entity ]]
 class("MapObject").extends(MapEntity)
 
-function MapObject:init(layer, lidx, object, oidx)
+function MapObject:init(layer, lidx, object)
     MapTile.super.init(self, layer, lidx)
     self:setProperties(object.properties)
-    self.name = ("%s_%s_%i"):format(self.name, object.name, oidx)
+    self.name = ("%s_%i_%s"):format(self.name, object.id, object.name)
     self.width = object.width
     self.height = object.height
     self.pos.x += object.x

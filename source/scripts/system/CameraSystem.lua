@@ -1,4 +1,3 @@
----@diagnostic disable: undefined-field, inject-field, need-check-nil
 import "CoreLibs/object"
 import "libs/tinyecs"
 import "libs/vector"
