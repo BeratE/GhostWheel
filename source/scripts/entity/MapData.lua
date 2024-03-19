@@ -86,7 +86,7 @@ function MapData:_readTiledJson(filepathname)
         if (layer.type == Tiled.Layer.Type.Tile) then
             for y = 1, layer.height do
                 for x = 1, layer.width  do
-                    local tileidx = layer.data[((ty-1)*layer.width) + tx]
+                    local tileidx = layer.data[((y-1)*layer.width) + x]
                     local tileimg = self.tileimages[tileidx]
                     if (tileimg) then
                         table.insert(self.tiles, MapTile(layer, lidx, x, y, tileimg))
