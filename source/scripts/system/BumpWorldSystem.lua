@@ -21,7 +21,7 @@ BumpWorldSystem.filter = tinyecs.requireAll("pos", "hitbox")
 
 function BumpWorldSystem:init(bumpworld)
     BumpWorldSystem.super.init(self)
-    self.bumpworld = bumpworld
+    self:setBumpWorld(bumpworld)
 end
 
 function BumpWorldSystem:onAdd(e)

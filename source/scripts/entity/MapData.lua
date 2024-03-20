@@ -33,7 +33,6 @@ function MapData:_readTiledJson(filepathname)
     filepathname = "assets/map/"..filepathname
     log.info("Loading Tiled file " .. filepathname)
     local tiled = json.decodeFile(filepathname)
-
     -- Sanity check
     assert(tiled, "Unable to decode Tiled map file " .. filepathname)
     assert(tiled.compressionlevel == Tiled.Map.Compression.Default, "TiledMap only supports default compression")
@@ -41,7 +40,6 @@ function MapData:_readTiledJson(filepathname)
     assert(tiled.width == tiled.height, "TiledMap only supports maps of equal width and height")
     assert(tiled.orientation == Tiled.Map.Orientation.Isometric, "TiledMap can only load isometric tiled data")
     assert(tiled.renderorder == Tiled.Map.RenderOrder.RightDown, "TiledMap can only use right-down render order")
-
     -- Read tile data
     self.nTilesX = tiled.width
     self.nTilesY = tiled.height
@@ -50,7 +48,13 @@ function MapData:_readTiledJson(filepathname)
     self.tileDepth  = self.tileHeight/2
     self.width = self.nTilesX*self.tileWidth
     self.height = self.nTilesY*self.tileHeight
-
+    local ppm = self.tileHeight
+    -- Set map properties
+    if (tiled.properties) then
+        for _, property in ipairs(tiled.properties) do
+            self[property.name] = property.value
+        end
+    end
     -- Collect tilesets into one big image table
     self.tileimages = {}
     for _,t in ipairs(tiled.tilesets) do
@@ -70,14 +74,12 @@ function MapData:_readTiledJson(filepathname)
             table.insert(self.tileimages, imgtable:getImage(i))
         end
     end
-
     -- Initialize tilemap bumpword and add map borders
     self.bumpworld = bump.newWorld()
-    self.bumpworld:add({name = "_borderTop"},   0, -PPM, self.nTilesX*PPM, PPM)
-    self.bumpworld:add({name = "_borderBot"},   0, self.nTilesY*PPM, self.nTilesX*PPM, 16)
-    self.bumpworld:add({name = "_borderLeft"},  -PPM, 0, PPM, self.nTilesY*PPM)
-    self.bumpworld:add({name = "_borderRight"}, self.nTilesX*PPM, 0, PPM, self.nTilesY*PPM)
-
+    self.bumpworld:add({name = "_borderTop"},   0, -ppm, self.nTilesX*ppm, ppm)
+    self.bumpworld:add({name = "_borderBot"},   0, self.nTilesY*ppm, self.nTilesX*ppm, 16)
+    self.bumpworld:add({name = "_borderLeft"},  -ppm, 0, ppm, self.nTilesY*ppm)
+    self.bumpworld:add({name = "_borderRight"}, self.nTilesX*ppm, 0, ppm, self.nTilesY*ppm)
     -- Retrieve entities from layers
     self.entitis = {}
     for lidx, layer in ipairs(tiled.layers) do
@@ -87,7 +89,7 @@ function MapData:_readTiledJson(filepathname)
                     local tileidx = layer.data[((y-1)*layer.width) + x]
                     local tileimg = self.tileimages[tileidx]
                     if (tileimg) then
-                        table.insert(self.entitis, MapTile(layer, lidx, x, y, tileimg))
+                        table.insert(self.entitis, MapTile(layer, lidx, x, y, ppm, tileimg))
                     elseif(tileidx ~= 0) then
                         local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tileidx, lidx, x, y)
                         log.warn(msg)
@@ -111,7 +113,6 @@ function MapData:_readTiledJson(filepathname)
             log.warn("Unrecognized layer type ".. layer.type)
         end
     end
-
     -- Post-Process entities
     for _, e in ipairs(self.entitis) do
         if (e.collision and not e.hitbox) then
@@ -126,4 +127,12 @@ function MapData:_readTiledJson(filepathname)
             end
         end
     end
+end
+
+function MapData:getBumpWorld()
+    return self.bumpworld
+end
+
+function MapData:getTileSize()
+    return self.tileWidth, self.tileHeight
 end

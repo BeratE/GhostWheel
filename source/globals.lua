@@ -4,11 +4,6 @@ FPS = 30 -- Frames per second
 
 --[[ CONFIGURATIONS ]]
 
--- Make this dependant on Level data?
-TILE_WIDTH  = 128           -- Global Tile-width for isometric coordinate conversion
-TILE_HEIGHT = 64            -- Global Tile-height or isometric coordinate conversion
-PPM = TILE_HEIGHT           -- Pixel-Per-Meter. Stretching factor for Tile coordinate system.
-
 CAMERA_LERP_FACTOR = 0.1    -- Smoothing factor for camera lerping
 BUMP_CELL_MULTIPLIER = 2    -- BumpWorld cell size multiplier
 

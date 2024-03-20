@@ -10,10 +10,10 @@ class("Player").extends(Entity)
 function Player:init(pos)
     Player.super.init(self)
     self.player = true
-    self.cameraTrack = {offsetx = 0, offsety = 0}
+    self.cameratrack = {x = 0, y = 0}
     self:setSprite()
     self.mass = 80
-    self.pos = pos or vector(PPM/2, PPM/2)
+    self.pos = pos or vector(64, 64)
     self.hitbox = {w = self.sprite.width, h = self.sprite.height}
 end
 

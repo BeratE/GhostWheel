@@ -19,10 +19,11 @@ function MapEntity:init(layer, lidx)
 end
 
 function MapEntity:setSprite(img)
-    self.sprite = gfx.sprite.new(img)
-    self.sprite:setZIndex(SPRITE_Z_MIN + self.lidx)
-    self.sprite:setCenter(0.5, 0.0)
-    self.sprite:moveTo(TransformSystem.TileToScreen():transformXY(self.pos.x, self.pos.y))
+    if (img) then
+        self.sprite = gfx.sprite.new(img)
+        self.sprite:setZIndex(SPRITE_Z_MIN + self.lidx)
+        self.sprite:setCenter(0.5, 0.0)
+    end
 end
 
 function MapEntity:setProperties(properties)

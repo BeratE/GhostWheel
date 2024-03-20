@@ -9,7 +9,7 @@ local disp <const> = playdate.display
 -- [[ Lazily follows the player character around by setting the drawing offset ]]
 class("CameraSystem").extends()
 tinyecs.processingSystem(CameraSystem)
-CameraSystem.filter = tinyecs.requireAll("cameraTrack", "sprite")
+CameraSystem.filter = tinyecs.requireAll("cameratrack", "sprite")
 
 
 function CameraSystem:init()
@@ -18,7 +18,7 @@ end
 
 function CameraSystem:onAdd(e)
     self.center = vector(disp.getWidth()/2, disp.getHeight()/2)
-    self.camera = vector(self.center.x - e.sprite.x + e.cameraTrack.offsetx, self.center.y - e.sprite.y + e.cameraTrack.offsety)
+    self.camera = vector(self.center.x - e.sprite.x + e.cameratrack.x, self.center.y - e.sprite.y + e.cameratrack.y)
 end
 
 function CameraSystem:preProcess(dt)
@@ -27,7 +27,7 @@ end
 
 function CameraSystem:process(e, dt)
     local lerp = CAMERA_LERP_FACTOR
-    local tx, ty = self.center.x - e.sprite.x + e.cameraTrack.offsetx, self.center.y - e.sprite.y + e.cameraTrack.offsety
+    local tx, ty = self.center.x - e.sprite.x + e.cameratrack.x, self.center.y - e.sprite.y + e.cameratrack.y
     local cx, cy = self.camera:unpack()
     local sx, sy = cx + lerp*(tx - cx), cy + lerp*(ty - cy)
     self.camera:set(sx, sy)

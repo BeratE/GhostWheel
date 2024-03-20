@@ -33,11 +33,12 @@ function TestScene:init()
     end
     self.levelIdx = 1
     self.player = Player()
+    local level = self.levels[self.levelIdx]
     -- Initialize Systems
     self.systems = {
-        bumpworld = BumpWorldSystem(self.levels[self.levelIdx].bumpworld),
+        bumpworld = BumpWorldSystem(level:getBumpWorld()),
+        transform = TransformSystem(level:getTileSize()),
         rigidbody = RigidBodySystem(),
-        transform = TransformSystem(),
         sprite = SpriteSystem(),
         camera = CameraSystem()
     }
@@ -76,7 +77,8 @@ function TestScene:switchNextLevel()
     end
     self.world:refresh()
     self.levels[self.levelIdx]:add(self.world)
-    self.systems.bumpworld:setBumpWorld(self.levels[self.levelIdx].bumpworld)
+    self.systems.bumpworld:setBumpWorld(self.levels[self.levelIdx]:getBumpWorld())
+    self.systems.transform:setTileSize(self.levels[self.levelIdx]:getTileSize())
     self.world:refresh()
 end
 
