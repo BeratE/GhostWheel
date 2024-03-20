@@ -18,7 +18,7 @@ end
 
 function CameraSystem:onAdd(e)
     self.center = vector(disp.getWidth()/2, disp.getHeight()/2)
-    self.camera = vector(self.center.x - e.sprite.x + e.cameratrack.x, self.center.y - e.sprite.y + e.cameratrack.y)
+    self.camera = vector(self.center.x - e.sprite.x, self.center.y - e.sprite.y)
 end
 
 function CameraSystem:preProcess(dt)
@@ -27,7 +27,7 @@ end
 
 function CameraSystem:process(e, dt)
     local lerp = CAMERA_LERP_FACTOR
-    local tx, ty = self.center.x - e.sprite.x + e.cameratrack.x, self.center.y - e.sprite.y + e.cameratrack.y
+    local tx, ty = self.center.x - e.sprite.x, self.center.y - e.sprite.y
     local cx, cy = self.camera:unpack()
     local sx, sy = cx + lerp*(tx - cx), cy + lerp*(ty - cy)
     self.camera:set(sx, sy)

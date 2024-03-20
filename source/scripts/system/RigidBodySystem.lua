@@ -61,8 +61,8 @@ function RigidBodySystem.initRigidBody(e, mass, lindamp, pos)
     e.pos = e.pos or pos or vector(0, 0) -- Current position of the object
     e = e or {}
     --[[ Scalar components ]]
-    -- Mass of object in kg (minimum of 1gram)
-    e.mass = e.mass or mass or 1
+    -- Mass of object in kg (minimum of 1gram) - default 80kg
+    e.mass = e.mass or mass or 80
     e.mass = math.max(e.mass, 0.001)
     -- linear damping factor [0, 1], i.e. resistance to movement
     e.lindamp = e.lindamp or lindamp or 0.1

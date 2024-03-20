@@ -309,31 +309,36 @@
         }, 
         {
          "draworder":"topdown",
-         "id":12,
-         "name":"spawn",
+         "id":14,
+         "name":"player",
          "objects":[
                 {
                  "height":0,
-                 "id":50,
+                 "id":75,
                  "name":"player",
                  "point":true,
+                 "properties":[
+                        {
+                         "name":"cameratrack",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"collision",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"player",
+                         "type":"bool",
+                         "value":true
+                        }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":781.667,
-                 "y":1759.67
-                }, 
-                {
-                 "height":0,
-                 "id":54,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":904.667,
-                 "y":2258
+                 "x":781,
+                 "y":1805.66666666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -341,8 +346,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":14,
- "nextobjectid":75,
+ "nextlayerid":15,
+ "nextobjectid":76,
  "orientation":"isometric",
  "renderorder":"right-down",
  "tiledversion":"1.8.0",

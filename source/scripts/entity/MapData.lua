@@ -4,8 +4,8 @@ import "CoreLibs/graphics"
 import "scripts/entity/MapTile"
 import "scripts/entity/MapObject"
 import "pdlibs/util/string"
-import "libs/bump"
 import "libs/pdlog"
+import "libs/bump"
 
 local gfx <const> = playdate.graphics
 
@@ -15,18 +15,6 @@ Loads TILED map data from JSON files]]
 class("MapData").extends()
 
 function MapData:init(filepathname)
-    self:_readTiledJson(filepathname)
-end
-
-function MapData:add(world)
-    world:add(table.unpack(self.entitis))
-end
-
-function MapData:remove(world)
-    world:remove(table.unpack(self.entitis))
-end
-
-function MapData:_readTiledJson(filepathname)
     self.mapdata = true
 
     -- Read json map
@@ -75,7 +63,7 @@ function MapData:_readTiledJson(filepathname)
         end
     end
     -- Initialize tilemap bumpword and add map borders
-    self.bumpworld = bump.newWorld()
+    self.bumpworld = bump.newWorld(math.max(self.nTilesX, self.nTilesY) * BUMP_CELL_MULTIPLIER)
     self.bumpworld:add({name = "_borderTop"},   0, -ppm, self.nTilesX*ppm, ppm)
     self.bumpworld:add({name = "_borderBot"},   0, self.nTilesY*ppm, self.nTilesX*ppm, 16)
     self.bumpworld:add({name = "_borderLeft"},  -ppm, 0, ppm, self.nTilesY*ppm)
@@ -97,7 +85,7 @@ function MapData:_readTiledJson(filepathname)
                 end
             end
         elseif(layer.type == Tiled.Layer.Type.Object) then
-            for oidx, object in ipairs(layer.objects) do
+            for _, object in ipairs(layer.objects) do
                 table.insert(self.entitis, MapObject(layer, lidx, object))
             end
         elseif(layer.type == Tiled.Layer.Type.Image) then
@@ -115,18 +103,41 @@ function MapData:_readTiledJson(filepathname)
     end
     -- Post-Process entities
     for _, e in ipairs(self.entitis) do
+        -- player
+        if (e.player) then
+            if (self.player) then
+                log.error("There is already a player object on the map!")
+            else
+                self.player = e
+                self.player:setDebugSprite()
+            end
+        end
+        -- collision
         if (e.collision and not e.hitbox) then
             e.hitbox = {
                 w = math.max(e.width or 1, 1),
                 h = math.max(e.height or 1, 1)
             }
         end
+        -- bumtype
         if (e.bumptype and not e.bumpfilter) then
             e.bumpfilter = function (self, other)
                 return e.bumptype
             end
         end
     end
+    -- Check if everything went right
+    if not self.player then
+        log.error("No player object was found on the map!")
+    end
+end
+
+function MapData:add(world)
+    world:add(table.unpack(self.entitis))
+end
+
+function MapData:remove(world)
+    world:remove(table.unpack(self.entitis))
 end
 
 function MapData:getBumpWorld()

@@ -5,7 +5,6 @@ import "scripts/system/RigidBodySystem"
 import "scripts/system/BumpWorldSystem"
 import "scripts/system/SpriteSystem"
 import "scripts/entity/MapData"
-import "scripts/entity/Player"
 import "libs/pdlog"
 
 --[[ TestScene ]]
@@ -32,8 +31,8 @@ function TestScene:init()
         error("No test levels found for TestScene", 2)
     end
     self.levelIdx = 1
-    self.player = Player()
     local level = self.levels[self.levelIdx]
+    self.player = level.player
     -- Initialize Systems
     self.systems = {
         bumpworld = BumpWorldSystem(level:getBumpWorld()),
@@ -48,16 +47,12 @@ end
 function TestScene:onEnter()
     TestScene.super.onEnter(self)
     log.info("Entering TestScene ..")
-    -- Add Entities
-    self.world:addEntity(self.player)
     self.levels[self.levelIdx]:add(self.world)
     self.world:refresh()
 end
 
 function TestScene:onExit()
     log.info("Exiting TestScene ..")
-    -- Remove Entities
-    self.world:removeEntity(self.player)
     self.levels[self.levelIdx]:remove(self.world)
     self.world:refresh()
 end

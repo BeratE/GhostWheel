@@ -23,6 +23,7 @@ function MapEntity:setSprite(img)
         self.sprite = gfx.sprite.new(img)
         self.sprite:setZIndex(SPRITE_Z_MIN + self.lidx)
         self.sprite:setCenter(0.5, 0.0)
+        self.width, self.height = img.width, img.height
     end
 end
 
