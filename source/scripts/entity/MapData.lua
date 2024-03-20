@@ -63,7 +63,8 @@ function MapData:init(filepathname)
         end
     end
     -- Initialize tilemap bumpword and add map borders
-    self.bumpworld = bump.newWorld(math.max(self.nTilesX, self.nTilesY) * BUMP_CELL_MULTIPLIER)
+    --self.bumpworld = bump.newWorld(math.max(self.nTilesX, self.nTilesY) * BUMP_CELL_MULTIPLIER)
+    self.bumpworld = bump.newWorld()
     self.bumpworld:add({name = "_borderTop"},   0, -ppm, self.nTilesX*ppm, ppm)
     self.bumpworld:add({name = "_borderBot"},   0, self.nTilesY*ppm, self.nTilesX*ppm, 16)
     self.bumpworld:add({name = "_borderLeft"},  -ppm, 0, ppm, self.nTilesY*ppm)

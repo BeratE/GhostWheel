@@ -22,9 +22,6 @@ function TransformSystem:preProcess(dt)
 end
 
 function TransformSystem:process(e, dt)
-    if not e.moved then
-        --return
-    end
     local x, y = e.pos.x, e.pos.y
     e.sprite:moveTo(self.toScreen:transformXY(x, y))
 end

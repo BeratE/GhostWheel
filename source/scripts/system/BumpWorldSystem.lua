@@ -39,12 +39,13 @@ function BumpWorldSystem:process(e, dt)
     end
     --[[ Position Update and Collision detection ]]
     local collisionfilter = e.bumpfilter or defaultfilter
-    local x, y, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, collisionfilter)
-    e.pos:set(x, y)
+    local cols, len
+    e.pos.x, e.pos.y, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, collisionfilter)
     for i = 1, len do
         local col = cols[i]
         local collided = true
-        log.info(("Collision with %s at %0.2f, %0.2f."):format(col.other.name, col.touch.x, col.touch.y))
+        log.info(("Collision (%s) %s at %0.2f, %0.2f."):format(col.type, col.other.name, col.touch.x, col.touch.y))
+        e:addForce(col.normal.x, col.normal.y)
         if col.type == "touch" then
             e.vel:set(0, 0)
             e.acc:set(0, 0)

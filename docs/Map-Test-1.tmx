@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.0" orientation="isometric" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="64" infinite="0" nextlayerid="20" nextobjectid="98">
+<map version="1.8" tiledversion="1.8.0" orientation="isometric" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="64" infinite="0" nextlayerid="20" nextobjectid="103">
  <editorsettings>
   <export target="../source/assets/map/test-1.json" format="json"/>
  </editorsettings>
@@ -49,20 +49,20 @@
   <object id="78" x="0.477652" y="128.195" width="192.583" height="1920.08"/>
   <object id="79" x="319.853" y="0.945303" width="1732.2" height="385.167"/>
   <object id="80" x="322.728" y="514.445" width="318.667" height="61.0833"/>
-  <object id="81" x="767.895" y="512.278" width="385.5" height="64.6667"/>
   <object id="82" x="321.395" y="572.528" width="128" height="707.75"/>
-  <object id="83" x="962.061" y="578.945" width="190.667" height="704"/>
+  <object id="83" x="962.061" y="572.945" width="190.667" height="710"/>
   <object id="84" x="446.395" y="1217.62" width="258.5" height="62"/>
-  <object id="85" x="831.895" y="1217.12" width="128.167" height="65.1667"/>
+  <object id="85" x="831.895" y="1217.12" width="133.917" height="65.1667"/>
   <object id="86" x="319.728" y="1408.28" width="256.834" height="637.333"/>
-  <object id="87" x="574.478" y="1408.23" width="129.5" height="64.2083"/>
   <object id="88" x="832.728" y="1408.95" width="320" height="64"/>
   <object id="89" x="1024.06" y="1471.62" width="128" height="576"/>
   <object id="90" x="1279.9" y="1217.12" width="769.5" height="834.5"/>
   <object id="91" x="1279.4" y="1024.28" width="66" height="203.75"/>
   <object id="92" x="1280.73" y="512.862" width="63.4167" height="381.417"/>
   <object id="93" x="1339.48" y="512.862" width="711.917" height="256.417"/>
-  <object id="94" x="445.25" y="831.25" width="512.5" height="66.25"/>
+  <object id="94" x="445.25" y="831.25" width="521" height="66.25"/>
+  <object id="98" x="552.25" y="1407.75" width="152.5" height="64.5"/>
+  <object id="101" x="766.75" y="511.75" width="385.5" height="64.5"/>
  </objectgroup>
  <objectgroup id="14" name="player">
   <object id="75" name="player" x="779.75" y="1804.92">
