@@ -15,7 +15,8 @@ local PRECISION <const> = 0.0001
 
 class("RigidBodySystem").extends()
 tinyecs.processingSystem(RigidBodySystem)
-RigidBodySystem.filter = tinyecs.requireAll("pos", tinyecs.rejectAny(Tiled.Layer.Type.Image, Tiled.Layer.Type.Tile))
+local rejectAny = tinyecs.rejectAny("immobile", Tiled.Layer.Type.Image, Tiled.Layer.Type.Tile)
+RigidBodySystem.filter = tinyecs.requireAll("pos", rejectAny)
 
 function RigidBodySystem:init()
     RigidBodySystem.super.init(self)

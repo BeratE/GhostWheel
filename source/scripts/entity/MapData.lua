@@ -79,8 +79,8 @@ function MapData:init(filepathname)
                     if (tileimg) then
                         table.insert(self.entitis, MapTile(layer, lidx, x, y, ppm, tileimg))
                     elseif(tileidx ~= 0) then
-                        local msg = ("Tile index %i not found in tilelayer %i at (%i, %i)"):format(tileidx, lidx, x, y)
-                        log.warn(msg)
+                        local msg = ("Tile index %i not found in tilelayer %s at (%i, %i)"):format(tileidx, lidx, x, y)
+                        log.error(msg)
                     end
                 end
             end
@@ -95,7 +95,7 @@ function MapData:init(filepathname)
                 table.insert(self.entitis, MapImage(layer, lidx, img))
             else
                 local msg = ("Image %s not found in tilelayer %i"):format(img_name, lidx)
-                log.warn(msg)
+                log.error(msg)
             end
         else
             log.warn("Unrecognized layer type ".. layer.type)
@@ -114,6 +114,9 @@ function MapData:init(filepathname)
         end
         -- collision
         if (e.collision and not e.hitbox) then
+            if (not e.height or not e.width) then
+                log.error(("Entity %s has collision but no dimensions!"):format(e.name))
+            end
             e.hitbox = {
                 w = math.max(e.width or 1, 1),
                 h = math.max(e.height or 1, 1)

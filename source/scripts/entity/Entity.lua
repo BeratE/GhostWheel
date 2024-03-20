@@ -34,6 +34,6 @@ function Entity:setDebugSprite()
     --gfx.drawTextInRect(self.entityid, 0, self.height, self.width, textheight)
     gfx.popContext()
     self.sprite = gfx.sprite.new(img)
-    self.sprite:setCenter(0.5, 0.5)
+    self.sprite:setCenter(0.5, 0.0)
     self.sprite:setZIndex(0)
 end

@@ -9,8 +9,6 @@ Order of physics system:
 3 Collisions resolution
 ]]
 
-local gfx <const> = playdate.graphics
-
 local function defaultfilter(item, other)
     return "touch"
 end
@@ -41,15 +39,15 @@ function BumpWorldSystem:process(e, dt)
     end
     --[[ Position Update and Collision detection ]]
     local collisionfilter = e.bumpfilter or defaultfilter
-    local cols, len
-    e.pos.x, e.pos.y, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, collisionfilter)
+    local x, y, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, collisionfilter)
+    e.pos:set(x, y)
     for i = 1, len do
         local col = cols[i]
         local collided = true
         log.info(("Collision with %s at %0.2f, %0.2f."):format(col.other.name, col.touch.x, col.touch.y))
-        
         if col.type == "touch" then
-            e.vel.x, e.vel.y = 0, 0
+            e.vel:set(0, 0)
+            e.acc:set(0, 0)
         elseif col.type == "slide" then
             
         elseif col.type == "bounce" then
