@@ -113,22 +113,6 @@ function MapData:init(filepathname)
                 self.player:setDebugSprite()
             end
         end
-        -- collision
-        if (e.collision and not e.hitbox) then
-            if (not e.height or not e.width) then
-                log.error(("Entity %s has collision but no dimensions!"):format(e.name))
-            end
-            e.hitbox = {
-                w = math.max(e.width or 1, 1),
-                h = math.max(e.height or 1, 1)
-            }
-        end
-        -- bumtype
-        if (e.bumptype and not e.bumpfilter) then
-            e.bumpfilter = function (self, other)
-                return e.bumptype
-            end
-        end
     end
     -- Check if everything went right
     if not self.player then

@@ -9,13 +9,14 @@ Order of physics system:
 3 Collisions resolution
 ]]
 
-local function defaultfilter(item, other)
-    return "touch"
+local function defaultfilter(entity, other)
+    return other.bumptype or "touch"
 end
 
 class("BumpWorldSystem").extends()
 tinyecs.processingSystem(BumpWorldSystem)
-BumpWorldSystem.filter = tinyecs.requireAll("pos", "hitbox")
+BumpWorldSystem.filter = tinyecs.requireAll("pos",
+    tinyecs.requireAny("hitbox", "collision"))
 
 function BumpWorldSystem:init(bumpworld)
     BumpWorldSystem.super.init(self)
@@ -23,6 +24,10 @@ function BumpWorldSystem:init(bumpworld)
 end
 
 function BumpWorldSystem:onAdd(e)
+    if (e.collision and not e.hitbox) then
+        assert(e.width and e.height, "Entity with collision component requires width/height")
+        e.hitbox = {w = e.width, h = e.height}
+    end
     self.bumpworld:add(e, e.pos.x, e.pos.y, e.hitbox.w, e.hitbox.h)
 end
 
@@ -43,7 +48,6 @@ function BumpWorldSystem:process(e, dt)
     e.pos.x, e.pos.y, cols, len = self.bumpworld:move(e, e.pos.x, e.pos.y, collisionfilter)
     for i = 1, len do
         local col = cols[i]
-        local collided = true
         log.info(("Collision (%s) %s at %0.2f, %0.2f."):format(col.type, col.other.name, col.touch.x, col.touch.y))
         e:addForce(col.normal.x, col.normal.y)
         if col.type == "touch" then
@@ -53,9 +57,11 @@ function BumpWorldSystem:process(e, dt)
             
         elseif col.type == "bounce" then
             
+        elseif col.type == "cross" then
+            
         end
 
-        if e.onCollision and collided then
+        if e.onCollision then
             e:onCollision(col)
         end
     end
