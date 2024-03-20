@@ -28,6 +28,11 @@ function BumpWorldSystem:onAdd(e)
         assert(e.width and e.height, "Entity with collision component requires width/height")
         e.hitbox = {w = e.width, h = e.height}
     end
+    if (not e.onCollision) then
+        e.onCollision = function (self, col)
+            log.info(("Entity %s collided with %s"):format(self.name, col.other.name))
+        end
+    end
     self.bumpworld:add(e, e.pos.x, e.pos.y, e.hitbox.w, e.hitbox.h)
 end
 
@@ -49,21 +54,19 @@ function BumpWorldSystem:process(e, dt)
     for i = 1, len do
         local col = cols[i]
         log.info(("Collision (%s) %s at %0.2f, %0.2f."):format(col.type, col.other.name, col.touch.x, col.touch.y))
-        e:addForce(col.normal.x, col.normal.y)
         if col.type == "touch" then
             e.vel:set(0, 0)
             e.acc:set(0, 0)
         elseif col.type == "slide" then
-            
         elseif col.type == "bounce" then
-            
+            e.vel:set(0, 0)
+            e.acc:set(0, 0)
+            e:addForce(col.normal.x, col.normal.y)
         elseif col.type == "cross" then
             
         end
 
-        if e.onCollision then
-            e:onCollision(col)
-        end
+        e:onCollision(col)
     end
 end
 

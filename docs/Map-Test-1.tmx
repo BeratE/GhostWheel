@@ -43,6 +43,7 @@
  </layer>
  <objectgroup color="#82ff0000" id="16" name="collision">
   <properties>
+   <property name="bumptype" value="touch"/>
    <property name="collision" type="bool" value="true"/>
    <property name="immobile" type="bool" value="true"/>
   </properties>

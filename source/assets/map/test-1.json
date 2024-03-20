@@ -210,6 +210,11 @@
          "opacity":1,
          "properties":[
                 {
+                 "name":"bumptype",
+                 "type":"string",
+                 "value":"touch"
+                }, 
+                {
                  "name":"collision",
                  "type":"bool",
                  "value":true
@@ -268,7 +273,24 @@
          "draworder":"topdown",
          "id":15,
          "name":"event",
-         "objects":[],
+         "objects":[
+                {
+                 "height":63,
+                 "id":103,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"bumptype",
+                         "type":"string",
+                         "value":"\"cross\""
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":139,
+                 "x":697,
+                 "y":1409.33333333333
+                }],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -276,7 +298,7 @@
          "y":0
         }],
  "nextlayerid":20,
- "nextobjectid":103,
+ "nextobjectid":105,
  "orientation":"isometric",
  "renderorder":"right-down",
  "tiledversion":"1.8.0",
