@@ -61,7 +61,6 @@ end
 -- Add all the required components for the rigid body system
 function RigidBodySystem.initRigidBody(e, mass, lindamp, pos)
     e.pos = e.pos or pos or vector(0, 0) -- Current position of the object
-    e = e or {}
     --[[ Scalar components ]]
     -- Mass of object in kg (minimum of 1gram) - default 80kg
     e.mass = e.mass or mass or 80
@@ -78,5 +77,10 @@ function RigidBodySystem.initRigidBody(e, mass, lindamp, pos)
     e.addForce = e.addForce or function (self, fx, fy)
         self.force.x += fx
         self.force.y += fy
+    end
+    -- Stop all movement
+    e.stopMovement = e.stopMovement or function (self)
+        self.vel:set(0, 0)
+        self.acc:set(0, 0)
     end
 end
