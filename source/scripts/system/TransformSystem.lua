@@ -18,16 +18,12 @@ function TransformSystem:onAdd(e)
     e.sprite:moveTo(self.toScreen:transformXY(e.pos.x, e.pos.y))
 end
 
-function TransformSystem:preProcess(dt)
-end
-
 function TransformSystem:process(e, dt)
     local x, y = e.pos.x, e.pos.y
     e.sprite:moveTo(self.toScreen:transformXY(x, y))
 end
 
 function TransformSystem:setMapData(mapdata)
-    -- Top-Down to Screen Coordinate projection
     self.tilewidth = mapdata.tileWidth
     self.tileheight = mapdata.tileHeight
     self.ppm = mapdata.tileHeight
@@ -42,5 +38,4 @@ function TransformSystem:setMapData(mapdata)
     end
     self.toTile = self.toScreen:copy()
     self.toTile:invert()
-
 end

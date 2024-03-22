@@ -72,7 +72,7 @@ function BumpWorldSystem:process(e, dt)
 
         -- Check for Collision event trigger
         if (col.other.event) then
-            col.other.event:notify("collision", {other = e})
+            col.other:eventNotify("collision", {other = e})
         end
 
         -- Entity specific collision behavior

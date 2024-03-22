@@ -29,7 +29,6 @@ end
 function MapEntity:setProperties(properties)
     if (properties) then
         for _, property in ipairs(properties) do
-            -- Pre-Process property value
             local value = property.value
             -- Translate string dot notation
             local p, names = self, {}

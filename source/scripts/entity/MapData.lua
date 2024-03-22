@@ -16,7 +16,6 @@ class("MapData").extends()
 
 function MapData:init(filepathname)
     self.mapdata = true
-
     -- Read json map
     filepathname = "assets/map/"..filepathname
     log.info("Loading Tiled file " .. filepathname)
@@ -57,7 +56,6 @@ function MapData:init(filepathname)
         end
     end
     -- Initialize tilemap bumpword and add map borders
-    --self.bumpworld = bump.newWorld(math.max(self.nTilesX, self.nTilesY) * BUMP_CELL_MULTIPLIER)
     self.bumpworld = bump.newWorld()
     self.bumpworld:add({name = "_borderTop"},   0, -ppm, self.nTilesX*ppm, ppm)
     self.bumpworld:add({name = "_borderBot"},   0, self.nTilesY*ppm, self.nTilesX*ppm, 16)
@@ -98,7 +96,6 @@ function MapData:init(filepathname)
     end
     -- Post-Process entities
     for _, e in ipairs(self.entitis) do
-        -- player
         if (e.player) then
             if (self.player) then
                 log.error("There is already a player object on the map!")
@@ -107,10 +104,6 @@ function MapData:init(filepathname)
                 self.player:setDebugSprite()
             end
         end
-    end
-    -- Check if everything went right
-    if not self.player then
-        log.error("No player object was found on the map!")
     end
 end
 
