@@ -23,8 +23,8 @@ local function checkTrigger(e, ...)
 end
 
 function EventSystem:onAdd(e)
-    e.event.messages = {}
-    e.event.consumed = false
+    e.event.messages = e.event.messages or {}
+    e.event.consumed = e.event.consumed or false
 
     e.event.checkTrigger = e.event.checkTrigger or function (self, ...)
         if (not self.trigger) then
