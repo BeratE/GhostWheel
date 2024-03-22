@@ -25,32 +25,3 @@ DIR = {
     NW = 7, -- North West
     N  = 8,  -- North
 }
-
---[[ Definitions for Tiled ]]
-Tiled = {
-    Map = {
-        Compression = {
-            Default = -1
-        },
-        Orientation = {
-            Orthogonal = "orthogonal",
-            Isometric  = "isometric",
-            Staggered  = "staggered",
-            Hexagonal  = "hexagonal"
-        },
-        RenderOrder = {
-            RightDown = "right-down", -- Default
-            RightUp   = "right-up",
-            LeftDown  = "left-down",
-            LeftUp    = "left-up" -- Only supported for orthogonal maps
-        },
-    },
-    Layer = {
-        Type = {
-            Tile   = "tilelayer",
-            Object = "objectgroup",
-            Image  = "imagelayer",
-            Group  = "group",
-        }
-    }
-}

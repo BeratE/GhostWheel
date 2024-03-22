@@ -2,12 +2,13 @@ import "CoreLibs/object"
 import "libs/tinyecs"
 import "libs/vector"
 import "pdlibs/util/debug"
+import "scripts/system/AbstractSystem"
 
 local gfx <const> = playdate.graphics
 local disp <const> = playdate.display
 
 -- [[ Lazily follows the player character around by setting the drawing offset ]]
-class("CameraSystem").extends()
+class("CameraSystem").extends(AbstractSystem)
 tinyecs.processingSystem(CameraSystem)
 CameraSystem.filter = tinyecs.requireAll("cameratrack", "sprite")
 

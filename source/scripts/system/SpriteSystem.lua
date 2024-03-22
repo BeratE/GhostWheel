@@ -1,11 +1,12 @@
 import "CoreLibs/object"
 import "libs/tinyecs"
 import "pdlibs/util/debug"
+import "scripts/system/AbstractSystem"
 
 local gfx <const> = playdate.graphics
 
 -- [[ Manage sprite component of entities ]]
-class("SpriteSystem").extends()
+class("SpriteSystem").extends(AbstractSystem)
 tinyecs.system(SpriteSystem)
 SpriteSystem.filter = tinyecs.requireAll("sprite")
 

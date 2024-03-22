@@ -1,6 +1,7 @@
 import "CoreLibs/object"
 import "pdlibs/util/math"
 import "libs/tinyecs"
+import "scripts/system/AbstractSystem"
 
 --[[ Application of bump collision detection.
 Order of physics system:
@@ -9,13 +10,12 @@ Order of physics system:
 * 3 Collisions resolution
 ]]
 
-class("BumpWorldSystem").extends()
+class("BumpWorldSystem").extends(AbstractSystem)
 tinyecs.processingSystem(BumpWorldSystem)
 BumpWorldSystem.filter = tinyecs.requireAll("pos", tinyecs.requireAny("hitbox", "collision"))
 
-function BumpWorldSystem:init(bumpworld)
-    BumpWorldSystem.super.init(self)
-    self:setBumpWorld(bumpworld)
+function BumpWorldSystem:init(mapdata)
+    BumpWorldSystem.super.init(self, mapdata)
 end
 
 function BumpWorldSystem:onAdd(e)
@@ -80,6 +80,6 @@ function BumpWorldSystem:process(e, dt)
     end
 end
 
-function BumpWorldSystem:setBumpWorld(bumpworld)
-    self.bumpworld = bumpworld
+function BumpWorldSystem:setMapData(mapdata)
+    self.bumpworld = mapdata.bumpworld
 end

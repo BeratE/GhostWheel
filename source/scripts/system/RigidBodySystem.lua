@@ -2,6 +2,7 @@ import "CoreLibs/object"
 import "pdlibs/util/math"
 import "libs/tinyecs"
 import "libs/vector"
+import "scripts/system/AbstractSystem"
 
 --[[ Simple Rigid-Body 2D (top-down) physics engine working in tile coordinates.
 Units: kilogram kg, meter m, milliseconds ms. (Usage of milliseconds to avoid floating-point errors)
@@ -13,11 +14,9 @@ Order of physics system:
 
 local PRECISION <const> = 0.0001
 
-class("RigidBodySystem").extends()
+class("RigidBodySystem").extends(AbstractSystem)
 tinyecs.processingSystem(RigidBodySystem)
-local f_require = tinyecs.requireAll("pos")
-local f_reject = tinyecs.rejectAny("immobile", Tiled.Layer.Type.Image, Tiled.Layer.Type.Tile)
-RigidBodySystem.filter = tinyecs.requireAll(f_require, f_reject)
+RigidBodySystem.filter = tinyecs.requireAll(tinyecs.requireAll("pos"), tinyecs.rejectAny("immobile", "imagelayer", "tilelayer"))
 
 function RigidBodySystem:init()
     RigidBodySystem.super.init(self)

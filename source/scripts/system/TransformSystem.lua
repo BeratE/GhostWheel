@@ -1,17 +1,17 @@
 import "CoreLibs/object"
 import "libs/tinyecs"
 import "pdlibs/util/debug"
+import "scripts/system/AbstractSystem"
 
 local geom <const> = playdate.geometry
 
 -- [[ Derives screen coordinates by applying linear transform to position coordinates ]]
-class("TransformSystem").extends()
+class("TransformSystem").extends(AbstractSystem)
 tinyecs.processingSystem(TransformSystem)
 TransformSystem.filter = tinyecs.requireAll("pos", "sprite")
 
-function TransformSystem:init(tilewidth, tileheight)
-    TransformSystem.super.init(self)
-    self:setTileSize(tilewidth, tileheight)
+function TransformSystem:init(mapdata)
+    TransformSystem.super.init(self, mapdata)
 end
 
 function TransformSystem:onAdd(e)
@@ -26,14 +26,21 @@ function TransformSystem:process(e, dt)
     e.sprite:moveTo(self.toScreen:transformXY(x, y))
 end
 
-function TransformSystem:setTileSize(tilewidth, tileheight)
+function TransformSystem:setMapData(mapdata)
     -- Top-Down to Screen Coordinate projection
-    self.tilewidth = tilewidth
-    self.tileheight = tileheight
-    self.ppm = tileheight
-    self.toScreen = geom.affineTransform.new(
-        (tilewidth/2)/self.ppm, -(tilewidth/2)/self.ppm,
-        (tileheight/2)/self.ppm, (tileheight/2)/self.ppm)
+    self.tilewidth = mapdata.tileWidth
+    self.tileheight = mapdata.tileHeight
+    self.ppm = mapdata.tileHeight
+    if (mapdata.orientation == "isometric") then
+        self.toScreen = geom.affineTransform.new(
+            (self.tilewidth/2)/self.ppm, -(self.tilewidth/2)/self.ppm,
+            (self.tileheight/2)/self.ppm, (self.tileheight/2)/self.ppm)
+    else
+        self.toScreen = geom.affineTransform.new(
+            1/self.ppm, 1/self.ppm,
+            1/self.ppm, 1/self.ppm)
+    end
     self.toTile = self.toScreen:copy()
     self.toTile:invert()
+
 end

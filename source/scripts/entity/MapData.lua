@@ -21,14 +21,8 @@ function MapData:init(filepathname)
     filepathname = "assets/map/"..filepathname
     log.info("Loading Tiled file " .. filepathname)
     local tiled = json.decodeFile(filepathname)
-    -- Sanity check
-    assert(tiled, "Unable to decode Tiled map file " .. filepathname)
-    assert(tiled.compressionlevel == Tiled.Map.Compression.Default, "TiledMap only supports default compression")
-    assert(tiled.infinite == false, "TileTiled.Map does not support infinite maps")
-    assert(tiled.width == tiled.height, "TiledMap only supports maps of equal width and height")
-    assert(tiled.orientation == Tiled.Map.Orientation.Isometric, "TiledMap can only load isometric tiled data")
-    assert(tiled.renderorder == Tiled.Map.RenderOrder.RightDown, "TiledMap can only use right-down render order")
     -- Read tile data
+    self.orientation = tiled.orientation
     self.nTilesX = tiled.width
     self.nTilesY = tiled.height
     self.tileWidth  = tiled.tilewidth
@@ -72,7 +66,7 @@ function MapData:init(filepathname)
     -- Retrieve entities from layers
     self.entitis = {}
     for lidx, layer in ipairs(tiled.layers) do
-        if (layer.type == Tiled.Layer.Type.Tile) then
+        if (layer.type == "tilelayer") then
             for y = 1, layer.height do
                 for x = 1, layer.width  do
                     local tileidx = layer.data[((y-1)*layer.width) + x]
@@ -85,11 +79,11 @@ function MapData:init(filepathname)
                     end
                 end
             end
-        elseif(layer.type == Tiled.Layer.Type.Object) then
+        elseif(layer.type == "objectgroup") then
             for _, object in ipairs(layer.objects) do
                 table.insert(self.entitis, MapObject(layer, lidx, object))
             end
-        elseif(layer.type == Tiled.Layer.Type.Image) then
+        elseif(layer.type == "imagelayer") then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
             local img = gfx.sprite.new(assets.getImage(img_name))
             if (img) then
@@ -126,12 +120,4 @@ end
 
 function MapData:remove(world)
     world:remove(table.unpack(self.entitis))
-end
-
-function MapData:getBumpWorld()
-    return self.bumpworld
-end
-
-function MapData:getTileSize()
-    return self.tileWidth, self.tileHeight
 end
