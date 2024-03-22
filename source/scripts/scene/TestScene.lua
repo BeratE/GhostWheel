@@ -3,6 +3,7 @@ import "scripts/system/TransformSystem"
 import "scripts/system/CameraSystem"
 import "scripts/system/RigidBodySystem"
 import "scripts/system/BumpWorldSystem"
+import "scripts/system/EventSystem"
 import "scripts/system/SpriteSystem"
 import "scripts/entity/MapData"
 import "libs/pdlog"
@@ -39,7 +40,8 @@ function TestScene:init()
         transform = TransformSystem(level:getTileSize()),
         rigidbody = RigidBodySystem(),
         sprite = SpriteSystem(),
-        camera = CameraSystem()
+        camera = CameraSystem(),
+        event = EventSystem()
     }
     self:addSystems(self.systems)
 end

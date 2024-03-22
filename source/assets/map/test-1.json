@@ -282,14 +282,29 @@
                         {
                          "name":"bumptype",
                          "type":"string",
-                         "value":"\"cross\""
+                         "value":"cross"
+                        }, 
+                        {
+                         "name":"collision",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"event.repeats",
+                         "type":"bool",
+                         "value":false
+                        }, 
+                        {
+                         "name":"event.trigger",
+                         "type":"string",
+                         "value":"collision"
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":139,
                  "x":697,
-                 "y":1409.33333333333
+                 "y":1409.33
                 }],
          "opacity":1,
          "type":"objectgroup",

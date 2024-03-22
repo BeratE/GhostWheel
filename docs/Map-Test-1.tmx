@@ -78,7 +78,10 @@
  <objectgroup color="#0000ff" id="15" name="event">
   <object id="103" x="697" y="1409.33" width="139" height="63">
    <properties>
-    <property name="bumptype" value="&quot;cross&quot;"/>
+    <property name="bumptype" value="cross"/>
+    <property name="collision" type="bool" value="true"/>
+    <property name="event.repeats" type="bool" value="false"/>
+    <property name="event.trigger" value="collision"/>
    </properties>
   </object>
  </objectgroup>

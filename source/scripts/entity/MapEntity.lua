@@ -29,14 +29,25 @@ end
 function MapEntity:setProperties(properties)
     if (properties) then
         for _, property in ipairs(properties) do
+            -- Pre-Process property value
             -- Translate string dot notation
             local pointer, prev, lname = self, self, property.name
             for name in string.gmatch(property.name, '([^.]*)') do
-                prev = pointer
-                pointer[name] = {}
+                prev, lname = pointer, name
+                pointer[name] = pointer[name] or {}
                 pointer = pointer[name]
             end
+            -- Insert (with array support)
             prev[lname] = property.value
+            --[[
+            if (type(prev[lname] == "nil")) then
+                prev[lname] = value
+            elseif(type(prev[lname] ~= "table")) then
+                table.insert(prev[lname], value)
+            else
+                prev[lname] = {prev[lname], value}
+            end
+            --]]
         end
     end
 end
