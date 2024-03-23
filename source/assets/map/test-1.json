@@ -48,14 +48,9 @@
                          "value":true
                         }, 
                         {
-                         "name":"event.repeats",
+                         "name":"event.collision.repeats",
                          "type":"bool",
                          "value":false
-                        }, 
-                        {
-                         "name":"event.trigger",
-                         "type":"string",
-                         "value":"collision"
                         }],
                  "rotation":0,
                  "type":"",

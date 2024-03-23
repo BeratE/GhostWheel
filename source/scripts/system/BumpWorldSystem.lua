@@ -24,13 +24,11 @@ function BumpWorldSystem:onAdd(e)
         assert(e.width > 0 and e.height > 0, "Entity requires positive width/height component")
         e.hitbox = {w = e.width, h = e.height}
     end
-    --[[
-    if (not e.onCollision) then
-        e.onCollision = function (self, col)
-            log.info(("Entity %s collided with %s"):format(self.name, col.other.name))
-        end
+    
+    e.onCollision = e.onCollision or function (self, col)
+        log.info(("Entity %s collided with %s"):format(self.name, col.other.name))
     end
-    --]]
+
     self.bumpworld:add(e, e.pos.x, e.pos.y, e.hitbox.w, e.hitbox.h)
 end
 
@@ -72,11 +70,11 @@ function BumpWorldSystem:process(e, dt)
 
         -- Check for Collision event trigger
         if (col.other.event) then
-            col.other:eventNotify("collision", {other = e})
+            col.other:notify("collision", {other = e})
         end
 
         -- Entity specific collision behavior
-        -- e:onCollision(col)
+        e:onCollision(col)
     end
 end
 

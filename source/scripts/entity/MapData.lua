@@ -63,6 +63,7 @@ function MapData:init(filepathname)
     self.bumpworld:add({name = "_borderRight"}, self.nTilesX*ppm, 0, ppm, self.nTilesY*ppm)
     -- Retrieve entities from layers
     self.entitis = {}
+    self.objects = {} -- Objects sorted by object id (subset of entities)
     for lidx, layer in ipairs(tiled.layers) do
         if (layer.type == "tilelayer") then
             for y = 1, layer.height do
@@ -79,7 +80,10 @@ function MapData:init(filepathname)
             end
         elseif(layer.type == "objectgroup") then
             for _, object in ipairs(layer.objects) do
-                table.insert(self.entitis, MapObject(layer, lidx, object))
+                local entity = MapObject(layer, lidx, object)
+                table.insert(self.entitis, entity)
+                self.objects[entity.oid] = entity
+                
             end
         elseif(layer.type == "imagelayer") then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)

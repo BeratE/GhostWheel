@@ -82,8 +82,7 @@
    <properties>
     <property name="bumptype" value="cross"/>
     <property name="collision" type="bool" value="true"/>
-    <property name="event.repeats" type="bool" value="false"/>
-    <property name="event.trigger" value="collision"/>
+    <property name="event.collision.repeats" type="bool" value="false"/>
    </properties>
   </object>
  </objectgroup>

@@ -12,6 +12,7 @@ function MapEntity:init(layer, lidx)
     MapEntity.super.init(self)
     self.mapentity = true            -- Generic Map Entity
     self[layer.type] = true          -- Object/Tile Entity
+    self.lid = layer.id              -- layer id
     self.lidx = lidx or layer.id     -- Layer index
     self.pos = vector((layer.offsetx or 0), (layer.offsety or 0))
     self.name = layer.name

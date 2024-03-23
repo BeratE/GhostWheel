@@ -3,8 +3,11 @@ import "pdlibs/util/math"
 import "libs/tinyecs"
 import "scripts/system/AbstractSystem"
 
---[[ Process entity specific dynamic behavior stored in the event component. 
-Events execute a specified behavior depending on the recieved messages. ]]
+--[[ Events listen for messages created from other systems, 
+like collision, and execute a specified behavior upon recieving those messages.
+Messages consist of a subject (part that event listens to) and the body, 
+which is a table of additional information. An event can listen to multiple subjects.
+There can only be one event component per entity]]
 
 class("EventSystem").extends(AbstractSystem)
 tinyecs.processingSystem(EventSystem)
@@ -15,44 +18,43 @@ function EventSystem:init()
 end
 
 function EventSystem:onAdd(e)
-    e.event.messages = e.event.messages or {}
-    e.event.consumed = e.event.consumed or false
+    e.messages = e.messages or {}     -- Event message queue
 
-    e.eventCheckTrigger = e.eventCheckTrigger or function (self, ...)
-        if (not self.event.trigger) then return true end
-        for _, type in ipairs({...}) do
-            if (self.event.trigger == type) then return true end
+    for _, s in pairs(e.event) do
+        if (type(s) == "table") then
+            s.consumed = s.consumed or false
+            s.repeats = s.repeats or false
         end
-        return false
     end
+
     -- Notify only this entity
-    e.eventNotify = e.eventNotify or function (self, header, body)
-        if (self:eventCheckTrigger(header)) then
-            table.insert(self.event.messages, {header = header, body = body})
+    e.notify = e.notify or function (self, subject, body)
+        if (self.event[subject] and not self.event[subject].consumed) then
+            table.insert(self.messages, {
+                subject = subject,
+                body = body
+            })
         end
     end
 end
 
 function EventSystem:process(e, dt)
-    if (e.event.consumed or #e.event.messages == 0) then
+    if (#e.messages == 0) then
         return
     end
     -- Consume events
-    for _, msg in ipairs(e.event.messages) do
-        log.info(("Event %s: %s "):format(msg.header, msg.body))
-        if msg.header == "collision" then
+    for _, msg in ipairs(e.messages) do
+        log.info(("Event %s: %s "):format(msg.subject, msg.body))
+        if msg.subject == "collision" then
             
         end
     end
-    e.event.messages = {}
-    if (not e.event.repeats) then
-        e.event.consumed = true
-    end
+    e.messages = {}
 end
 
 -- Notify all entities in the system
-function EventSystem:broadcast(header, body)
+function EventSystem:broadcast(subject, body)
     for _, e in ipairs(self.entities) do
-        e:eventNotify(header, body)
+        e:notify(subject, body)
     end
 end
