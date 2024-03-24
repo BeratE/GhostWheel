@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.0" orientation="isometric" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="64" infinite="0" nextlayerid="22" nextobjectid="105">
+<map version="1.10" tiledversion="git" orientation="isometric" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="64" infinite="0" nextlayerid="23" nextobjectid="108">
  <editorsettings>
   <export target="../source/assets/map/test-1.json" format="json"/>
  </editorsettings>
@@ -82,6 +82,9 @@
    <properties>
     <property name="bumptype" value="cross"/>
     <property name="collision" type="bool" value="true"/>
+    <property name="event.collision.action">if (other.oid == 75) then
+    print &quot;Hello World&quot;
+end</property>
     <property name="event.collision.repeats" type="bool" value="false"/>
    </properties>
   </object>
@@ -115,7 +118,20 @@
    <properties>
     <property name="cameratrack" type="bool" value="true"/>
     <property name="collision" type="bool" value="true"/>
+    <property name="debugsprite" type="bool" value="true"/>
     <property name="player" type="bool" value="true"/>
+   </properties>
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="22" name="patrol_test">
+  <object id="106" name="enemy_path" x="252.667" y="894">
+   <polygon points="2.66667,-450.667 4,452 964,449.333 959.333,-450"/>
+  </object>
+  <object id="107" name="enemy" x="254" y="834">
+   <properties>
+    <property name="debugsprite" type="bool" value="true"/>
+    <property name="patrol" type="object" value="106"/>
    </properties>
    <point/>
   </object>

@@ -1,10 +1,11 @@
 import "scripts/scene/Scene"
-import "scripts/system/TransformSystem"
-import "scripts/system/CameraSystem"
-import "scripts/system/RigidBodySystem"
-import "scripts/system/BumpWorldSystem"
-import "scripts/system/EventSystem"
-import "scripts/system/SpriteSystem"
+import "scripts/system/render/SpriteSystem"
+import "scripts/system/render/TransformSystem"
+import "scripts/system/render/CameraSystem"
+import "scripts/system/physics/RigidBodySystem"
+import "scripts/system/physics/BumpWorldSystem"
+import "scripts/system/logic/EventSystem"
+import "scripts/system/logic/PatrolSystem"
 import "scripts/entity/MapData"
 import "libs/pdlog"
 
@@ -41,7 +42,8 @@ function TestScene:init()
         rigidbody = RigidBodySystem(),
         sprite = SpriteSystem(),
         camera = CameraSystem(),
-        event = EventSystem()
+        event = EventSystem(),
+        patrol = PatrolSystem()
     }
     self:addSystems(self.systems)
 end

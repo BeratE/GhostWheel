@@ -1,6 +1,3 @@
-import "CoreLibs/object"
-import "libs/tinyecs"
-import "pdlibs/util/debug"
 import "scripts/system/AbstractSystem"
 
 local gfx <const> = playdate.graphics

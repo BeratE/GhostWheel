@@ -1,13 +1,11 @@
-import "CoreLibs/object"
-import "pdlibs/util/math"
-import "libs/tinyecs"
 import "scripts/system/AbstractSystem"
 
---[[ Events listen for messages created from other systems, 
-like collision, and execute a specified behavior upon recieving those messages.
-Messages consist of a subject (part that event listens to) and the body, 
-which is a table of additional information. An event can listen to multiple subjects.
-There can only be one event component per entity]]
+--[[ In Construction ]]
+
+-- List of predefined event subjects
+Event = {
+    Collision = "collision" -- Occurs when other collides with entity
+}
 
 class("EventSystem").extends(AbstractSystem)
 tinyecs.processingSystem(EventSystem)
@@ -29,7 +27,8 @@ function EventSystem:onAdd(e)
 
     -- Notify only this entity
     e.notify = e.notify or function (self, subject, body)
-        if (self.event[subject] and not self.event[subject].consumed) then
+        if (self.event[subject] and
+            not self.event[subject].consumed) then
             table.insert(self.messages, {
                 subject = subject,
                 body = body
@@ -42,12 +41,15 @@ function EventSystem:process(e, dt)
     if (#e.messages == 0) then
         return
     end
-    -- Consume events
+    -- Consume messages
     for _, msg in ipairs(e.messages) do
         log.info(("Event %s: %s "):format(msg.subject, msg.body))
-        if msg.subject == "collision" then
+        local subject = e.event[msg.subject]
+        local consumed = not subject.repeats
+        if (subject.action) then
             
         end
+        subject.consumed = consumed
     end
     e.messages = {}
 end

@@ -1,5 +1,7 @@
 import "CoreLibs/object"
 import "libs/tinyecs"
+import "libs/vector"
+import "pdlibs/util/math"
 import "pdlibs/util/debug"
 
 class("AbstractSystem").extends()

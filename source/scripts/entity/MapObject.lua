@@ -18,13 +18,19 @@ function MapObject:init(layer, lidx, object)
     self.rotation = object.rotation
     self.type = object.type
     self.text = object.text
+    -- Set geometrical properties
     if object.point then
         self.point = geom.point.new(self.pos.x, self.pos.y)
     elseif object.polygon or object.polyline then
-        local polygon = object.polygon or object.polyline
-        self.polygon = geom.polygon.new(#polygon)
-        for n, p in ipairs(polygon) do
-            self.polygon:setPointAt(n, p.x, p.y)
+        local poly = (object.polygon or object.polyline)
+        local size = #poly
+        if (object.polygon) then size += 1 end
+        self.polygon = geom.polygon.new(size)
+        for n, p in ipairs(poly) do
+            self.polygon:setPointAt(n, self.pos.x + p.x, self.pos.y+p.y)
+        end
+        if (object.polygon) then -- Close polygon
+            self.polygon:setPointAt(size, self.pos.x +  poly[1].x, self.pos.y+ poly[1].y)
         end
     else
         if (object.ellipse) then

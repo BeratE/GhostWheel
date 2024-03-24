@@ -1,6 +1,3 @@
-import "CoreLibs/object"
-import "pdlibs/util/math"
-import "libs/tinyecs"
 import "scripts/system/AbstractSystem"
 
 --[[ Application of bump collision detection.
@@ -70,11 +67,11 @@ function BumpWorldSystem:process(e, dt)
 
         -- Check for Collision event trigger
         if (col.other.event) then
-            col.other:notify("collision", {other = e})
+            col.other:notify(Event.Collision, {other = e})
         end
 
         -- Entity specific collision behavior
-        e:onCollision(col)
+        --e:onCollision(col)
     end
 end
 

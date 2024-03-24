@@ -7,6 +7,7 @@ import "pdlibs/util/string"
 import "libs/pdlog"
 import "libs/bump"
 
+local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
 --[[ Container for map info, bumpworld and 
@@ -17,8 +18,9 @@ class("MapData").extends()
 function MapData:init(filepathname)
     self.mapdata = true
     -- Read json map
-    filepathname = "assets/map/"..filepathname
+    
     log.info("Loading Tiled file " .. filepathname)
+    filepathname = "assets/map/"..filepathname
     local tiled = json.decodeFile(filepathname)
     -- Read tile data
     self.orientation = tiled.orientation
@@ -83,7 +85,6 @@ function MapData:init(filepathname)
                 local entity = MapObject(layer, lidx, object)
                 table.insert(self.entitis, entity)
                 self.objects[entity.oid] = entity
-                
             end
         elseif(layer.type == "imagelayer") then
             local img_name = pdlibs.string.cutPathToFilename(layer.image)
@@ -105,8 +106,17 @@ function MapData:init(filepathname)
                 log.error("There is already a player object on the map!")
             else
                 self.player = e
-                self.player:setDebugSprite()
             end
+        end
+        if (e.debugsprite) then
+            e:setDebugSprite()
+        end
+        -- Fill object references
+        for oid, _ in pairs(e.objref) do
+            if (self.objects[oid] == nil) then
+                log.error(("Entity %s referencing non-existant object id %i"):format(e.name, oid))
+            end
+            e.objref[oid] = self.objects[oid]
         end
     end
 end

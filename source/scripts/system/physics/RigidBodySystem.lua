@@ -1,7 +1,3 @@
-import "CoreLibs/object"
-import "pdlibs/util/math"
-import "libs/tinyecs"
-import "libs/vector"
 import "scripts/system/AbstractSystem"
 
 --[[ Simple Rigid-Body 2D (top-down) physics engine working in tile coordinates.

@@ -14,8 +14,10 @@ function MapEntity:init(layer, lidx)
     self[layer.type] = true          -- Object/Tile Entity
     self.lid = layer.id              -- layer id
     self.lidx = lidx or layer.id     -- Layer index
+    self.visible = layer.visible
     self.pos = vector((layer.offsetx or 0), (layer.offsety or 0))
     self.name = layer.name
+    self.objref = {}
     self:setProperties(layer.properties)
 end
 
@@ -30,7 +32,15 @@ end
 function MapEntity:setProperties(properties)
     if (properties) then
         for _, property in ipairs(properties) do
-            local value = property.value
+            local value
+            if (property.type == "object") then
+                -- Store the objectid and a placeholder reference
+                value = value or {}
+                value.oid = property.value
+                self.objref[property.value] = true
+            else
+                value = property.value
+            end
             -- Translate string dot notation
             local p, names = self, {}
             for n in string.gmatch(property.name, '([^.]*)') do

@@ -1,8 +1,5 @@
-import "CoreLibs/object"
-import "libs/tinyecs"
-import "libs/vector"
-import "pdlibs/util/debug"
 import "scripts/system/AbstractSystem"
+
 
 local gfx <const> = playdate.graphics
 local disp <const> = playdate.display
