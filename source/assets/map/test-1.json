@@ -392,6 +392,7 @@
          "y":0
         }, 
         {
+         "color":"#64aaaaff",
          "draworder":"topdown",
          "id":22,
          "name":"patrol_test",
@@ -402,12 +403,12 @@
                  "name":"enemy_path",
                  "polygon":[
                         {
-                         "x":2.66667,
-                         "y":-450.667
+                         "x":0.166669999999982,
+                         "y":-450.167
                         }, 
                         {
-                         "x":4,
-                         "y":452
+                         "x":2.99999999999991,
+                         "y":451
                         }, 
                         {
                          "x":964,
@@ -439,6 +440,11 @@
                          "name":"patrol",
                          "type":"object",
                          "value":106
+                        }, 
+                        {
+                         "name":"patrol.speed",
+                         "type":"float",
+                         "value":0.1
                         }],
                  "rotation":0,
                  "type":"",

@@ -17,7 +17,11 @@ function PatrolSystem:onAdd(e)
     -- Check if patrol reference is a polygon entity
     local polygon = e.objref[e.patrol.oid].polygon
     assert(polygon, "Patrol reference must be a polygon object!")
-    e.patrol.animator = gfx.animator.new(1000, polygon)
+    e.patrol.reverses = e.patrol.reverses or false
+    e.patrol.speed = e.patrol.speed or 0.1
+    e.patrol.duration = polygon:length()/e.patrol.speed
+    e.patrol.animator = gfx.animator.new(e.patrol.duration, polygon)
+    e.patrol.animator.reverses = e.patrol.reverses
 end
 
 function PatrolSystem:process(e, dt)

@@ -1,4 +1,5 @@
 import "scripts/scene/Scene"
+import "scripts/system/render/DebugSpriteSystem"
 import "scripts/system/render/SpriteSystem"
 import "scripts/system/render/TransformSystem"
 import "scripts/system/render/CameraSystem"
@@ -40,6 +41,7 @@ function TestScene:init()
         bumpworld = BumpWorldSystem(level),
         transform = TransformSystem(level),
         rigidbody = RigidBodySystem(),
+        --debugsprite = DebugSpriteSystem(),
         sprite = SpriteSystem(),
         camera = CameraSystem(),
         event = EventSystem(),
