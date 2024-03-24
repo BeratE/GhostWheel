@@ -89,65 +89,6 @@
          "y":0
         }, 
         {
-         "color":"#0000ff",
-         "draworder":"topdown",
-         "id":15,
-         "name":"door",
-         "objects":[
-                {
-                 "height":22.5,
-                 "id":103,
-                 "name":"",
-                 "properties":[
-                        {
-                         "name":"bumpmask",
-                         "type":"int",
-                         "value":1
-                        }, 
-                        {
-                         "name":"bumptype",
-                         "type":"string",
-                         "value":"cross"
-                        }, 
-                        {
-                         "name":"collision",
-                         "type":"bool",
-                         "value":true
-                        }, 
-                        {
-                         "name":"event.collision.delete",
-                         "type":"object",
-                         "value":103
-                        }, 
-                        {
-                         "name":"event.collision.repeats",
-                         "type":"bool",
-                         "value":false
-                        }, 
-                        {
-                         "name":"event.collision.set",
-                         "type":"object",
-                         "value":107
-                        }, 
-                        {
-                         "name":"event.collision.set.patrol.start",
-                         "type":"bool",
-                         "value":true
-                        }],
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":136.5,
-                 "x":699.5,
-                 "y":1429.33
-                }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
          "color":"#82ff0000",
          "draworder":"topdown",
          "id":16,
@@ -413,10 +354,74 @@
          "y":0
         }, 
         {
+         "color":"#0000ff",
+         "draworder":"topdown",
+         "id":15,
+         "name":"event",
+         "objects":[
+                {
+                 "height":22.5,
+                 "id":103,
+                 "name":"door",
+                 "properties":[
+                        {
+                         "name":"bumpmask",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"bumptype",
+                         "type":"string",
+                         "value":"cross"
+                        }, 
+                        {
+                         "name":"collision",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
+                         "name":"event.collision.repeats",
+                         "type":"bool",
+                         "value":false
+                        }, 
+                        {
+                         "name":"event.collision.set1",
+                         "type":"object",
+                         "value":107
+                        }, 
+                        {
+                         "name":"event.collision.set1.patrol.pause",
+                         "type":"bool",
+                         "value":false
+                        }, 
+                        {
+                         "name":"event.collision.set2",
+                         "type":"object",
+                         "value":103
+                        }, 
+                        {
+                         "name":"event.collision.set2.delete",
+                         "type":"bool",
+                         "value":true
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":136.5,
+                 "x":699.5,
+                 "y":1429.33
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
          "color":"#64aaaaff",
          "draworder":"topdown",
          "id":22,
-         "name":"patroltest",
+         "name":"enemy",
          "objects":[
                 {
                  "height":0,
@@ -473,9 +478,14 @@
                          "value":106
                         }, 
                         {
+                         "name":"patrol.pause",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
                          "name":"patrol.repeatcount",
                          "type":"int",
-                         "value":1
+                         "value":-1
                         }, 
                         {
                          "name":"patrol.reverses",
@@ -486,11 +496,6 @@
                          "name":"patrol.speed",
                          "type":"float",
                          "value":0.1
-                        }, 
-                        {
-                         "name":"patrol.start",
-                         "type":"bool",
-                         "value":false
                         }],
                  "rotation":0,
                  "type":"",

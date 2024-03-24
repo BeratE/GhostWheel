@@ -58,21 +58,23 @@ function EventSystem:process(e, dt)
         local subject = e.event[msg.subject]
         local consumed = not subject.repeats
         -- Set Entity Attributes
-        if (subject.set) then
-            local target = msg.body -- Default target
-            -- Check if special target is selected
-            if (subject.set.oid and subject.set.oid > 0) then
-                target = e.objref[subject.set.oid]
-            end
-            for name, value in pairs(subject.set) do
-                if (name ~= "oid") then
-                    setProperty(target, name, value)
+        for action, body in pairs(subject) do
+            -- Set Values
+            if (action:match("set%d*")) then
+                local target = msg.body -- Default target
+                -- Check if special target is selected
+                if (body.oid and body.oid > 0) then
+                    target = e.objref[body.oid]
                 end
+                for name, value in pairs(body) do
+                    if (name ~= "oid") then
+                        setProperty(target, name, value)
+                    end
+                end
+                -- Refresh Entity since components have possibly changed
+                _G["world"]:addEntity(target)
             end
-            -- Refresh Entity since components have possibly changed
-            _G["world"]:addEntity(target)
         end
-
         subject.consumed = consumed
     end
     e.messages = {}
