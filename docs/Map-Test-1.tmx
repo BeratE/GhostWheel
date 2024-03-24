@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="git" orientation="isometric" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="64" infinite="0" nextlayerid="23" nextobjectid="108">
+<map version="1.10" tiledversion="git" orientation="isometric" renderorder="right-down" width="32" height="32" tilewidth="128" tileheight="64" infinite="0" nextlayerid="23" nextobjectid="121">
  <editorsettings>
   <export target="../source/assets/map/test-1.json" format="json"/>
  </editorsettings>
@@ -77,21 +77,9 @@
 0,0,0,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup color="#0000ff" id="15" name="door">
-  <object id="103" x="699.5" y="1429.33" width="136.5" height="22.5">
-   <properties>
-    <property name="bumptype" value="cross"/>
-    <property name="collision" type="bool" value="true"/>
-    <property name="event.collision.action">if (other.oid == 75) then
-    print &quot;Hello World&quot;
-end</property>
-    <property name="event.collision.repeats" type="bool" value="false"/>
-   </properties>
-  </object>
- </objectgroup>
  <objectgroup color="#82ff0000" id="16" name="wall">
   <properties>
-   <property name="bumptype" value="bounce"/>
+   <property name="bumptype" value="touch"/>
    <property name="collision" type="bool" value="true"/>
    <property name="immobile" type="bool" value="true"/>
   </properties>
@@ -113,9 +101,10 @@ end</property>
   <object id="98" x="552.25" y="1407.75" width="152.5" height="64.5"/>
   <object id="101" x="766.75" y="511.75" width="385.5" height="64.5"/>
  </objectgroup>
- <objectgroup id="14" name="player">
+ <objectgroup color="#00aa00" id="14" name="player">
   <object id="75" name="player" x="779.75" y="1804.92">
    <properties>
+    <property name="bumptag" type="int" value="1"/>
     <property name="cameratrack" type="bool" value="true"/>
     <property name="collision" type="bool" value="true"/>
     <property name="debugsprite" type="bool" value="true"/>
@@ -124,15 +113,33 @@ end</property>
    <point/>
   </object>
  </objectgroup>
- <objectgroup color="#64aaaaff" id="22" name="patrol_test">
-  <object id="106" name="enemy_path" x="252.667" y="894">
-   <polygon points="0.16667,-450.167 3,451 964,449.333 959.333,-450"/>
-  </object>
-  <object id="107" name="enemy" x="254" y="834">
+ <objectgroup color="#0000ff" id="15" name="event">
+  <object id="103" name="door" x="699.5" y="1429.33" width="136.5" height="22.5">
    <properties>
+    <property name="bumpmask" type="int" value="1"/>
+    <property name="bumptype" value="cross"/>
+    <property name="collision" type="bool" value="true"/>
+    <property name="event.collision.delete" type="object" value="103"/>
+    <property name="event.collision.repeats" type="bool" value="false"/>
+    <property name="event.collision.set" type="object" value="107"/>
+    <property name="event.collision.set.patrol.start" type="bool" value="true"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup color="#64aaaaff" id="22" name="enemy">
+  <object id="106" name="enemytest" x="252.667" y="894">
+   <polyline points="483.666,451 961,446.333 960.833,82.5 1333,82.9997"/>
+  </object>
+  <object id="107" name="enemy" x="734.5" y="1345.5">
+   <properties>
+    <property name="bumptag" type="int" value="2"/>
+    <property name="collision" type="bool" value="true"/>
     <property name="debugsprite" type="bool" value="true"/>
     <property name="patrol" type="object" value="106"/>
+    <property name="patrol.repeatcount" type="int" value="1"/>
+    <property name="patrol.reverses" type="bool" value="false"/>
     <property name="patrol.speed" type="float" value="0.1"/>
+    <property name="patrol.start" type="bool" value="false"/>
    </properties>
    <point/>
   </object>

@@ -17,17 +17,38 @@ function PatrolSystem:onAdd(e)
     -- Check if patrol reference is a polygon entity
     local polygon = e.objref[e.patrol.oid].polygon
     assert(polygon, "Patrol reference must be a polygon object!")
+
+    e.patrol.polygon = e.patrol.polygon or e.objref[e.patrol.oid].polygon
     e.patrol.reverses = e.patrol.reverses or false
     e.patrol.speed = e.patrol.speed or 0.1
-    e.patrol.duration = polygon:length()/e.patrol.speed
-    e.patrol.animator = gfx.animator.new(e.patrol.duration, polygon)
-    e.patrol.animator.reverses = e.patrol.reverses
+    e.patrol.start = e.patrol.start or false
+    e.patrol.repeatcount = e.patrol.repeatcount or -1
+    e.patrol.duration = e.patrol.polygon:length()/e.patrol.speed
+
+    e.patrolRestart = e.patrolRestart or function ()
+        e.patrol.animator = gfx.animator.new(e.patrol.duration, e.patrol.polygon)
+        e.patrol.animator.reverses = e.patrol.reverses
+        if (e.patrol.repeatcount > 0) then
+            e.patrol.animator.repeatCount = e.patrol.repeatcount-1
+        end
+        e.patrol.start = true
+    end
 end
 
 function PatrolSystem:process(e, dt)
-    if e.patrol.animator:ended() then
-        e.patrol.animator:reset()
+    if (not e.patrol.animator) then
+        if (e.patrol.start) then
+            e:patrolRestart()
+        end
+    else
+        if e.patrol.animator:ended() then
+            if (e.patrol.repeatcount < 0) then
+                e.patrol.animator:reset()
+            end
+        else
+            -- Needs fix to work with physics systems
+            local p = e.patrol.animator:currentValue()
+            e.pos:set(p.x, p.y)
+        end
     end
-    local p = e.patrol.animator:currentValue()
-    e.pos:set(p.x, p.y)
 end

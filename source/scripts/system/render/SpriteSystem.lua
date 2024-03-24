@@ -21,7 +21,7 @@ function SpriteSystem:onRemove(e)
 end
 
 function SpriteSystem:preWrap()
-    gfx.clear()
+    --gfx.clear()
 end
 
 function SpriteSystem:update(dt)

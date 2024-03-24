@@ -33,11 +33,12 @@ function BumpWorldSystem:onRemove(e)
     self.bumpworld:remove(e)
 end
 
-local function defaultfilter(item, other)
-    -- Ignore collision bumptag j if bit j in bumpmask is set
-    if item.bumpmask and other.bumptag and
-      (item.bumpmask & other.bumptag ~= 0) then
-        return
+local function defaultfilter(entity, other)
+    if (entity.bumptag and other.bumpmask) then
+        -- Only collide if other.bumptag bit j in bumpmask is set
+        if (entity.bumptag & other.bumpmask == 0) then
+            return
+        end
     end
     return other.bumptype or "touch"
 end
@@ -67,7 +68,7 @@ function BumpWorldSystem:process(e, dt)
 
         -- Check for Collision event trigger
         if (col.other.event) then
-            col.other:notify(Event.Collision, {other = e})
+            col.other:notify(Event.Collision, e)
         end
 
         -- Entity specific collision behavior

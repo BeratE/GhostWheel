@@ -12,11 +12,11 @@ function MapEntity:init(layer, lidx)
     MapEntity.super.init(self)
     self.mapentity = true            -- Generic Map Entity
     self[layer.type] = true          -- Object/Tile Entity
+    self.name = layer.name
     self.lid = layer.id              -- layer id
     self.lidx = lidx or layer.id     -- Layer index
     self.visible = layer.visible
     self.pos = vector((layer.offsetx or 0), (layer.offsety or 0))
-    self.name = layer.name
     self.objref = {}
     self:setProperties(layer.properties)
 end
@@ -32,6 +32,7 @@ end
 function MapEntity:setProperties(properties)
     if (properties) then
         for _, property in ipairs(properties) do
+            -- Pre-Process property value
             local value
             if (property.type == "object") then
                 -- Store the objectid and a placeholder reference

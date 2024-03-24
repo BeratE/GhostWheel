@@ -37,6 +37,17 @@ function EventSystem:onAdd(e)
     end
 end
 
+-- Recursively sets/overwrites properties 
+local function setProperty(e, name, value)
+    if (type(value) == "table" and e[name] and type(e[name] == "table")) then
+        for n, v in pairs(value) do
+            setProperty(e[name], n, v)
+        end
+    else
+        e[name] = value
+    end
+end
+
 function EventSystem:process(e, dt)
     if (#e.messages == 0) then
         return
@@ -46,12 +57,29 @@ function EventSystem:process(e, dt)
         log.info(("Event %s: %s "):format(msg.subject, msg.body))
         local subject = e.event[msg.subject]
         local consumed = not subject.repeats
-        if (subject.action) then
-            
+        -- Set Entity Attributes
+        if (subject.set) then
+            local target = msg.body -- Default target
+            -- Check if special target is selected
+            if (subject.set.oid and subject.set.oid > 0) then
+                target = e.objref[subject.set.oid]
+            end
+            for name, value in pairs(subject.set) do
+                if (name ~= "oid") then
+                    setProperty(target, name, value)
+                end
+            end
+            -- Refresh Entity since components have possibly changed
+            _G["world"]:addEntity(target)
         end
+
         subject.consumed = consumed
     end
     e.messages = {}
+end
+
+function EventSystem:postProcess(dt)
+    
 end
 
 -- Notify all entities in the system

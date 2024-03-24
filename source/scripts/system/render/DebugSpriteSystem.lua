@@ -12,8 +12,15 @@ function DebugSpriteSystem:init()
     DebugSpriteSystem.super.init(self)
 end
 
+function DebugSpriteSystem:onAdd(e)
+    e.debugsprite = gfx.sprite.spriteWithText(e.name, 400, 200, gfx.kColorWhite)
+    e.debugsprite:add()
+end
+
+function DebugSpriteSystem:onRemove(e)
+    e.debugsprite:remove()
+end
+
 function DebugSpriteSystem:process(e, dt)
-    local x, y = e.sprite.x, e.sprite.y
-    local name = e.name
-    gfx.drawText(name, x, y)
+    e.debugsprite:moveTo(e.sprite.x, e.sprite.y-e.sprite.height)
 end

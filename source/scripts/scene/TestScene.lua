@@ -41,7 +41,7 @@ function TestScene:init()
         bumpworld = BumpWorldSystem(level),
         transform = TransformSystem(level),
         rigidbody = RigidBodySystem(),
-        --debugsprite = DebugSpriteSystem(),
+        debugsprite = DebugSpriteSystem(),
         sprite = SpriteSystem(),
         camera = CameraSystem(),
         event = EventSystem(),
@@ -65,8 +65,6 @@ end
 
 function TestScene:onUpdate()
     TestScene.super.onUpdate(self)
-    self:refreshDeltaTimeMs()
-    self.world:update(self:getDeltaTimeMs())
 end
 
 function TestScene:switchNextLevel()

@@ -25,6 +25,7 @@ end
 function Scene:onUpdate()
     self:refreshDeltaTimeMs()
     self.world:update(self:getDeltaTimeMs())
+    self.world:refresh()
 end
 
 function Scene:refreshDeltaTimeMs()

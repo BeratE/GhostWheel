@@ -100,6 +100,11 @@
                  "name":"",
                  "properties":[
                         {
+                         "name":"bumpmask",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
                          "name":"bumptype",
                          "type":"string",
                          "value":"cross"
@@ -110,14 +115,24 @@
                          "value":true
                         }, 
                         {
-                         "name":"event.collision.action",
-                         "type":"string",
-                         "value":"if (other.oid == 75) then\n    print \"Hello World\"\nend"
+                         "name":"event.collision.delete",
+                         "type":"object",
+                         "value":103
                         }, 
                         {
                          "name":"event.collision.repeats",
                          "type":"bool",
                          "value":false
+                        }, 
+                        {
+                         "name":"event.collision.set",
+                         "type":"object",
+                         "value":107
+                        }, 
+                        {
+                         "name":"event.collision.set.patrol.start",
+                         "type":"bool",
+                         "value":true
                         }],
                  "rotation":0,
                  "type":"",
@@ -330,7 +345,7 @@
                 {
                  "name":"bumptype",
                  "type":"string",
-                 "value":"bounce"
+                 "value":"touch"
                 }, 
                 {
                  "name":"collision",
@@ -348,6 +363,7 @@
          "y":0
         }, 
         {
+         "color":"#00aa00",
          "draworder":"topdown",
          "id":14,
          "name":"player",
@@ -358,6 +374,11 @@
                  "name":"player",
                  "point":true,
                  "properties":[
+                        {
+                         "name":"bumptag",
+                         "type":"int",
+                         "value":1
+                        }, 
                         {
                          "name":"cameratrack",
                          "type":"bool",
@@ -395,28 +416,28 @@
          "color":"#64aaaaff",
          "draworder":"topdown",
          "id":22,
-         "name":"patrol_test",
+         "name":"patroltest",
          "objects":[
                 {
                  "height":0,
                  "id":106,
-                 "name":"enemy_path",
-                 "polygon":[
+                 "name":"enemytest",
+                 "polyline":[
                         {
-                         "x":0.166669999999982,
-                         "y":-450.167
-                        }, 
-                        {
-                         "x":2.99999999999991,
+                         "x":483.666333333333,
                          "y":451
                         }, 
                         {
-                         "x":964,
-                         "y":449.333
+                         "x":961,
+                         "y":446.333
                         }, 
                         {
-                         "x":959.333,
-                         "y":-450
+                         "x":960.833,
+                         "y":82.5
+                        }, 
+                        {
+                         "x":1333.00000333333,
+                         "y":82.9996666666668
                         }],
                  "rotation":0,
                  "type":"",
@@ -432,6 +453,16 @@
                  "point":true,
                  "properties":[
                         {
+                         "name":"bumptag",
+                         "type":"int",
+                         "value":2
+                        }, 
+                        {
+                         "name":"collision",
+                         "type":"bool",
+                         "value":true
+                        }, 
+                        {
                          "name":"debugsprite",
                          "type":"bool",
                          "value":true
@@ -442,16 +473,31 @@
                          "value":106
                         }, 
                         {
+                         "name":"patrol.repeatcount",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
+                         "name":"patrol.reverses",
+                         "type":"bool",
+                         "value":false
+                        }, 
+                        {
                          "name":"patrol.speed",
                          "type":"float",
                          "value":0.1
+                        }, 
+                        {
+                         "name":"patrol.start",
+                         "type":"bool",
+                         "value":false
                         }],
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":254,
-                 "y":834
+                 "x":734.5,
+                 "y":1345.5
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -460,7 +506,7 @@
          "y":0
         }],
  "nextlayerid":23,
- "nextobjectid":108,
+ "nextobjectid":121,
  "orientation":"isometric",
  "renderorder":"right-down",
  "tiledversion":"git",
