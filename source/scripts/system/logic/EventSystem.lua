@@ -20,15 +20,14 @@ function EventSystem:onAdd(e)
 
     for _, s in pairs(e.event) do
         if (type(s) == "table") then
-            s.consumed = s.consumed or false
+            s.ignore = s.ignore or false
             s.repeats = s.repeats or false
         end
     end
 
     -- Notify only this entity
     e.notify = e.notify or function (self, subject, body)
-        if (self.event[subject] and
-            not self.event[subject].consumed) then
+        if (self.event[subject] and not self.event[subject].ignore) then
             table.insert(self.messages, {
                 subject = subject,
                 body = body
@@ -53,10 +52,10 @@ function EventSystem:process(e, dt)
         return
     end
     -- Consume messages
-    for _, msg in ipairs(e.messages) do
+    for i, msg in ipairs(e.messages) do
         log.info(("Event %s: %s "):format(msg.subject, msg.body))
         local subject = e.event[msg.subject]
-        local consumed = not subject.repeats
+        local ignore = not subject.repeats
         -- Set Entity Attributes
         for action, body in pairs(subject) do
             -- Set Values
@@ -68,6 +67,9 @@ function EventSystem:process(e, dt)
                 end
                 for name, value in pairs(body) do
                     if (name ~= "oid") then
+                        if (type(value) == "string" and value == "nil") then
+                            value = nil
+                        end
                         setProperty(target, name, value)
                     end
                 end
@@ -75,7 +77,7 @@ function EventSystem:process(e, dt)
                 _G["world"]:addEntity(target)
             end
         end
-        subject.consumed = consumed
+        subject.ignore = ignore
     end
     e.messages = {}
 end

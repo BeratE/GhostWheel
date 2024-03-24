@@ -485,7 +485,7 @@
                         {
                          "name":"patrol.repeatcount",
                          "type":"int",
-                         "value":-1
+                         "value":0
                         }, 
                         {
                          "name":"patrol.reverses",
