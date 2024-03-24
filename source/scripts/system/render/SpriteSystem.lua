@@ -7,11 +7,6 @@ class("SpriteSystem").extends(AbstractSystem)
 tinyecs.system(SpriteSystem)
 SpriteSystem.filter = tinyecs.requireAll("sprite")
 
-
-function SpriteSystem:init()
-    SpriteSystem.super.init(self)
-end
-
 function SpriteSystem:onAdd(e)
     e.sprite:add()
 end

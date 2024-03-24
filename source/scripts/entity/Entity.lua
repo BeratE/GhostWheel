@@ -21,17 +21,14 @@ end
 
 
 function Entity:setDebugSprite()
-    self.width, self.height = 16, 16
-    --local textheight = 10
+    self.debugsprite = true
+    self.width, self.height = 32, 32
     local img = gfx.image.new(self.width, self.height)
     gfx.pushContext(img)
     gfx.setColor(gfx.kColorBlack)
     gfx.fillEllipseInRect(0, 0, self.width, self.height)
     gfx.setColor(gfx.kColorWhite)
     gfx.fillEllipseInRect(2, 2, self.width-4, self.height-4)
-    --gfx.fillRect(0, self.height, self.width, textheight)
-    --gfx.setColor(gfx.kColorBlack)
-    --gfx.drawTextInRect(self.entityid, 0, self.height, self.width, textheight)
     gfx.popContext()
     self.sprite = gfx.sprite.new(img)
     self.sprite:setCenter(0.5, 0.0)

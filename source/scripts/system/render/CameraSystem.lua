@@ -9,11 +9,6 @@ class("CameraSystem").extends(AbstractSystem)
 tinyecs.processingSystem(CameraSystem)
 CameraSystem.filter = tinyecs.requireAll("cameratrack", "sprite")
 
-
-function CameraSystem:init()
-    CameraSystem.super.init(self)
-end
-
 function CameraSystem:onAdd(e)
     self.center = vector(disp.getWidth()/2, disp.getHeight()/2)
     self.camera = vector(self.center.x - e.sprite.x, self.center.y - e.sprite.y)
@@ -30,9 +25,6 @@ function CameraSystem:process(e, dt)
     local sx, sy = cx + lerp*(tx - cx), cy + lerp*(ty - cy)
     self.camera:set(sx, sy)
     gfx.setDrawOffset(self.camera.x, self.camera.y)
-end
-
-function CameraSystem:postProcess(dt)
 end
 
 function CameraSystem.getViewPort()

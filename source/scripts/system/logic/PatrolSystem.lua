@@ -9,10 +9,6 @@ class("PatrolSystem").extends(AbstractSystem)
 tinyecs.processingSystem(PatrolSystem)
 PatrolSystem.filter = tinyecs.requireAll("patrol", "pos")
 
-function PatrolSystem:init()
-    PatrolSystem.super.init(self)
-end
-
 function PatrolSystem:onAdd(e)
     -- Check if patrol reference is a polygon entity
     local polygon = e.objref[e.patrol.oid].polygon

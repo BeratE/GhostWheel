@@ -4,16 +4,13 @@ import "scripts/system/AbstractSystem"
 
 -- List of predefined event subjects
 Event = {
-    Collision = "collision" -- Occurs when other collides with entity
+    Collision = "collision", -- When other collides with entity
+    Property = "property"    -- When entity property/component is changed
 }
 
 class("EventSystem").extends(AbstractSystem)
 tinyecs.processingSystem(EventSystem)
 EventSystem.filter = tinyecs.requireAll("event")
-
-function EventSystem:init()
-    EventSystem.super.init(self)
-end
 
 function EventSystem:onAdd(e)
     e.messages = e.messages or {}     -- Event message queue
@@ -47,6 +44,16 @@ local function setProperty(e, name, value)
     end
 end
 
+-- Retrieve property from entity with dot notation
+local function getProperty(e, name)
+     -- Translate string dot notation
+    local p = e
+    for n in string.gmatch(name, '([^.]*)') do
+        p = p[n]
+    end
+    return p
+end
+
 function EventSystem:process(e, dt)
     if (#e.messages == 0) then
         return
@@ -58,20 +65,37 @@ function EventSystem:process(e, dt)
         local ignore = not subject.repeats
         -- Set Entity Attributes
         for action, body in pairs(subject) do
-            -- Set Values
-            if (action:match("set%d*")) then
+            if (action:match("set%d*")) then -- Set Values
                 local target = msg.body -- Default target
                 -- Check if special target is selected
                 if (body.oid and body.oid > 0) then
                     target = e.objref[body.oid]
                 end
                 for name, value in pairs(body) do
-                    if (name ~= "oid") then
-                        if (type(value) == "string" and value == "nil") then
-                            value = nil
-                        end
-                        setProperty(target, name, value)
+                    if (name == "oid") then
+                        goto continue
                     end
+                    if (type(value) == "string") then
+                        -- Translate to literal nil
+                        if (value == "nil") then
+                            value = nil
+                        -- Look for reference values
+                        else
+                            local ref, propname = value:match(("^(%a+):([%w.]+)"))
+                            if (ref == "self") then
+                                value = getProperty(e, propname)
+                            elseif (ref == "body") then
+                                value = getProperty(msg.body, propname)
+                            end
+                        end
+                    end
+                    setProperty(target, name, value)
+                    --[[
+                    if (target.event) then
+                        target:notify(Event.Property, {name = name, value = value})
+                    end
+                    --]]
+                    ::continue::
                 end
                 -- Refresh Entity since components have possibly changed
                 _G["world"]:addEntity(target)
@@ -80,10 +104,6 @@ function EventSystem:process(e, dt)
         subject.ignore = ignore
     end
     e.messages = {}
-end
-
-function EventSystem:postProcess(dt)
-    
 end
 
 -- Notify all entities in the system

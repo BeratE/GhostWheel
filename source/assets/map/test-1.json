@@ -344,8 +344,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":779.75,
-                 "y":1804.92
+                 "x":768.25,
+                 "y":1782.42
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -429,20 +429,20 @@
                  "name":"enemytest",
                  "polyline":[
                         {
-                         "x":483.666333333333,
-                         "y":451
+                         "x":482.666,
+                         "y":450
                         }, 
                         {
-                         "x":961,
-                         "y":446.333
+                         "x":963,
+                         "y":444.333
                         }, 
                         {
                          "x":960.833,
                          "y":82.5
                         }, 
                         {
-                         "x":1333.00000333333,
-                         "y":82.9996666666668
+                         "x":1333,
+                         "y":82.9997
                         }],
                  "rotation":0,
                  "type":"",
@@ -501,8 +501,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":734.5,
-                 "y":1345.5
+                 "x":730,
+                 "y":1344
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -511,7 +511,7 @@
          "y":0
         }],
  "nextlayerid":23,
- "nextobjectid":121,
+ "nextobjectid":122,
  "orientation":"isometric",
  "renderorder":"right-down",
  "tiledversion":"git",

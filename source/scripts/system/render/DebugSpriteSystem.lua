@@ -7,11 +7,6 @@ class("DebugSpriteSystem").extends(AbstractSystem)
 tinyecs.processingSystem(DebugSpriteSystem)
 DebugSpriteSystem.filter = tinyecs.requireAll("debugsprite", "sprite", "name")
 
-
-function DebugSpriteSystem:init()
-    DebugSpriteSystem.super.init(self)
-end
-
 function DebugSpriteSystem:onAdd(e)
     e.debugsprite = gfx.sprite.spriteWithText(e.name, 400, 200, gfx.kColorWhite)
     e.debugsprite:add()
@@ -22,5 +17,5 @@ function DebugSpriteSystem:onRemove(e)
 end
 
 function DebugSpriteSystem:process(e, dt)
-    e.debugsprite:moveTo(e.sprite.x, e.sprite.y-e.sprite.height)
+    e.debugsprite:moveTo(e.sprite.x, e.sprite.y-10)
 end

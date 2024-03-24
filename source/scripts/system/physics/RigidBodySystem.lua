@@ -14,10 +14,6 @@ class("RigidBodySystem").extends(AbstractSystem)
 tinyecs.processingSystem(RigidBodySystem)
 RigidBodySystem.filter = tinyecs.requireAll(tinyecs.requireAll("pos"), tinyecs.rejectAny("immobile", "imagelayer", "tilelayer"))
 
-function RigidBodySystem:init()
-    RigidBodySystem.super.init(self)
-end
-
 function RigidBodySystem:onAdd(e)
     RigidBodySystem.initRigidBody(e)
 end
