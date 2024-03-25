@@ -8,6 +8,13 @@ Order of physics system:
 3 Collisions resolution
 ]]
 
+ForceMode = {
+    Force = 1,          -- Input as Force [N], change vel by force*dt/mass
+    Impulse = 2,        -- Input as impulse [N/s], change vel by force/mass (default)
+    Acceleration = 3,   -- Input as acceleration [m/s^2], change 
+    VelocityChange = 4  -- Input as direct velocity change [m/s]
+}
+
 local PRECISION <const> = 0.0001
 
 class("RigidBodySystem").extends(AbstractSystem)
@@ -22,10 +29,22 @@ end
 function RigidBodySystem:process(e, dt)
     -- Apply linear damping force
     e:addForce(-e.lindamp * e.vel.x, -e.lindamp * e.vel.y)
+    -- Set immediate acceleration 
+    e.acc.x = e.force[ForceMode.Acceleration].x
+    e.acc.y = e.force[ForceMode.Acceleration].y
+    e.force[ForceMode.Acceleration] = vector(0, 0)
+    -- Set acceleration using immediate forces
+    e.acc.x += e.force[ForceMode.Force].x*dt/e.mass
+    e.acc.y += e.force[ForceMode.Force].y*dt/e.mass
+    e.force[ForceMode.Force] = vector(0, 0)
     -- Set acceleration using the impulse forces acting on object
-    e.acc.x = e.force.x/e.mass
-    e.acc.y = e.force.y/e.mass
-    e.force = vector(0, 0)
+    e.acc.x += e.force[ForceMode.Impulse].x/e.mass
+    e.acc.y += e.force[ForceMode.Impulse].y/e.mass
+    e.force[ForceMode.Impulse] = vector(0, 0)
+    -- Set direct velocity change
+    e.vel.x += e.force[ForceMode.VelocityChange].x
+    e.vel.y += e.force[ForceMode.VelocityChange].y
+    e.force[ForceMode.VelocityChange] = vector(0, 0)
     -- Velocity verlet integration
     e.moved = false
     local x = e.pos.x + e.vel.x*dt + e.acc.x/2*dt*dt
@@ -41,17 +60,10 @@ function RigidBodySystem:process(e, dt)
     if (math.abs(e.acc.y) < PRECISION) then e.acc.y = 0 end
     if (math.abs(e.vel.x) < PRECISION) then e.vel.x = 0 end
     if (math.abs(e.vel.y) < PRECISION) then e.vel.y = 0 end
-    --print("Entity Acc: " .. e.acc.x .. ", " .. e.acc.y)
-    --print("Entity Vel: " .. e.vel.x .. ", " .. e.vel.y)
-    --print("Entity Pos " .. e.pos.x .. " " .. e.pos.y)
 end
 
 
 --[[ Static helper functions ]]
-
-local function isvector(t)
-    return getmetatable(t) == vector
-end
 
 -- Add all the required components for the rigid body system
 function RigidBodySystem.initRigidBody(e, mass, lindamp, pos)
@@ -67,14 +79,19 @@ function RigidBodySystem.initRigidBody(e, mass, lindamp, pos)
     e.lindamp = e.lindamp or lindamp or 0.1
     e.lindamp = pdlibs.math.clamp(e.lindamp, 0.0, 1.0)
     --[[ Vector components ]]
-    e.force = e.force or vector(0, 0) -- Accumulated forces acting on the object in the next timestep 
+    e.force = e.force or {} -- Accumulated forces acting on the object in the next timestep
+    e.force[ForceMode.Force] = e.force[ForceMode.Force] or vector(0, 0)
+    e.force[ForceMode.Impulse] = e.force[ForceMode.Impulse] or vector(0, 0)
+    e.force[ForceMode.Acceleration] = e.force[ForceMode.Acceleration] or vector(0, 0)
+    e.force[ForceMode.VelocityChange] = e.force[ForceMode.VelocityChange] or vector(0, 0)
     e.acc = e.acc or vector(0, 0) -- Current acceleration of the object
     e.vel = e.vel or vector(0, 0) -- Current velocity of the object
 
     -- Add impulse force to entity
-    e.addForce = e.addForce or function (self, fx, fy)
-        self.force.x += fx
-        self.force.y += fy
+    e.addForce = e.addForce or function (self, fx, fy, mode)
+        mode = mode or ForceMode.Impulse
+        self.force[mode].x += fx
+        self.force[mode].y += fy
     end
     -- Stop all movement
     e.stopMovement = e.stopMovement or function (self)
