@@ -35,8 +35,8 @@ end
 
 local function defaultfilter(entity, other)
     if (entity.bumptag and other.bumpmask) then
-        -- Only collide if other.bumptag bit j in bumpmask is set
         if (entity.bumptag & other.bumpmask == 0) then
+            -- Only collide if other.bumptag bit j in bumpmask is set
             return
         end
     end

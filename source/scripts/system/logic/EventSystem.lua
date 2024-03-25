@@ -70,8 +70,8 @@ function EventSystem:process(e, dt)
         for aname, abody in pairs(subject) do
             if (aname:match("set%d*")) then -- Set Name-Value Pairs
                 local target = msg.body -- Default target
-                if (abody.oid and abody.oid > 0) then -- Check if special target is selected
-                    target = e.objref[abody.oid]
+                if (abody.objrefid and abody.objrefid > 0) then -- Check if special target is selected
+                    target = e.objref[abody.objrefid]
                 end
                 for pname, pvalue in pairs(abody) do
                     if (pname ~= "oid") then

@@ -47,7 +47,7 @@ local function random()
 end
 
 -- check if an object is a vector
-local function isvector(t)
+function isvector(t)
     return getmetatable(t) == vector
 end
 

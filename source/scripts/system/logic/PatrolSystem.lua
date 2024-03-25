@@ -11,10 +11,10 @@ PatrolSystem.filter = tinyecs.requireAll("patrol", "pos")
 
 function PatrolSystem:onAdd(e)
     -- Check if patrol reference is a polygon entity
-    local polygon = e.objref[e.patrol.oid].polygon
+    local polygon = e.objref[e.patrol.objrefid].polygon
     assert(polygon, "Patrol reference must be a polygon object!")
 
-    e.patrol.polygon = e.patrol.polygon or e.objref[e.patrol.oid].polygon
+    e.patrol.polygon = e.patrol.polygon or e.objref[e.patrol.objrefid].polygon
     e.patrol.duration = e.patrol.polygon:length()/e.patrol.speed
     e.patrol.repeatcount = e.patrol.repeatcount or -1
     e.patrol.reverses = e.patrol.reverses or false
