@@ -123,7 +123,7 @@
     <property name="event.collision.set1" type="object" value="107"/>
     <property name="event.collision.set1.patrol.pause" type="bool" value="false"/>
     <property name="event.collision.set2" type="object" value="103"/>
-    <property name="event.collision.set2.delete" type="bool" value="true"/>
+    <property name="event.collision.set2.bumpmask" type="int" value="0"/>
    </properties>
   </object>
  </objectgroup>

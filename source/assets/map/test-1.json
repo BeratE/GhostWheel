@@ -400,9 +400,9 @@
                          "value":103
                         }, 
                         {
-                         "name":"event.collision.set2.delete",
-                         "type":"bool",
-                         "value":true
+                         "name":"event.collision.set2.bumpmask",
+                         "type":"int",
+                         "value":0
                         }],
                  "rotation":0,
                  "type":"",

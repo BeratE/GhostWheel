@@ -49,9 +49,16 @@ end
 
 --[[ Static helper functions ]]
 
+local function isvector(t)
+    return getmetatable(t) == vector
+end
+
 -- Add all the required components for the rigid body system
 function RigidBodySystem.initRigidBody(e, mass, lindamp, pos)
     e.pos = e.pos or pos or vector(0, 0) -- Current position of the object
+    if (not isvector(e.pos)) then
+        e.pos = vector (e.pos.x, e.pos.y)
+    end
     --[[ Scalar components ]]
     -- Mass of object in kg (minimum of 1gram) - default 80kg
     e.mass = e.mass or mass or 80

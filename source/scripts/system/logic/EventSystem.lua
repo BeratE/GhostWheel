@@ -36,9 +36,11 @@ end
 -- Recursively sets/overwrites properties 
 local function setProperty(e, name, value)
     local propertyChanged = (e[name] ~= value)
-    if (type(value) == "table" and type(e[name] == "table") and value ~= e[name]) then
-        for n, v in pairs(value) do
-            setProperty(e[name], n, v)
+    if (type(value) == "table" and type(e[name] == "table")) then
+        if (value ~= e[name]) then
+            for n, v in pairs(value) do
+                setProperty(e[name], n, v)
+            end
         end
     else
         e[name] = value
@@ -65,32 +67,28 @@ function EventSystem:process(e, dt)
         local subject = e.event[msg.subject]
         local ignore = not subject.repeats
         -- Set Entity Attributes
-        for action, body in pairs(subject) do
-            if (action:match("set%d*")) then -- Set Values
+        for aname, abody in pairs(subject) do
+            if (aname:match("set%d*")) then -- Set Name-Value Pairs
                 local target = msg.body -- Default target
-                -- Check if special target is selected
-                if (body.oid and body.oid > 0) then
-                    target = e.objref[body.oid]
+                if (abody.oid and abody.oid > 0) then -- Check if special target is selected
+                    target = e.objref[abody.oid]
                 end
-                for name, value in pairs(body) do
-                    if (name == "oid") then goto continue end
-                    if (type(value) == "string") then
-                        if (value == "nil") then 
-                            value = nil          -- Translate to literal nil
-                        else                     -- Look for reference values
-                            local ref, rest = value:match(("^(%a+):([%w.]+)"))
-                            if (ref == "self") then     -- Reference entity
-                                value = getProperty(e, rest)
-                            elseif (ref == "body") then -- Reference message mody
-                                value = getProperty(msg.body, rest)
+                for pname, pvalue in pairs(abody) do
+                    if (pname ~= "oid") then
+                        if (type(pvalue) == "string") then
+                            if (pvalue == "nil") then -- Translate to literal nil
+                                pvalue = nil
+                            else                     -- Look for reference values
+                                local ref, rest = pvalue:match(("^(%a+):([%w.]+)"))
+                                if     (ref == "self") then pvalue = getProperty(e, rest)
+                                elseif (ref == "body") then pvalue = getProperty(msg.body, rest) end
                             end
                         end
+                        local propertyChanged = setProperty(target, pname, pvalue)
+                        if (propertyChanged and target.event) then
+                            target:notify(Event.Property, {name = pname, value = pvalue})
+                        end
                     end
-                    local propertyChanged = setProperty(target, name, value)
-                    if (propertyChanged and target.event) then
-                        target:notify(Event.Property, {name = name, value = value})
-                    end
-                    ::continue::
                 end
                 -- Refresh Entity since components have possibly changed
                 _G["world"]:addEntity(target)
