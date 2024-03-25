@@ -136,6 +136,7 @@
     <property name="bumptag" type="int" value="2"/>
     <property name="collision" type="bool" value="true"/>
     <property name="debugsprite" type="bool" value="true"/>
+    <property name="lindamp" type="int" value="1"/>
     <property name="patrol" type="object" value="106"/>
     <property name="patrol.pause" type="bool" value="true"/>
     <property name="patrol.repeatcount" type="int" value="0"/>

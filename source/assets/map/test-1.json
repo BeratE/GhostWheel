@@ -473,6 +473,11 @@
                          "value":true
                         }, 
                         {
+                         "name":"lindamp",
+                         "type":"int",
+                         "value":1
+                        }, 
+                        {
                          "name":"patrol",
                          "type":"object",
                          "value":106

@@ -6,6 +6,7 @@ import "scripts/system/render/CameraSystem"
 import "scripts/system/physics/RigidBodySystem"
 import "scripts/system/physics/BumpWorldSystem"
 import "scripts/system/logic/EventSystem"
+import "scripts/system/logic/FollowSystem"
 import "scripts/system/logic/PatrolSystem"
 import "scripts/entity/MapData"
 import "libs/pdlog"
@@ -45,6 +46,7 @@ function TestScene:init()
         sprite = SpriteSystem(),
         camera = CameraSystem(),
         event = EventSystem(),
+        follow = FollowSystem(),
         patrol = PatrolSystem()
     }
     self:addSystems(self.systems)
