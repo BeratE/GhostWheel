@@ -11,6 +11,9 @@ tinyecs.processingSystem(FollowSystem)
 FollowSystem.filter = tinyecs.requireAll("pos", "follow")
 
 function FollowSystem:onAdd(e)
+    if (e.follow.objrefid) then
+        e.follow.target = e.follow
+    end
     e.follow.pause = e.follow.pause or false
     e.follow.mindist = e.follow.mindist or 0
     if (not e.follow.tolerance) then

@@ -11,7 +11,6 @@ PatrolSystem.filter = tinyecs.requireAll("patrol", "pos")
 
 function PatrolSystem:onAdd(e)
     e.patrol.polygon = e.patrol.polygon or e.objref[e.patrol.objrefid].polygon
-    e.patrol.duration = e.patrol.polygon:length()/e.patrol.speed
     e.patrol.repeatcount = e.patrol.repeatcount or -1
     e.patrol.reverses = e.patrol.reverses or false
     e.patrol.speed = e.patrol.speed or 0.1
