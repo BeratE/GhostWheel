@@ -56,8 +56,8 @@ function FollowSystem:process(e, dt)
     local dy = (e.follow.target.y or e.follow.target.pos.y) - e.pos.y
     local s = e.follow.speed
     local sx, sy = 0, 0
-    if (math.abs(dx) > e.follow.tolerance) then sx = dx/math.abs(dx) end
-    if (math.abs(dy) > e.follow.tolerance) then sy = dy/math.abs(dy) end
+    if (math.abs(dx) > e.follow.tolerance/2) then sx = dx/math.abs(dx) end
+    if (math.abs(dy) > e.follow.tolerance/2) then sy = dy/math.abs(dy) end
     local n = math.sqrt(sx*sx+sy*sy)
     if (n > 0) then e:addForce(s*sx/n, s*sy/n, ForceMode.VelocityChange) end
 end

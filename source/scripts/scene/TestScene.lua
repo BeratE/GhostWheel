@@ -11,6 +11,9 @@ import "scripts/system/logic/PatrolSystem"
 import "scripts/entity/MapData"
 import "libs/pdlog"
 
+local pd <const> = playdate
+local gfx <const> = playdate.graphics
+
 --[[ TestScene ]]
 class("TestScene").extends(Scene)
 
@@ -42,7 +45,7 @@ function TestScene:init()
         bumpworld = BumpWorldSystem(level),
         transform = TransformSystem(level),
         rigidbody = RigidBodySystem(),
-        debugsprite = DebugSpriteSystem(),
+        --debugsprite = DebugSpriteSystem(),
         sprite = SpriteSystem(),
         camera = CameraSystem(),
         event = EventSystem(),
@@ -57,6 +60,7 @@ function TestScene:onEnter()
     log.info("Entering TestScene ..")
     self.levels[self.levelIdx]:add(self.world)
     self.world:refresh()
+    gfx.setFont(assets.getFont("ruby_12"))
 end
 
 function TestScene:onExit()
@@ -67,6 +71,7 @@ end
 
 function TestScene:onUpdate()
     TestScene.super.onUpdate(self)
+    self:debugDraw()
 end
 
 function TestScene:switchNextLevel()
@@ -119,4 +124,45 @@ function TestScene:keyPressed(key)
             self.world:removeSystem(self.systems.bumpworld)
         end
     end
+end
+
+function TestScene:debugDraw()
+    if (not DEBUG_DRAW) then
+        return
+    end
+    local transform = self.systems.transform.toScreen
+
+    -- Draw Hitbox
+    --pd.setDebugDrawColor(1, 0, 0, 1)
+    
+    for _, e in ipairs(self.systems.bumpworld.entities) do
+        -- Draw Hitbox
+        local x, y, w, h = e.pos.x, e.pos.y, e.hitbox.w, e.hitbox.h
+        local rect = pd.geometry.rect.new(x, y, w, h):toPolygon()
+        transform:transformPolygon(rect)
+        local p = rect:getPointAt(1)
+
+        gfx.pushContext()
+            if (e.immobile) then gfx.setColor(gfx.kColorWhite)
+            else gfx.setColor(gfx.kColorBlack) end
+            gfx.setDitherPattern(0.5, gfx.image.kDitherTypeBayer2x2)
+            gfx.fillPolygon(rect)
+        gfx.popContext()
+
+        -- Draw Name
+        local name = e.name
+        local tw, th = gfx.getTextSize(name)
+        gfx.pushContext()
+            gfx.setColor(gfx.kColorWhite)
+            gfx.setDitherPattern(0.2, gfx.image.kDitherTypeBayer8x8)
+            gfx.setLineWidth(2)
+            gfx.fillRect(p.x-tw/2, p.y-th, tw, th)
+        gfx.popContext()
+        gfx.pushContext()
+            gfx.setColor(gfx.kColorBlack)
+            gfx.drawText(name, p.x-tw/2, p.y-th)
+        gfx.popContext()
+    end
+
+    
 end

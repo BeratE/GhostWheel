@@ -46,23 +46,20 @@ end
 
 
 --[[ Simulator and Debug ]]
---[[
-DEBUG_OVERLAY = gfx.image.new(disp.getWidth(), disp.getHeight(), gfx.kColorBlack)
-pd.setDebugDrawColor(1, 1, 0, 0)
+
 function playdate.debugDraw()
-	DEBUG_OVERLAY:drawIgnoringOffset(0, 0) -- draw our layer of collected debug draws
-	DEBUG_OVERLAY:clear(gfx.kColorBlack) -- blank for next update
+	SCENE_MANAGER.current:debugDraw()
 end
---]]
+
 function playdate.keyPressed(key)
     --log.info("Key pressed " .. key)
     SCENE_MANAGER.current:keyPressed(key)
 end
 
 local menu = playdate.getSystemMenu()
-local debugItem, error = menu:addCheckmarkMenuItem("debug", DEBUG, function(value)
-    DEBUG = value
-    log.info("Debug mode set to " .. string.upper(tostring(value)))
+local debugItem, error = menu:addCheckmarkMenuItem("debug draw", DEBUG_DRAW, function(value)
+    DEBUG_DRAW = value
+    log.info(("Debug Draw mode set to %s"):format(string.upper(tostring(value))))
 end)
 if (not debugItem) then
     log.error(error)

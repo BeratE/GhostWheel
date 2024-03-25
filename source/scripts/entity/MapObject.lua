@@ -9,7 +9,8 @@ class("MapObject").extends(MapEntity)
 function MapObject:init(layer, lidx, object)
     MapTile.super.init(self, layer, lidx)
     self:setProperties(object.properties)
-    self.name = ("%s[%i]%s"):format(self.name, object.id, object.name)
+    if (object.name == "") then object.name = layer.name end
+    self.name = ("[%i]%s"):format(object.id, object.name)
     self.oid = object.id
     self.width = object.width
     self.height = object.height

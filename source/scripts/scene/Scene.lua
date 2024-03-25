@@ -47,5 +47,8 @@ end
 
 -- [[ Simulator and Debug ]]
 
+function Scene:debugDraw()
+end
+
 function Scene:keyPressed(key)
 end

@@ -1,5 +1,6 @@
 --[[ Global constants ]]
 DEBUG = true
+DEBUG_DRAW = true
 FPS = 30 -- Frames per second
 
 --[[ CONFIGURATIONS ]]
