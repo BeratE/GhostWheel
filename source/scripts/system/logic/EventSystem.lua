@@ -1,6 +1,8 @@
 import "scripts/system/AbstractSystem"
 
---[[ In Construction ]]
+--[[ An Event component listens to messages 
+with a predefined subject(headers) from other system,
+and react with their according actions. ]]
 
 -- List of predefined event subjects
 Event = {
@@ -68,7 +70,8 @@ function EventSystem:process(e, dt)
         local ignore = not subject.repeats
         -- Set Entity Attributes
         for aname, abody in pairs(subject) do
-            if (aname:match("set%d*")) then -- Set Name-Value Pairs
+            -- Action "Set" Name-Value Pairs
+            if (aname:match("set%d*")) then
                 local target = msg.body -- Default target
                 if (abody.objrefid and abody.objrefid > 0) then -- Check if special target is selected
                     target = e.objref[abody.objrefid]

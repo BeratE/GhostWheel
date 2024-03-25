@@ -1,7 +1,6 @@
 import "CoreLibs/animator"
 import "scripts/system/AbstractSystem"
 
-local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
 --[[ Entity moves along a given patrol path (reference to another polygon entity)]]
@@ -10,16 +9,14 @@ tinyecs.processingSystem(PatrolSystem)
 PatrolSystem.filter = tinyecs.requireAll("patrol", "pos")
 
 function PatrolSystem:onAdd(e)
-    -- Check if patrol reference is a polygon entity
-    local polygon = e.objref[e.patrol.objrefid].polygon
-    assert(polygon, "Patrol reference must be a polygon object!")
-
     e.patrol.polygon = e.patrol.polygon or e.objref[e.patrol.objrefid].polygon
     e.patrol.duration = e.patrol.polygon:length()/e.patrol.speed
     e.patrol.repeatcount = e.patrol.repeatcount or -1
     e.patrol.reverses = e.patrol.reverses or false
     e.patrol.speed = e.patrol.speed or 0.1
     e.patrol.pause = e.patrol.pause or false
+    e.patrol.polygonidx = 1
+    e.follow = {}
 
     e.patrolRestart = e.patrolRestart or function ()
         e.patrol.animator = gfx.animator.new(e.patrol.duration, e.patrol.polygon)
