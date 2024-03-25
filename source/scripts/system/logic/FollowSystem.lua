@@ -4,7 +4,8 @@ import "scripts/system/AbstractSystem"
 local pd <const> = playdate
 local gfx <const> = playdate.graphics
 
---[[ Follows a given target, target needs to be a table with a pos attribute. ]]
+--[[ Follows a given target. 
+Target either needs a pos component or x and y attributes. ]]
 class("FollowSystem").extends(AbstractSystem)
 tinyecs.processingSystem(FollowSystem)
 FollowSystem.filter = tinyecs.requireAll("pos", "follow")
@@ -12,7 +13,13 @@ FollowSystem.filter = tinyecs.requireAll("pos", "follow")
 function FollowSystem:onAdd(e)
     e.follow.pause = e.follow.pause or false
     e.follow.mindist = e.follow.mindist or 0
-    e.follow.tolerance = e.follow.tolerance or 8
+    if (not e.follow.tolerance) then
+        
+        if (e.width or e.height) then
+            e.follow.tolerance = math.max(e.width or e.height, e.height or e.width)/2
+        end
+    end
+    e.follow.tolerance = e.follow.tolerance or 10
     e.follow.speed = e.follow.speed or 0.1
     
     e.setFollowTarget = e.setFollowTarget or function (self, target)
@@ -42,9 +49,12 @@ function FollowSystem:process(e, dt)
     if (e.follow.pause or e:hasFollowReached()) then
         return
     end
-    local s = e.follow.speed
     local dx = (e.follow.target.x or e.follow.target.pos.x) - e.pos.x
     local dy = (e.follow.target.y or e.follow.target.pos.y) - e.pos.y
-    if (math.abs(dx) > e.follow.tolerance) then e:addForce(dx/math.abs(dx)*s, 0, ForceMode.VelocityChange) end
-    if (math.abs(dy) > e.follow.tolerance) then e:addForce(0, dy/math.abs(dy)*s, ForceMode.VelocityChange) end
+    local s = e.follow.speed
+    local sx, sy = 0, 0
+    if (math.abs(dx) > e.follow.tolerance) then sx = dx/math.abs(dx) end
+    if (math.abs(dy) > e.follow.tolerance) then sy = dy/math.abs(dy) end
+    local n = math.sqrt(sx*sx+sy*sy)
+    if (n > 0) then e:addForce(s*sx/n, s*sy/n, ForceMode.VelocityChange) end
 end

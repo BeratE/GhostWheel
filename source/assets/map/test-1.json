@@ -500,7 +500,7 @@
                         {
                          "name":"patrol.speed",
                          "type":"float",
-                         "value":0.1
+                         "value":0.05
                         }],
                  "rotation":0,
                  "type":"",

@@ -141,7 +141,7 @@
     <property name="patrol.pause" type="bool" value="true"/>
     <property name="patrol.repeatcount" type="int" value="0"/>
     <property name="patrol.reverses" type="bool" value="false"/>
-    <property name="patrol.speed" type="float" value="0.1"/>
+    <property name="patrol.speed" type="float" value="0.05"/>
    </properties>
    <point/>
   </object>
