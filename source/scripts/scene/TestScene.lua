@@ -72,7 +72,9 @@ end
 
 function TestScene:onUpdate()
     TestScene.super.onUpdate(self)
-    self:debugDraw()
+    if (DEBUG_DRAW) then
+        self:debugDraw()
+    end
 end
 
 function TestScene:switchNextLevel()
@@ -167,9 +169,6 @@ function TestScene:keyPressed(key)
 end
 
 function TestScene:debugDraw()
-    if (not DEBUG_DRAW) then
-        return
-    end
     for _, e in ipairs(self.systems.bumpworld.entities) do
         -- Draw Hitbox
         local x, y, w, h = e.pos.x, e.pos.y, e.hitbox.w, e.hitbox.h
@@ -178,9 +177,16 @@ function TestScene:debugDraw()
         local p = rect:getPointAt(1)
 
         gfx.pushContext()
-            if (e.immobile) then gfx.setColor(gfx.kColorWhite)
-            else gfx.setColor(gfx.kColorBlack) end
-            gfx.setDitherPattern(0.5, gfx.image.kDitherTypeBayer2x2)
+            if (e.immobile) then
+                gfx.setColor(gfx.kColorWhite)
+                gfx.setDitherPattern(0.3, gfx.image.kDitherTypeDiagonalLine)
+            elseif (e.event) then
+                gfx.setColor(gfx.kColorBlack)
+                gfx.setDitherPattern(0.5, gfx.image.kDitherTypeHorizontalLine)
+            else
+                gfx.setColor(gfx.kColorBlack)
+                gfx.setDitherPattern(0.5, gfx.image.kDitherTypeBayer2x2)
+            end
             gfx.fillPolygon(rect)
         gfx.popContext()
 
