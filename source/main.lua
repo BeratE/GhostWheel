@@ -56,11 +56,11 @@ function playdate.keyPressed(key)
     SCENE_MANAGER.current:keyPressed(key)
 end
 
-local menu = playdate.getSystemMenu()
-local debugItem, error = menu:addCheckmarkMenuItem("debug draw", DEBUG_DRAW, function(value)
+local debugmenu = playdate.getSystemMenu()
+
+local debugItem, error
+debugItem, error = debugmenu:addCheckmarkMenuItem("debug draw", DEBUG_DRAW, function(value)
     DEBUG_DRAW = value
     log.info(("Debug Draw mode set to %s"):format(string.upper(tostring(value))))
 end)
-if (not debugItem) then
-    log.error(error)
-end
+if (not debugItem) then log.error(error) end

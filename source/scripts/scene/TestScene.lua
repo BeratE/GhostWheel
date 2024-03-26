@@ -64,6 +64,7 @@ function TestScene:onEnter()
 end
 
 function TestScene:onExit()
+    TestScene.super.onExit(self)
     log.info("Exiting TestScene ..")
     self.levels[self.levelIdx]:remove(self.world)
     self.world:refresh()
@@ -90,6 +91,20 @@ function TestScene:switchNextLevel()
 end
 
 local v = 0.1
+local capture = {
+    code = {},
+    mode = false,
+}
+function capturecode(code)
+    local number = 0
+    for i = #code, 1, -1 do
+        local c = code[i]
+        local e = 10^(#code - i)
+        number += c*e
+    end
+    return number
+end
+
 function TestScene:keyPressed(key)
     -- Print help
     if (key == "h") then
@@ -98,24 +113,37 @@ function TestScene:keyPressed(key)
         log.info("k - Move player down")
         log.info("j - Move player left")
         log.info("l - Move player right")
-        log.info("+ - Increase player velocity")
+        log.info("u - Increase player velocity")
         log.info("c - toggle collision")
         log.info("n - switch to next level")
+        log.info("+ - open capture code (cc) mode")
+        log.info("+(%d+)o - cc print object with given oid")
     end
-
+    -- Code Capture (CC) Mode
+    if (key == '+') then
+        capture.mode = true
+        capture.code = {}
+        log.info("Opening code capture mode.")
+    end
+    if (capture.mode) then
+        if (key:match("%d")) then
+            table.insert(capture.code, tonumber(key))
+            log.info(("Captured code %i"):format(capturecode(capture.code)))
+        end
+        if (key == "o") then
+            local code = capturecode(capture.code)
+            log.info(("Closing code capture mode, code %i."):format(code))
+            capture.code = {}
+            local entity = self.levels[self.levelIdx].objects[code]
+            log.info(("Table for objectid %i"):format(code))
+            printTable(entity)
+        end
+    end
+    -- Level Management
     if (key == 'n') then
         self:switchNextLevel()
-    elseif (key == "i") then
-        self.player:addForce(0, -v)
-    elseif (key == "k") then
-        self.player:addForce(0, v)
-    elseif (key == "j") then
-        self.player:addForce(-v, 0)
-    elseif (key == "l") then
-        self.player:addForce(v, 0)
-    elseif (key == "+") then
-        v += 0.1
-    elseif (key == "c") then
+    end
+    if (key == "c") then
         if (self.systems.bumpworld.world == nil) then
             log.info("DEBUG: Activate Collision")
             self.world:addSystem(self.systems.bumpworld)
@@ -124,22 +152,29 @@ function TestScene:keyPressed(key)
             self.world:removeSystem(self.systems.bumpworld)
         end
     end
+    -- Player Movement
+    if (key == "i") then
+        self.player:addForce(0, -v)
+    elseif (key == "k") then
+        self.player:addForce(0, v)
+    elseif (key == "j") then
+        self.player:addForce(-v, 0)
+    elseif (key == "l") then
+        self.player:addForce(v, 0)
+    elseif (key == "u") then
+        v += 0.1
+    end
 end
 
 function TestScene:debugDraw()
     if (not DEBUG_DRAW) then
         return
     end
-    local transform = self.systems.transform.toScreen
-
-    -- Draw Hitbox
-    --pd.setDebugDrawColor(1, 0, 0, 1)
-    
     for _, e in ipairs(self.systems.bumpworld.entities) do
         -- Draw Hitbox
         local x, y, w, h = e.pos.x, e.pos.y, e.hitbox.w, e.hitbox.h
         local rect = pd.geometry.rect.new(x, y, w, h):toPolygon()
-        transform:transformPolygon(rect)
+        self.systems.transform.toScreen:transformPolygon(rect)
         local p = rect:getPointAt(1)
 
         gfx.pushContext()
@@ -163,6 +198,4 @@ function TestScene:debugDraw()
             gfx.drawText(name, p.x-tw/2, p.y-th)
         gfx.popContext()
     end
-
-    
 end

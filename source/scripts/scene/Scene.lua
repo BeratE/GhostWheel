@@ -50,5 +50,8 @@ end
 function Scene:debugDraw()
 end
 
+function Scene:debugMenu()
+end
+
 function Scene:keyPressed(key)
 end
