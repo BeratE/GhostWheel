@@ -38,7 +38,7 @@ What You Can Define in Tiled:
 
 ## 🛠 Entity-Component-System Design
 All entities (player, NPCs, items, triggers) are defined by their components, which are simple flags or attributes set in Tiled.
-For example, a snipped of exported level data containing a "PlayerStart" object may look like this:
+For example, a snippet of exported level data containing a "PlayerStart" object may look like this:
 ```json
 {
   "type": "object",
@@ -76,6 +76,12 @@ The engine automatically builds this into a controllable player entity with came
 * Resistance to movement (linear damping)
 * Finetunable feel (force, damping, mass)
 
+## 🧪 Current Limitations / Unsupported Features
+* ❌ No animation system yet
+* ❌ No event trigger logic (in progress)
+* ❌ No UI/Dialog/Inventory/Item systems (planned)
+* ❌ No visual scripting for triggers
+* ❌ No support for hexagonal maps or staggered projections
 
 ## 🛠 Immediate To-Do
 * Basic animation support
