@@ -1,72 +1,88 @@
 # GhostWheel
-Experimental Isomentric 2.D Game Engine, able to load level data created in .
+Experimental Isomentric 2.D Game Engine written in Lua for the [Playdate](https://play.date/) SDK, able to load level data created in the [Tiled Map Editor](https://www.mapeditor.org/).
 
 A playable prototype engine for creating isometric, physics-enabled 2.5D levels, using JSON data exported from the [Tiled Map Editor](https://www.mapeditor.org/).
 Designed with an Entity-Component-System (ECS) architecture, this engine empowers non-technical level designers to quickly prototype and test game levels using only Tiled.
 
-> 🚧 **_ Note:_** : This engine is experimental and under active development. Expect bugs and incomplete features.
-
-## 🧪 Goals
 The ultimate goal is to allow designers to:
 * Rapidly prototype isometric levels
 * Define rich game logic with no code
 * Use pre-rendered visuals for final levels after testing
 * Focus on gameplay, not engine internals
 
+> 🚧 **_ Note:_** : This engine is experimental and under active development. Expect bugs and incomplete features.
+
+
 ## 🗺 Level Editing in Tiled
-Levels are created entirely in [Tiled Map Editor](https://www.mapeditor.org/), using JSON export format. 
-All core level data—collision, visuals, player start, monsters, event zones, etc.—are defined using custom properties on tiles, objects, and layers.
+Levels are created entirely in the [Tiled Map Editor](https://www.mapeditor.org/), using JSON export format. 
+All core level data—collision, visuals, player start, monsters, event zones, etc. are defined using custom properties on tiles, objects, and layers.
 
 ![GhostWheel_Tiled](https://github.com/user-attachments/assets/2cbdcae3-a0c1-41be-979f-9a923da2c2b7)
 
-What You Can Define in Tiled
-| Feature	 | Defined Via |
-| -------- | ------- |
-| Layout & terrain |	Tile layers |
-| Player/Monsters	| Object layers with custom properties (e.g. "player", "monster") |
-| Collision	| Object layers with "collision" component |
-| Patrol paths |	Object groups with waypoints |
-| Triggers & events	| Areas with "event" components |
-| Camera tracking	| "cameratrack" property |
-| Dialogs |	Placeholder support via trigger components |
+What You Can Define in Tiled:
+| Feature	          | Defined Via                                                     |
+| ------------------| --------------------------------------------------------------- |
+| Layout & terrain  |	Tile layers                                                     |
+| Player/Monsters	  | Object layers with custom properties (e.g. "player", "monster") |
+| Collision	        | Object layers with "collision" component                        |
+| Patrol paths      |	Object groups with waypoints                                    |
+| Triggers & events	| Areas with "event" components                                   |
+| Camera tracking	  | "cameratrack" property                                          |
 
-## 📁 Example Workflow
+### 📁 Example Workflow
 * Open Tiled
 * Design your level using tile and object layers
 * Add properties like "player", "event", "collision", "dialog", etc.
 * Export the map as .json
 * Load it into the game engine and test on Playdate or desktop
 
-## 🎮 Playable Prototype
+## 🛠 Entity-Component-System Design
+All entities (player, NPCs, items, triggers) are defined by their components, which are simple flags or attributes set in Tiled.
+For example, a snipped of exported level data containing a "PlayerStart" object may look like this:
+```json
+{
+  "type": "object",
+  "name": "PlayerStart",
+  "properties": {
+    "player": true,
+    "cameratrack": true,
+    "collision": true
+  }
+}
+```
+The engine automatically builds this into a controllable player entity with camera tracking and collision detection.
 
 ![GhostWheel_Collision](https://github.com/user-attachments/assets/f44e15cd-36a6-4a78-b8ce-12e3e72b9f17)
 
-### Isometric Engine
+## 🎮 Some Supported Featues
 #### Map/Level Loading
 * Load JSON files exported from Tiled Map Editor
-* Render Isometric grid data
-* Support x,y shift of map (for camera)
+*  Support Isometric grid data,
+* (x, y) shift of map (for camera)
 * Support multiple layers
 * Support multiple tilesets
 * Support multiple levels (height differences)
 * Support different map width/height
 * Support layer properties
 * Support image layers
-### Rendering
+### Rendering & Physics
 * Render Tiled Map Data
-* Translate Position to Isometric Coordinates
-### Collision Detection
-Axis-Aligned Collision detection
-Physics based collision response
-
-### Physics Engine
+* Translate 2D Position coordinates to 2.5d isometric coordinates
+* Translation from top-down (physics) to isometric (render) (see Isometric)
+* Axis-Aligned collision detection in 2d position space
+* Rigid-Body physics collision response
 * Velocity Verlet Integration with velocity and acceleration
 * Impulses using forces
 * Resistance to movement (linear damping)
 * Finetunable feel (force, damping, mass)
-* Translation from top-down (physics) to isometric (render) (see Isometric)
 
 
+## 🛠 Immediate To-Do
+* Basic animation support
+* Trigger system for events
+* Items and inventory system
+* Doors to other rooms/levels
+* Dialog system
 
 ## 💬 Contributing
 This project is experimental and feedback is welcome! If you're a designer or developer and want to try it out, open an issue or contribute directly.
