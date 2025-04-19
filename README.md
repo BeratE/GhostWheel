@@ -36,6 +36,11 @@ What You Can Define in Tiled:
 * Export the map as .json
 * Load it into the game engine and test on Playdate or desktop
 
+See the documentation for a listings of:
+* [ECS Components](docs/ECS&#32;Components.pdf) that can be defined as properties in tiled
+* [Isometric handling](docs/Isometric.pdf) and list of explicitly supported and unsupported features in the map engine.
+* [Tiled Map Editor settings](docs/Tiled&#32;Map&#32;Editor.pdf) and export.
+
 ## 🛠 Entity-Component-System Design
 All entities (player, NPCs, items, triggers) are defined by their components, which are simple flags or attributes set in Tiled.
 For example, a snippet of exported level data containing a "PlayerStart" object may look like this:
